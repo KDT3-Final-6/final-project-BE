@@ -99,3 +99,43 @@ $ npm start
 ## References
 
 - [고투게더](https://www.gotogether-s.com/)
+
+-----
+##Project Name
+ 파이널 프로젝트 이며,
+ 더 샤이니기업과 하는 여행상품 사이트 프로젝트 입니다.
+ [See Demo]()
+
+## Prerequisite
+
+- java: ^11
+
+## How to start
+
+```shell
+$ git clone {repo addr}
+$ cd repo-setup-sample
+$ npm install
+$ npm start
+```
+
+## Feature
+
+- Blog
+- Reply
+- My Page
+
+## Contributors
+
+|username|Real name|github link|
+|:--:|:--:|:--:|
+|zoomin3022|주우민|[zoomin3022](https://github.com/zoomin3022)|
+|JeYeongR|류제영|[JeYeongR](https://github.com/JeYeongR)|
+|lala9663|김태윤|[lala9663](https://github.com/lala9663)|
+
+## References
+
+- [고투게더](https://www.gotogether-s.com/)
+
+
+## License
