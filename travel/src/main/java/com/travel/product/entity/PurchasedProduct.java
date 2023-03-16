@@ -1,10 +1,12 @@
 package com.travel.product.entity;
 
+import com.travel.order.entity.Order;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,13 +32,19 @@ public class PurchasedProduct {
     @Column(name = "purchased_product_price")
     private Integer purchasedProductPrice;
 
+    @Column(name = "start_date")
+    private LocalDate startDate;
+
+    @Column(name = "end_date")
+    private LocalDate endDate;
+
+    @Column(name = "period")
+    private Integer period;
+
     @Column(name = "purchased_product_quantity")
     private Integer productProductQuantity;
 
-    public PurchasedProduct(Product product) {
-        this.purchasedProductName = product.getProductName();
-        this.purchasedProductThumbnail = product.getProductThumbnail();
-        this.purchasedProductPrice = product.getProductPrice();
-        this.productProductQuantity = 3;
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
 }
