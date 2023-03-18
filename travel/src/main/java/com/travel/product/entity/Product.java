@@ -21,6 +21,7 @@ public class Product extends BaseEntity {
     @Column(name = "product_id")
     private Long productId;
 
+    //상품 이름(제목)
     @Column(name = "product_name")
     private String productName;
 
@@ -40,11 +41,11 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product")
     private List<ProductCategory> productCategories = new ArrayList<>();
 
-    //제목
+    //내용
     @Column(name = "product_content")
     private String productContent;
 
-    //상세
+    //내용 상세
     @Column(name = "content_detail")
     private String contentDetail;
 
