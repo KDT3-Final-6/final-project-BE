@@ -63,4 +63,8 @@ public class PeriodOption {
         this.minimumQuantity = minimumQuantity;
         this.soldQuantity = 0;
     }
+
+    public void setPeriodOptionSoldQuantity(Integer periodOptionSoldQuantity) {
+        this.periodOptionSoldQuantity = periodOptionSoldQuantity;
+    }
 }
