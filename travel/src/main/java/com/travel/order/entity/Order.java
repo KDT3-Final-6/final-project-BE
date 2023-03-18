@@ -4,6 +4,7 @@ import com.travel.global.entity.BaseEntityWithModifiedDate;
 import com.travel.member.entity.Member;
 import com.travel.product.entity.PurchasedProduct;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,4 +32,11 @@ public class Order extends BaseEntityWithModifiedDate {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<PurchasedProduct> purchasedProducts = new ArrayList<>();
+
+    @Builder
+    public Order(Member member, List<PurchasedProduct> purchasedProducts) {
+        this.member = member;
+        this.purchasedProducts = purchasedProducts;
+    }
+
 }
