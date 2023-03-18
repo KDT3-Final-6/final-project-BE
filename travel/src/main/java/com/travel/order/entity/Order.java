@@ -29,6 +29,6 @@ public class Order extends BaseEntityWithModifiedDate {
     @Column(name = "is_canceled")
     private Boolean isCanceled;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<PurchasedProduct> purchasedProducts = new ArrayList<>();
 }
