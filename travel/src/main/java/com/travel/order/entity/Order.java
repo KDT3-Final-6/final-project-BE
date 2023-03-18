@@ -36,6 +36,7 @@ public class Order extends BaseEntityWithModifiedDate {
     @Builder
     public Order(Member member, List<PurchasedProduct> purchasedProducts) {
         this.member = member;
+        this.isCanceled = false;
         this.purchasedProducts = purchasedProducts;
     }
 
