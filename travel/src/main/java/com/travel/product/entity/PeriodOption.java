@@ -64,7 +64,7 @@ public class PeriodOption {
         this.soldQuantity = 0;
     }
 
-    public void setPeriodOptionSoldQuantity(Integer periodOptionSoldQuantity) {
-        this.periodOptionSoldQuantity = periodOptionSoldQuantity;
+    public void setSoldQuantity(Integer soldQuantity) {
+        this.soldQuantity = soldQuantity;
     }
 }
