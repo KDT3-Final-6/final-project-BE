@@ -1,7 +1,7 @@
 package com.travel.product.service;
 
-import com.travel.product.dto.PeriodPostRequestDTO;
-import com.travel.product.dto.ProductPostRequestDTO;
+import com.travel.product.dto.request.PeriodPostRequestDTO;
+import com.travel.product.dto.request.ProductPostRequestDTO;
 import com.travel.product.entity.Category;
 import com.travel.product.entity.PeriodOption;
 import com.travel.product.entity.Product;

@@ -1,4 +1,4 @@
-package com.travel.product.dto;
+package com.travel.product.dto.request;
 
 import com.travel.product.entity.PeriodOption;
 import lombok.Getter;

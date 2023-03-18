@@ -1,4 +1,4 @@
-package com.travel.product.dto;
+package com.travel.product.dto.request;
 
 import lombok.Getter;
 

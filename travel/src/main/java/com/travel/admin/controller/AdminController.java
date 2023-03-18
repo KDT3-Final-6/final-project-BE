@@ -1,7 +1,7 @@
 package com.travel.admin.controller;
 
-import com.travel.product.dto.PeriodPostRequestDTO;
-import com.travel.product.dto.ProductPostRequestDTO;
+import com.travel.product.dto.request.PeriodPostRequestDTO;
+import com.travel.product.dto.request.ProductPostRequestDTO;
 import com.travel.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
