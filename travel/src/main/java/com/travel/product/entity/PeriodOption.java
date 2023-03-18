@@ -24,6 +24,9 @@ public class PeriodOption {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @Column(name = "option_name")
+    private String optionName;
+
     @Column(name = "start_date")
     private LocalDate startDate;
 
@@ -34,25 +37,30 @@ public class PeriodOption {
     private Integer period;
 
     //최대 인원
-    @Column(name = "period_option_maximum_quantity")
-    private Integer periodOptionMaximumQuantity;
+    @Column(name = "maximum_quantity")
+    private Integer maximumQuantity;
 
     //최소 인원
-    @Column(name = "period_option_minimum_quantity")
-    private Integer periodOptionMinimumQuantity;
+    @Column(name = "minimum_quantity")
+    private Integer minimumQuantity;
 
     //현재 신청한 인원
-    @Column(name = "period_option_sold_quantity")
-    private Integer periodOptionSoldQuantity;
+    @Column(name = "sold_quantity")
+    private Integer soldQuantity;
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 
     @Builder
-    public PeriodOption(Product product, LocalDate startDate, LocalDate endDate, Integer periodOptionMaximumQuantity, Integer periodOptionMinimumQuantity, Integer periodOptionSoldQuantity) {
+    public PeriodOption(Product product, String optionName, LocalDate startDate, LocalDate endDate, Integer maximumQuantity, Integer minimumQuantity) {
         this.product = product;
+        this.optionName = optionName;
         this.startDate = startDate;
         this.endDate = endDate;
         this.period = Period.between(startDate, endDate).getDays() + 1;
-        this.periodOptionMaximumQuantity = periodOptionMaximumQuantity;
-        this.periodOptionMinimumQuantity = periodOptionMinimumQuantity;
-        this.periodOptionSoldQuantity = periodOptionSoldQuantity;
+        this.maximumQuantity = maximumQuantity;
+        this.minimumQuantity = minimumQuantity;
+        this.soldQuantity = 0;
     }
 }
