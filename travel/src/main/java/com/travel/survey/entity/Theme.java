@@ -11,9 +11,9 @@ public enum Theme {
     VOLUNTEER("봉사활동"),
     TREKKING("트레킹");
 
-    String name;
+    String korean;
 
-    Theme(String name) {
-        this.name = name;
+    Theme(String korean) {
+        this.korean = korean;
     }
 }

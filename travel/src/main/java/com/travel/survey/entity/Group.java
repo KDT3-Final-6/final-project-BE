@@ -10,9 +10,9 @@ public enum Group {
     SEVENTY("70대");
 
 
-    String name;
+    String korean;
 
-    Group(String name) {
-        this.name = name;
+    Group(String korean) {
+        this.korean = korean;
     }
 }
