@@ -8,9 +8,9 @@ public enum Partner {
     FAMILY("가족");
 
 
-    String name;
+    String korean;
 
-    Partner(String name) {
-        this.name = name;
+    Partner(String korean) {
+        this.korean = korean;
     }
 }

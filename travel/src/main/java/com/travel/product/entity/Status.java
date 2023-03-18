@@ -7,9 +7,13 @@ public enum Status {
     HIDDEN("숨김");
 
 
-    private String name;
+    private String korean;
 
-    Status(String name) {
-        this.name = name;
+    public String getKorean() {
+        return korean;
+    }
+
+    Status(String korean) {
+        this.korean = korean;
     }
 }

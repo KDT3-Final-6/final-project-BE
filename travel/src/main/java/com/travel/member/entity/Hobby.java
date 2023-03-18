@@ -9,9 +9,9 @@ public enum Hobby {
     TREKKING("트레킹");
 
 
-    String name;
+    String korean;
 
-    Hobby(String name) {
-        this.name = name;
+    Hobby(String korean) {
+        this.korean = korean;
     }
 }

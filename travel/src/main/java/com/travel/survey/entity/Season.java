@@ -6,9 +6,9 @@ public enum Season {
     GOLF("가을"),
     WINE("겨울");
 
-    String name;
+    String korean;
 
-    Season(String name) {
-        this.name = name;
+    Season(String korean) {
+        this.korean = korean;
     }
 }

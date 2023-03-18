@@ -9,9 +9,9 @@ public enum Religion {
     JUDAISM("유대교"),
     ATHEISM("무교");
 
-    String name;
+    String korean;
 
-    Religion(String name) {
-        this.name = name;
+    Religion(String korean) {
+        this.korean = korean;
     }
 }

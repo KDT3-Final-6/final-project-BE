@@ -5,9 +5,9 @@ public enum Gender {
     MALE("남자"),
     FEMALE("여자");
 
-    String name;
+    String korean;
 
-    Gender(String name) {
-        this.name = name;
+    Gender(String korean) {
+        this.korean = korean;
     }
 }
