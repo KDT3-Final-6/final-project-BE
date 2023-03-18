@@ -30,10 +30,6 @@ public class Product extends BaseEntity {
     @Column(name = "product_price")
     private Integer productPrice;
 
-    @Column(name = "product_category")
-    @Enumerated(EnumType.STRING)
-    private Category productCategory;
-
     @Column(name = "product_status")
     @Enumerated(EnumType.STRING)
     private Status productStatus;
