@@ -7,11 +7,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderException extends CustomException {
 
-    private final OrderExceptionType productExceptionType;
-
+    private final OrderExceptionType orderExceptionType;
 
     @Override
     public CustomExceptionType getCustomExceptionType() {
-        return productExceptionType;
+        return orderExceptionType;
     }
 }
