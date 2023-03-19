@@ -13,13 +13,28 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<String> customExceptionHandler(CustomException e) {
+        log.error("--------------------------------");
+        log.error("StackTrace = {} ", (Object) e.getStackTrace());
+        log.error("HttpStatus = {} ", e.getCustomExceptionType().getHttpStatus());
+        log.error("ErrorMsg = {} ", e.getCustomExceptionType().getErrorMsg());
+        log.error("--------------------------------");
+
         return ResponseEntity.status(e.getCustomExceptionType().getHttpStatus())
                 .body(e.getCustomExceptionType().getErrorMsg());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> methodArgumentNotValidExceptionHandler() {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("잘못된 값입니다.");
+    public ResponseEntity<String> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        String errorMsg = "잘못된 값입니다.";
+
+        log.error("--------------------------------");
+        log.error("StackTrace = {} ", (Object) e.getStackTrace());
+        log.error("HttpStatus = {} ", httpStatus);
+        log.error("ErrorMsg = {} ", errorMsg);
+        log.error("--------------------------------");
+
+        return ResponseEntity.status(httpStatus)
+                .body(errorMsg);
     }
 }
