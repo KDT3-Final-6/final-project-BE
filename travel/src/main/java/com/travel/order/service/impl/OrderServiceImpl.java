@@ -84,4 +84,19 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.save(order);
     }
+
+    @Override
+    public void deleteOrder(Long orderId, String userEmail) {
+        Member member = memberRepository.findByMemberEmail(userEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND)); //나중에 예외 만들기
+
+        Order order = orderRepository.findByOrderIdAndMember(orderId, member)
+                .orElseThrow(() -> new OrderException(OrderExceptionType.ORDER_NOT_FOUND));
+
+        order.setIsCanceled(true);
+
+        orderRepository.save(order);
+    }
+
+
 }
