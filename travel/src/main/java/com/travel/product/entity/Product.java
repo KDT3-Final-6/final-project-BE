@@ -71,12 +71,7 @@ public class Product extends BaseEntity {
     public PurchasedProduct toPurchase(PeriodOption periodOption) {
         return PurchasedProduct.builder()
                 .product(this)
-                .purchasedProductName(productName)
-                .purchasedProductThumbnail(productThumbnail)
-                .purchasedProductPrice(productPrice)
-                .startDate(periodOption.getStartDate())
-                .endDate(periodOption.getEndDate())
-                .period(periodOption.getPeriod())
+                .periodOption(periodOption)
                 .build();
     }
 }

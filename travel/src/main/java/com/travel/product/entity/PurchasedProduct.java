@@ -1,10 +1,8 @@
 package com.travel.product.entity;
 
+import com.travel.order.dto.response.OrderResponseDTO;
 import com.travel.order.entity.Order;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -42,14 +40,41 @@ public class PurchasedProduct {
     @Column(name = "period")
     private Integer period;
 
-    @Column(name = "purchased_product_quantity")
-    private Integer productProductQuantity;
+    @Column(name = "option_name")
+    private String optionName;
 
+    @Setter
+    @Column(name = "purchased_product_quantity")
+    private Integer productProductQuantity = 1;
+
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
-    public void setOrder(Order order) {
-        this.order = order;
+    @Builder
+    public PurchasedProduct(Product product, PeriodOption periodOption) {
+        this.product = product;
+        this.purchasedProductName = product.getProductName();
+        this.purchasedProductThumbnail = product.getProductThumbnail();
+        this.purchasedProductPrice = product.getProductPrice(); //나중에 옵션이랑 더 해줄 예정
+        this.startDate = periodOption.getStartDate();
+        this.endDate = periodOption.getEndDate();
+        this.period = periodOption.getPeriod();
+        this.optionName = periodOption.getOptionName();
+    }
+
+    public OrderResponseDTO toOrderResponseDTO() {
+        return OrderResponseDTO.builder()
+                .orderId(this.order.getOrderId())
+                .productId(this.product.getProductId())
+                .productName(this.purchasedProductName)
+                .productThumbnail(this.purchasedProductThumbnail)
+                .productPrice(this.purchasedProductPrice)
+                .optionName(this.optionName)
+                .productProductQuantity(this.productProductQuantity)
+                .orderDate(this.order.getCreatedDate())
+                .isCanceled(this.order.getIsCanceled())
+                .build();
     }
 }
