@@ -16,7 +16,7 @@ import javax.validation.Valid;
 @RequestMapping("/admins")
 public class AdminController {
 
-    public static final int PAGE_SIZE = 1;
+    public static final int PAGE_SIZE = 3;
 
     private final ProductService productService;
 
@@ -40,7 +40,7 @@ public class AdminController {
             //음수나 오버플로 발생시키는 페이지 번호면 0번페이지로
         }
 
-        return ResponseEntity.ok(productService.displayAdminProducts(pageRequest));
+        return ResponseEntity.ok(productService.displayProductsByAdmin(pageRequest));
     }
 
     @PostMapping("/products/periods")
