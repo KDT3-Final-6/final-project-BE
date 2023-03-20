@@ -13,6 +13,10 @@ public enum CategoryEnum {
 
     String korean;
 
+    public String getKorean() {
+        return korean;
+    }
+
     CategoryEnum(String korean) {
         this.korean = korean;
     }
