@@ -35,7 +35,7 @@ public class Product extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status productStatus;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<PeriodOption> periodOptions = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
