@@ -19,8 +19,8 @@ import com.travel.product.entity.PurchasedProduct;
 import com.travel.product.exception.ProductException;
 import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.PeriodOptionRepository;
-import com.travel.product.repository.ProductRepository;
 import com.travel.product.repository.PurchasedProductRepository;
+import com.travel.product.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void createOrder(OrderCreateListDTO orderCreateListDTO, String userEmail) {
         Member member = memberRepository.findByMemberEmail(userEmail)
-                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND)); //나중에 예외 만들기
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
         List<OrderCreateDTO> createList = orderCreateListDTO.getProductIds();
 
@@ -64,7 +64,6 @@ public class OrderServiceImpl implements OrderService {
                     }
                     periodOption.setSoldQuantity(periodOptionSoldQuantity + quantity);
                     periodOptionRepository.save(periodOption);
-
 
                     PurchasedProduct purchasedProduct = product.toPurchase(periodOption);
                     if (quantity > 1) {
