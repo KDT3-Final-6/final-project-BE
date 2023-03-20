@@ -61,15 +61,8 @@ public class ProductService {
     @Transactional
     public void createPeriodOptions(PeriodPostRequestDTO periodPostRequestDTO) {
 
-//        Product product = productRepository.findById(periodPostRequestDTO.getProductId())
-//                .orElseThrow(()->new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
-
         Product product = productRepository.findById(periodPostRequestDTO.getProductId())
-                .orElseThrow(() -> {
-                    ProductExceptionType exceptionType = ProductExceptionType.PRODUCT_NOT_FOUND;
-                    log.error(exceptionType.getErrorMsg());
-                    return new ProductException(exceptionType);
-                });
+                .orElseThrow(()->new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
         List<PeriodOption> periodOptionList = periodPostRequestDTO.toEntities();
 
