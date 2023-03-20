@@ -15,4 +15,6 @@ public class OrderCreateDTO {
     @NotNull
     private Long periodOptionId;
 
+    @NotNull
+    private Integer quantity;
 }

@@ -3,10 +3,7 @@ package com.travel.order.entity;
 import com.travel.global.entity.BaseEntityWithModifiedDate;
 import com.travel.member.entity.Member;
 import com.travel.product.entity.PurchasedProduct;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -27,8 +24,9 @@ public class Order extends BaseEntityWithModifiedDate {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Setter
     @Column(name = "is_canceled")
-    private Boolean isCanceled;
+    private Boolean isCanceled = false;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<PurchasedProduct> purchasedProducts = new ArrayList<>();
@@ -36,7 +34,6 @@ public class Order extends BaseEntityWithModifiedDate {
     @Builder
     public Order(Member member, List<PurchasedProduct> purchasedProducts) {
         this.member = member;
-        this.isCanceled = false;
         this.purchasedProducts = purchasedProducts;
     }
 
