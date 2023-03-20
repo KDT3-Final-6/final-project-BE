@@ -13,7 +13,7 @@ import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.CategoryRepository;
 import com.travel.product.repository.PeriodOptionRepository;
 import com.travel.product.repository.ProductCategoryRepository;
-import com.travel.product.repository.ProductRepository;
+import com.travel.product.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -83,9 +83,15 @@ public class ProductService {
     }
 
 
-    public PageResponseDTO displayAdminProducts(Pageable pageable) {
+    public PageResponseDTO displayProductsByAdmin(Pageable pageable) {
 
         return new PageResponseDTO(productRepository.findAll(pageable)
+                .map(ProductListGetResponseDTO::new));
+    }
+
+    public PageResponseDTO displayProductsByMember(Pageable pageable, Boolean includeSoldOut) {
+
+        return new PageResponseDTO(productRepository.findAllWithCheckBox(pageable, includeSoldOut)
                 .map(ProductListGetResponseDTO::new));
     }
 }
