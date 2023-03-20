@@ -24,9 +24,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
 
     @Override
     public Page<Product> findAllWithCheckBox(Pageable pageable, Boolean includeSoldOut) {
-        QueryResults<Product> results = queryFactory
-                .select(product)
-                .from(product)
+        QueryResults<Product> results = queryFactory.selectFrom(product)
                 .where(productStatusRange(includeSoldOut))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
