@@ -1,5 +1,6 @@
 package com.travel.order.service.impl;
 
+import com.travel.global.response.PageResponseDTO;
 import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
@@ -23,6 +24,8 @@ import com.travel.product.repository.PurchasedProductRepository;
 import com.travel.product.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,6 +85,28 @@ public class OrderServiceImpl implements OrderService {
         purchasedProductList.forEach(purchasedProduct -> purchasedProduct.setOrder(order));
 
         orderRepository.save(order);
+    }
+
+    @Override
+    public PageResponseDTO getOrders(Pageable pageable, String userEmail) {
+        Member member = memberRepository.findByMemberEmail(userEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        List<Order> orderList = orderRepository.findByMember(member);
+
+        List<List<OrderResponseDTO>> lists = orderList.stream()
+                .map(order -> purchasedProductRepository.findByOrder(order).stream()
+                        .map(PurchasedProduct::toOrderResponseDTO)
+                        .collect(Collectors.toList()))
+                .collect(Collectors.toList());
+
+        List<OrderListResponseDTO> orderListResponseDTOS = lists.stream()
+                .map(list -> OrderListResponseDTO.builder()
+                        .orderList(list)
+                        .build())
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS, pageable, orderListResponseDTOS.size()));
     }
 
     @Override
