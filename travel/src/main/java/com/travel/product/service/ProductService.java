@@ -1,7 +1,9 @@
 package com.travel.product.service;
 
+import com.travel.global.response.PageResponseDTO;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
+import com.travel.product.dto.response.ProductListGetResponseDTO;
 import com.travel.product.entity.Category;
 import com.travel.product.entity.PeriodOption;
 import com.travel.product.entity.Product;
@@ -14,6 +16,7 @@ import com.travel.product.repository.ProductCategoryRepository;
 import com.travel.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,5 +80,12 @@ public class ProductService {
         */
 
         periodOptionList.forEach(product::addPeriodOption);
+    }
+
+
+    public PageResponseDTO displayAdminProducts(Pageable pageable) {
+
+        return new PageResponseDTO(productRepository.findAll(pageable)
+                .map(ProductListGetResponseDTO::new));
     }
 }
