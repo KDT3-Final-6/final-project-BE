@@ -1,5 +1,6 @@
 package com.travel.cart.entity;
 
+import com.travel.cart.dto.response.CartResponseDTO;
 import com.travel.global.entity.BaseEntity;
 import com.travel.member.entity.Member;
 import com.travel.product.entity.PeriodOption;
@@ -43,5 +44,19 @@ public class Cart extends BaseEntity {
         this.product = product;
         this.periodOption = periodOption;
         this.cartQuantity = cartQuantity;
+    }
+
+    public CartResponseDTO toCartResponseDTO() {
+        return CartResponseDTO.builder()
+                .cartId(this.getCartId())
+                .productId(this.getProduct().getProductId())
+                .periodOptionId(this.getPeriodOption().getPeriodOptionId())
+                .cartPrice(this.getProduct().getProductPrice() * this.getCartQuantity())
+                .productName(this.getProduct().getProductName())
+                .periodOptionName(this.getPeriodOption().getOptionName())
+                .productThumbnail(this.getProduct().getProductThumbnail())
+                .productContent(this.getProduct().getProductContent())
+                .cartQuantity(this.getCartQuantity())
+                .build();
     }
 }
