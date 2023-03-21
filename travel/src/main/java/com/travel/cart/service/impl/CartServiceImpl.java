@@ -2,6 +2,7 @@ package com.travel.cart.service.impl;
 
 import com.travel.cart.dto.request.CartAddDTO;
 import com.travel.cart.dto.request.CartDeleteListDTO;
+import com.travel.cart.dto.request.CartUpdateDTO;
 import com.travel.cart.dto.response.CartResponseDTO;
 import com.travel.cart.entity.Cart;
 import com.travel.cart.exception.CartException;
@@ -59,7 +60,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public PageResponseDTO getCarts(Pageable pageable, String userEmail) {
         Member member = memberRepository.findByMemberEmail(userEmail)
-                        .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
         List<Cart> cartList = cartRepository.findByMember(member);
 
@@ -71,9 +72,30 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public void updateCart(Long cartId, CartUpdateDTO cartUpdateDTO, String userEmail) {
+        Member member = memberRepository.findByMemberEmail(userEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        Cart cart = cartRepository.findByMemberAndCartId(member, cartId)
+                .orElseThrow(() -> new CartException(CartExceptionType.CART_NOT_FOUND));
+
+        Product product = productRepository.findById(cartUpdateDTO.getProductId())
+                .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
+
+        PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, cartUpdateDTO.getPeriodOptionId())
+                .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
+
+        cart.setProduct(product);
+        cart.setPeriodOption(periodOption);
+        cart.setCartQuantity(cartUpdateDTO.getQuantity());
+
+        cartRepository.save(cart);
+    }
+
+    @Override
     public void deleteCarts(CartDeleteListDTO cartDeleteListDTO, String userEmail) {
         Member member = memberRepository.findByMemberEmail(userEmail)
-                        .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
         List<Cart> cartList = cartDeleteListDTO.getCartIds().stream()
                 .map(cartDeleteDTO -> cartRepository.findByMemberAndCartId(member, cartDeleteDTO.getCartId())
