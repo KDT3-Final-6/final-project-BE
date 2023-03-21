@@ -44,8 +44,21 @@ public class AdminController {
     }
 
     @PostMapping("/products/periods")
-    public ResponseEntity postPeriod(@RequestBody @Valid PeriodPostRequestDTO periodPostRequestDTO) {
+    public ResponseEntity<String> postPeriod(@RequestBody @Valid PeriodPostRequestDTO periodPostRequestDTO) {
         productService.createPeriodOptions(periodPostRequestDTO);
+        return ResponseEntity.ok(null);
+    }
+
+    /**
+     *
+     * @param productId
+     * delete지만 실제 db에서는 삭제 하지 않는다
+     * 그냥 Member가 못보게 Status만 숨김으로 변경
+     * @return void
+     */
+    @DeleteMapping("/products/{productId}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long productId) {
+        productService.deleteProduct(productId);
         return ResponseEntity.ok(null);
     }
 }
