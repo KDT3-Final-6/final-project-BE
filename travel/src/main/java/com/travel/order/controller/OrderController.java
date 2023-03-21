@@ -1,5 +1,7 @@
 package com.travel.order.controller;
 
+import com.travel.global.exception.GlobalException;
+import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.order.dto.request.OrderCreateListDTO;
 import com.travel.order.service.OrderService;
@@ -28,15 +30,11 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<PageResponseDTO> getOrders(@RequestParam(required = false, defaultValue = "1") int page, String userEmail) {
-        PageRequest pageRequest;
-
-        try {
-            pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
-            //정상적인 범위 내의 페이지 번호면 해당 페이지로
-        } catch (IllegalArgumentException e) {
-            pageRequest = PageRequest.of(0, PAGE_SIZE);
-            //음수나 오버플로 발생시키는 페이지 번호면 0번페이지로
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
+
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
 
         PageResponseDTO orders = orderService.getOrders(pageRequest, userEmail);
 
