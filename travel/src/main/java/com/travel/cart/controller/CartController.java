@@ -2,6 +2,7 @@ package com.travel.cart.controller;
 
 import com.travel.cart.dto.request.CartAddDTO;
 import com.travel.cart.dto.request.CartDeleteListDTO;
+import com.travel.cart.dto.request.CartUpdateDTO;
 import com.travel.cart.service.CartService;
 import com.travel.global.exception.GlobalException;
 import com.travel.global.exception.GlobalExceptionType;
@@ -40,6 +41,13 @@ public class CartController {
         PageResponseDTO carts = cartService.getCarts(pageRequest, userEmail);
 
         return ResponseEntity.ok(carts);
+    }
+
+    @PatchMapping("/{cartId}")
+    public ResponseEntity<Void> updateCart(@PathVariable Long cartId, @Valid @RequestBody CartUpdateDTO cartUpdateDTO, String userEmail) {
+        cartService.updateCart(cartId, cartUpdateDTO, userEmail);
+
+        return ResponseEntity.ok(null);
     }
 
     @DeleteMapping
