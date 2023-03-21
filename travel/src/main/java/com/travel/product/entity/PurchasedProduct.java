@@ -1,5 +1,7 @@
 package com.travel.product.entity;
 
+import com.travel.member.entity.Member;
+import com.travel.order.dto.response.OrderAdminResponseDTO;
 import com.travel.order.dto.response.OrderResponseDTO;
 import com.travel.order.entity.Order;
 import lombok.*;
@@ -68,6 +70,22 @@ public class PurchasedProduct {
         return OrderResponseDTO.builder()
                 .orderId(this.order.getOrderId())
                 .productId(this.product.getProductId())
+                .productName(this.purchasedProductName)
+                .productThumbnail(this.purchasedProductThumbnail)
+                .productPrice(this.purchasedProductPrice)
+                .optionName(this.optionName)
+                .productProductQuantity(this.productProductQuantity)
+                .orderDate(this.order.getCreatedDate())
+                .isCanceled(this.order.getIsCanceled())
+                .build();
+    }
+
+    public OrderAdminResponseDTO toOrderAdminResponseDTO(Member member) {
+        return OrderAdminResponseDTO.builder()
+                .orderId(this.order.getOrderId())
+                .productId(this.product.getProductId())
+                .memberName(member.getMemberName())
+                .memberEmail(member.getMemberEmail())
                 .productName(this.purchasedProductName)
                 .productThumbnail(this.purchasedProductThumbnail)
                 .productPrice(this.purchasedProductPrice)
