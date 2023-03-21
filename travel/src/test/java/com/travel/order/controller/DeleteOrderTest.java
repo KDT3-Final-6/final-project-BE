@@ -8,8 +8,8 @@ import com.travel.product.entity.PeriodOption;
 import com.travel.product.entity.Product;
 import com.travel.product.entity.PurchasedProduct;
 import com.travel.product.repository.PeriodOptionRepository;
-import com.travel.product.repository.ProductRepository;
 import com.travel.product.repository.PurchasedProductRepository;
+import com.travel.product.repository.product.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -93,7 +93,7 @@ class DeleteOrderTest {
 
             Long orderId = order.getOrderId();
 
-            String url = "http://localhost:" + port + "/orders/" + orderId+ "?userEmail=" + userEmail;
+            String url = "http://localhost:" + port + "/orders/" + orderId + "?userEmail=" + userEmail;
 
             //when
             ResponseEntity<Void> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, null, Void.class);
@@ -152,7 +152,7 @@ class DeleteOrderTest {
 
             Long orderId = order.getOrderId() - 1L;
 
-            String url = "http://localhost:" + port + "/orders/" + orderId+ "?userEmail=" + userEmail;
+            String url = "http://localhost:" + port + "/orders/" + orderId + "?userEmail=" + userEmail;
 
             //when
             ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, null, String.class);
