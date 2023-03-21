@@ -1,6 +1,7 @@
 package com.travel.cart.controller;
 
-import com.travel.cart.dto.CartAddDTO;
+import com.travel.cart.dto.request.CartAddDTO;
+import com.travel.cart.dto.request.CartDeleteListDTO;
 import com.travel.cart.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
