@@ -5,10 +5,7 @@ import com.travel.global.entity.BaseEntity;
 import com.travel.member.entity.Member;
 import com.travel.product.entity.PeriodOption;
 import com.travel.product.entity.Product;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -23,18 +20,22 @@ public class Cart extends BaseEntity {
     @Column(name = "cart_id")
     private Long cartId;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "period_option_id")
     private PeriodOption periodOption;
 
+    @Setter
     @Column(name = "cart_quantity")
     private Integer cartQuantity;
 
