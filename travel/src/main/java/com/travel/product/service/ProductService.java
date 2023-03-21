@@ -3,6 +3,7 @@ package com.travel.product.service;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
+import com.travel.product.dto.response.ProductDetailGetResponseDTO;
 import com.travel.product.dto.response.ProductListGetResponseDTO;
 import com.travel.product.entity.Category;
 import com.travel.product.entity.PeriodOption;
@@ -61,15 +62,8 @@ public class ProductService {
     @Transactional
     public void createPeriodOptions(PeriodPostRequestDTO periodPostRequestDTO) {
 
-//        Product product = productRepository.findById(periodPostRequestDTO.getProductId())
-//                .orElseThrow(()->new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
-
         Product product = productRepository.findById(periodPostRequestDTO.getProductId())
-                .orElseThrow(() -> {
-                    ProductExceptionType exceptionType = ProductExceptionType.PRODUCT_NOT_FOUND;
-                    log.error(exceptionType.getErrorMsg());
-                    return new ProductException(exceptionType);
-                });
+                .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
         List<PeriodOption> periodOptionList = periodPostRequestDTO.toEntities();
 
@@ -93,5 +87,20 @@ public class ProductService {
 
         return new PageResponseDTO(productRepository.findAllWithCheckBox(pageable, includeSoldOut)
                 .map(ProductListGetResponseDTO::new));
+    }
+
+    public ProductDetailGetResponseDTO displayProductDetail(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
+
+        return new ProductDetailGetResponseDTO(product);
+    }
+
+    @Transactional
+    public void deleteProduct(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
+
+        product.changeStatusToHidden(product);
     }
 }

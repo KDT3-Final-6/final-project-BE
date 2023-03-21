@@ -35,7 +35,7 @@ public class Product extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status productStatus;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PeriodOption> periodOptions = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
@@ -52,6 +52,10 @@ public class Product extends BaseEntity {
     public void addPeriodOption(PeriodOption periodOption) {
         periodOption.setProduct(this);
         periodOptions.add(periodOption);
+    }
+
+    public void changeStatusToHidden(Product product){
+        product.productStatus = Status.HIDDEN;
     }
 
     @Builder
