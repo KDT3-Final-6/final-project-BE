@@ -58,7 +58,7 @@ public class CartServiceImpl implements CartService {
                         .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
         List<Cart> cartList = cartDeleteListDTO.getCartIds().stream()
-                .map(cartDeleteDTO -> cartRepository.findByMemberAndId(member, cartDeleteDTO.getCartId())
+                .map(cartDeleteDTO -> cartRepository.findByMemberAndCartId(member, cartDeleteDTO.getCartId())
                         .orElseThrow(() -> new CartException(CartExceptionType.CART_NOT_FOUND)))
                 .collect(Collectors.toList());
 
