@@ -7,7 +7,10 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum MemberExceptionType implements CustomExceptionType {
 
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 멤버입니다.");
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 멤버입니다."),
+
+    MEMBER_IS_NOT_ADMIN(HttpStatus.CONFLICT, "관리자가 아닙니다.");
+
     private final HttpStatus httpStatus;
     private final String errorMsg;
 

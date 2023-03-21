@@ -3,6 +3,7 @@ package com.travel.admin.controller;
 import com.travel.global.exception.GlobalException;
 import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
+import com.travel.order.service.OrderService;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
 import com.travel.product.service.ProductService;
@@ -21,6 +22,7 @@ public class AdminController {
     public static final int PAGE_SIZE = 3;
 
     private final ProductService productService;
+    private final OrderService orderService;
 
     @PostMapping("/products")
     public ResponseEntity<String> postProduct(@RequestBody @Valid ProductPostRequestDTO productPostRequestDTO) {
@@ -57,5 +59,18 @@ public class AdminController {
     public ResponseEntity<String> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.ok(null);
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<PageResponseDTO> getOrders(@RequestParam(required = false, defaultValue = "1") int page, String userEmail) {
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+
+        PageResponseDTO orders = orderService.getOrdersAdmin(pageRequest, userEmail);
+
+        return ResponseEntity.ok(orders);
     }
 }

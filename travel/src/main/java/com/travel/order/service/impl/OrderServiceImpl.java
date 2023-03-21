@@ -7,6 +7,8 @@ import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
 import com.travel.order.dto.request.OrderCreateDTO;
 import com.travel.order.dto.request.OrderCreateListDTO;
+import com.travel.order.dto.response.OrderAdminResponseDTO;
+import com.travel.order.dto.response.OrderListAdminResponseDTO;
 import com.travel.order.dto.response.OrderListResponseDTO;
 import com.travel.order.dto.response.OrderResponseDTO;
 import com.travel.order.entity.Order;
@@ -122,5 +124,30 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
     }
 
+    @Override
+    public PageResponseDTO getOrdersAdmin(Pageable pageable, String userEmail) {
+        Member member = memberRepository.findByMemberEmail(userEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
+        if (!member.isAdmin()) {
+            throw new MemberException(MemberExceptionType.MEMBER_IS_NOT_ADMIN);
+        }
+
+        List<Order> orderList = orderRepository.findAll();
+
+        List<OrderListAdminResponseDTO> orderListResponseDTOS = orderList.stream()
+                .map(order -> {
+                    Member user = order.getMember();
+                    List<OrderAdminResponseDTO> orderResponseDTOList = purchasedProductRepository.findByOrder(order).stream()
+                            .map(purchasedProduct -> purchasedProduct.toOrderAdminResponseDTO(user))
+                            .collect(Collectors.toList());
+
+                    return OrderListAdminResponseDTO.builder()
+                            .orderList(orderResponseDTOList)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS, pageable, orderListResponseDTOS.size()));
+    }
 }
