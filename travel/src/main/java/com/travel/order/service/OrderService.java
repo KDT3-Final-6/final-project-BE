@@ -11,4 +11,6 @@ public interface OrderService {
     PageResponseDTO getOrders(Pageable pageable, String userEmail);
 
     void deleteOrder(Long orderId, String userEmail);
+
+    PageResponseDTO getOrdersAdmin(Pageable pageable, String userEmail);
 }
