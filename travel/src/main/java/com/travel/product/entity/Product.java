@@ -35,7 +35,7 @@ public class Product extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Status productStatus;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PeriodOption> periodOptions = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
