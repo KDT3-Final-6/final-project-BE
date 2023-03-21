@@ -1,4 +1,4 @@
-package com.travel.cart.dto;
+package com.travel.cart.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
