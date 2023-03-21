@@ -69,8 +69,8 @@ public class Member extends BaseEntity {
         this.memberHobby = memberHobby;
     }
 
-    public Boolean isAdmin(Member member) {
-        if (member.memberAuthority) {
+    public Boolean isAdmin() {
+        if (this.memberAuthority) {
             return true;
         }
         return false;
