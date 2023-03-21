@@ -54,6 +54,10 @@ public class Product extends BaseEntity {
         periodOptions.add(periodOption);
     }
 
+    public void changeStatusToHidden(Product product){
+        product.productStatus = Status.HIDDEN;
+    }
+
     @Builder
     public Product(String productName, String productThumbnail, Integer productPrice, Status productStatus, String productContent, String contentDetail) {
         this.productName = productName;
