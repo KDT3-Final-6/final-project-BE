@@ -2,11 +2,13 @@ package com.travel.cart.service.impl;
 
 import com.travel.cart.dto.request.CartAddDTO;
 import com.travel.cart.dto.request.CartDeleteListDTO;
+import com.travel.cart.dto.response.CartResponseDTO;
 import com.travel.cart.entity.Cart;
 import com.travel.cart.exception.CartException;
 import com.travel.cart.exception.CartExceptionType;
 import com.travel.cart.repository.CartRepository;
 import com.travel.cart.service.CartService;
+import com.travel.global.response.PageResponseDTO;
 import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
@@ -18,6 +20,8 @@ import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.PeriodOptionRepository;
 import com.travel.product.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,6 +54,20 @@ public class CartServiceImpl implements CartService {
                 .periodOption(periodOption)
                 .cartQuantity(cartAddDTO.getQuantity())
                 .build());
+    }
+
+    @Override
+    public PageResponseDTO getCarts(Pageable pageable, String userEmail) {
+        Member member = memberRepository.findByMemberEmail(userEmail)
+                        .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        List<Cart> cartList = cartRepository.findByMember(member);
+
+        List<CartResponseDTO> cartResponseDTOList = cartList.stream()
+                .map(Cart::toCartResponseDTO)
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO(new PageImpl<>(cartResponseDTOList, pageable, cartResponseDTOList.size()));
     }
 
     @Override
