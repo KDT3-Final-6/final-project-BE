@@ -1,6 +1,7 @@
 package com.travel.product.dto.request;
 
 import com.travel.product.entity.PeriodOption;
+import com.travel.product.entity.Status;
 import lombok.Getter;
 
 import javax.validation.Valid;
@@ -40,9 +41,19 @@ public class PeriodPostRequestDTO {
                         .endDate(periodOption.getEndDate())
                         .maximumQuantity(periodOption.getMaximumQuantity())
                         .minimumQuantity(periodOption.getMinimumQuantity())
+                        .periodOptionStatus(setEnumProductStatus(periodOption.getPeriodOptionStatus()))
                         .build())
                 .collect(toList());
 
         return periodOptionList;
+    }
+
+    public Status setEnumProductStatus(String productStatus) {
+        if (productStatus.equals(Status.FORSALE.getKorean())) {
+            return Status.FORSALE;
+        } else if (productStatus.equals(Status.SOLDOUT.getKorean())) {
+            return Status.SOLDOUT;
+        }
+        return Status.HIDDEN;
     }
 }

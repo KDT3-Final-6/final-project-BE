@@ -29,6 +29,9 @@ public class PeriodOptionDTO {
     @Positive
     private Integer minimumQuantity;
 
+    @NotBlank
+    private String periodOptionStatus;
+
     public void setDates() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
