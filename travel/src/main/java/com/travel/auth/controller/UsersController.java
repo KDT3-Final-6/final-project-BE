@@ -1,8 +1,5 @@
 package com.travel.auth.controller;
 
-
-
-import com.travel.auth.dto.Response;
 import com.travel.auth.dto.ResponseDto;
 import com.travel.auth.dto.UserRequestDto;
 import com.travel.auth.jwt.JwtTokenProvider;
@@ -10,7 +7,6 @@ import com.travel.auth.lib.Helper;
 import com.travel.auth.service.UsersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +18,7 @@ public class UsersController {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final UsersService usersService;
-    private final Response response;
+
 
     @PostMapping("/members")
     public ResponseDto<?> signUp(@Validated @RequestBody UserRequestDto.SignUp signUp, Errors errors) {

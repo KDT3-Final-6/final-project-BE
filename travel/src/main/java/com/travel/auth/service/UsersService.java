@@ -1,6 +1,5 @@
 package com.travel.auth.service;
 
-import com.travel.auth.dto.Response;
 import com.travel.auth.dto.ResponseDto;
 import com.travel.auth.dto.UserRequestDto;
 import com.travel.auth.dto.UserResponseDto;
@@ -12,8 +11,6 @@ import com.travel.auth.security.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -31,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 public class UsersService {
 
     private final UsersRepository usersRepository;
-    private final Response response;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
