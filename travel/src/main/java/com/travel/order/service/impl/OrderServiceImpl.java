@@ -63,6 +63,10 @@ public class OrderServiceImpl implements OrderService {
                     PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, createDTO.getPeriodOptionId())
                             .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
+                    if (periodOption.getPeriodOptionStatus() != Status.FORSALE) {
+                        throw new OrderException(OrderExceptionType.PRODUCTS_CANNOT_BE_ORDERED);
+                    }
+
                     return updateQuantity(quantity, product, periodOption);
                 })
                 .collect(Collectors.toList());
