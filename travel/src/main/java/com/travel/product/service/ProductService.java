@@ -2,6 +2,7 @@ package com.travel.product.service;
 
 import com.travel.global.response.PageResponseDTO;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
+import com.travel.product.dto.request.ProductPatchRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
 import com.travel.product.dto.response.ProductDetailGetResponseDTO;
 import com.travel.product.dto.response.ProductListGetResponseDTO;
@@ -102,5 +103,13 @@ public class ProductService {
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
         product.changeStatusToHidden(product);
+    }
+
+    @Transactional
+    public void updateProduct(Long id, ProductPatchRequestDTO productPatchRequestDTO) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
+
+        product.updateProduct(productPatchRequestDTO.toEntity(product));
     }
 }
