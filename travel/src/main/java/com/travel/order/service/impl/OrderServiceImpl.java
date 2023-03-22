@@ -19,6 +19,7 @@ import com.travel.order.service.OrderService;
 import com.travel.product.entity.PeriodOption;
 import com.travel.product.entity.Product;
 import com.travel.product.entity.PurchasedProduct;
+import com.travel.product.entity.Status;
 import com.travel.product.exception.ProductException;
 import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.PeriodOptionRepository;
@@ -59,23 +60,10 @@ public class OrderServiceImpl implements OrderService {
 
                     Product product = productRepository.findById(createDTO.getProductId())
                             .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
-                    PeriodOption periodOption = periodOptionRepository.findById(createDTO.getPeriodOptionId())
+                    PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, createDTO.getPeriodOptionId())
                             .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
-                    //만약에 상품에 해당하지 않은 옵션이 오면?
-                    Integer periodOptionSoldQuantity = periodOption.getSoldQuantity();
-                    if (periodOptionSoldQuantity + quantity > periodOption.getMaximumQuantity()) {
-                        throw new OrderException(OrderExceptionType.MAX_CAPACITY_EXCEEDED);
-                    }
-                    periodOption.setSoldQuantity(periodOptionSoldQuantity + quantity);
-                    periodOptionRepository.save(periodOption);
-
-                    PurchasedProduct purchasedProduct = product.toPurchase(periodOption);
-                    if (quantity > 1) {
-                        purchasedProduct.setProductProductQuantity(quantity);
-                    }
-
-                    return purchasedProduct;
+                    return updateQuantity(quantity, product, periodOption);
                 })
                 .collect(Collectors.toList());
 
@@ -149,5 +137,22 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
 
         return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS, pageable, orderListResponseDTOS.size()));
+    }
+
+    private PurchasedProduct updateQuantity(Integer quantity, Product product, PeriodOption periodOption) {
+        Integer periodOptionSoldQuantity = periodOption.getSoldQuantity();
+        if (periodOptionSoldQuantity + quantity > periodOption.getMaximumQuantity()) {
+            throw new OrderException(OrderExceptionType.MAX_CAPACITY_EXCEEDED);
+        } else if (periodOptionSoldQuantity + quantity == periodOption.getMaximumQuantity()) {
+            periodOption.setPeriodOptionStatus(Status.SOLDOUT);
+        }
+        periodOption.setSoldQuantity(periodOptionSoldQuantity + quantity);
+        periodOptionRepository.save(periodOption);
+
+        PurchasedProduct purchasedProduct = product.toPurchase(periodOption);
+        if (quantity > 1) {
+            purchasedProduct.setProductProductQuantity(quantity);
+        }
+        return purchasedProduct;
     }
 }
