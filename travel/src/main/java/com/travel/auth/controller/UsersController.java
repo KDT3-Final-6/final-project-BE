@@ -3,6 +3,7 @@ package com.travel.auth.controller;
 
 
 import com.travel.auth.dto.Response;
+import com.travel.auth.dto.ResponseDto;
 import com.travel.auth.dto.UserRequestDto;
 import com.travel.auth.jwt.JwtTokenProvider;
 import com.travel.auth.lib.Helper;
@@ -24,56 +25,56 @@ public class UsersController {
     private final Response response;
 
     @PostMapping("/members")
-    public ResponseEntity<?> signUp(@Validated @RequestBody UserRequestDto.SignUp signUp, Errors errors) {
+    public ResponseDto<?> signUp(@Validated @RequestBody UserRequestDto.SignUp signUp, Errors errors) {
         // validation check
         if (errors.hasErrors()) {
-            return response.invalidFields(Helper.refineErrors(errors));
+            return new ResponseDto<>(Helper.refineErrors(errors));
         }
         return usersService.signUp(signUp);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Validated @RequestBody UserRequestDto.Login login, Errors errors) {
+    public ResponseDto<?> login(@Validated @RequestBody UserRequestDto.Login login, Errors errors) {
         // validation check
         if (errors.hasErrors()) {
-            return response.invalidFields(Helper.refineErrors(errors));
+            return new ResponseDto<>(Helper.refineErrors(errors));
         }
         return usersService.login(login);
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissue(@Validated UserRequestDto.Reissue reissue, Errors errors) {
+    public ResponseDto<?> reissue(@Validated @RequestBody UserRequestDto.Reissue reissue, Errors errors) {
         // validation check
         if (errors.hasErrors()) {
-            return response.invalidFields(Helper.refineErrors(errors));
+            return new ResponseDto<>(Helper.refineErrors(errors));
         }
         return usersService.reissue(reissue);
     }
 
     @PostMapping("/members/logout")
-    public ResponseEntity<?> logout(@Validated UserRequestDto.Logout logout, Errors errors) {
+    public ResponseDto<? extends Object> logout(@Validated @RequestBody UserRequestDto.Logout logout, Errors errors) {
         // validation check
         if (errors.hasErrors()) {
-            return response.invalidFields(Helper.refineErrors(errors));
+            return new ResponseDto<>(Helper.refineErrors(errors));
         }
         return usersService.logout(logout);
     }
 
     @GetMapping("/authority")
-    public ResponseEntity<?> authority() {
+    public ResponseDto<?> authority() {
         log.info("ADD ROLE_ADMIN");
         return usersService.authority();
     }
 
     @GetMapping("/userTest")
-    public ResponseEntity<?> userTest() {
+    public ResponseDto<?> userTest() {
         log.info("ROLE_USER TEST");
-        return response.success();
+        return new ResponseDto<>(ResponseDto.success());
     }
 
     @GetMapping("/adminTest")
-    public ResponseEntity<?> adminTest() {
+    public ResponseDto<?> adminTest() {
         log.info("ROLE_ADMIN TEST");
-        return response.success();
+        return new ResponseDto<>(ResponseDto.success());
     }
 }

@@ -1,6 +1,7 @@
 package com.travel.auth.service;
 
 import com.travel.auth.dto.Response;
+import com.travel.auth.dto.ResponseDto;
 import com.travel.auth.dto.UserRequestDto;
 import com.travel.auth.dto.UserResponseDto;
 import com.travel.auth.entity.Users;
@@ -36,9 +37,9 @@ public class UsersService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RedisTemplate redisTemplate;
 
-    public ResponseEntity<?> signUp(UserRequestDto.SignUp signUp) {
+    public ResponseDto<?> signUp(UserRequestDto.SignUp signUp) {
         if (usersRepository.existsByEmail(signUp.getEmail())) {
-            return response.fail("이미 회원가입된 이메일입니다.", HttpStatus.BAD_REQUEST);
+            return new ResponseDto<>("이미 회원가입된 이메일입니다.");
         }
 
         Users user = Users.builder()
@@ -54,37 +55,29 @@ public class UsersService {
         System.out.println("아이디: " + user.getEmail() + " 비밀번호: " + user.getPassword() + "생일: "
                 + user.getBirthDate() + " 취미: " + user.getHobby());
 
-        return response.success("회원가입에 성공했습니다.");
+        return new ResponseDto<>("회원가입 성공했습니다.");
     }
 
-    public ResponseEntity<?> login(UserRequestDto.Login login) {
+    public ResponseDto<?> login(UserRequestDto.Login login) {
 
         if (usersRepository.findByEmail(login.getEmail()).orElse(null) == null) {
-            return response.fail("해당하는 유저가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+            return new ResponseDto<>("가입된 이메일이 아닙니다.");
         }
 
-        // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
-        // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
         UsernamePasswordAuthenticationToken authenticationToken = login.toAuthentication();
 
-        // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
-        // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
         UserResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
-
-        // 4. RefreshToken Redis 저장 (expirationTime 설정을 통해 자동 삭제 처리)
         redisTemplate.opsForValue()
                 .set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
-
-        return response.success(tokenInfo, "로그인에 성공했습니다.", HttpStatus.OK);
+        return new ResponseDto<>(tokenInfo);
     }
 
-    public ResponseEntity<?> reissue(UserRequestDto.Reissue reissue) {
+    public ResponseDto<?> reissue(UserRequestDto.Reissue reissue) {
         // 1. Refresh Token 검증
         if (!jwtTokenProvider.validateToken(reissue.getRefreshToken())) {
-            return response.fail("Refresh Token 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
+            return new ResponseDto<>("Refresh Token 정보가 유효하지 않습니다.");
         }
 
         // 2. Access Token 에서 User email 을 가져옵니다.
@@ -94,10 +87,10 @@ public class UsersService {
         String refreshToken = (String)redisTemplate.opsForValue().get("회원:" + authentication.getName());
         // (추가) 로그아웃되어 Redis 에 RefreshToken 이 존재하지 않는 경우 처리
         if(ObjectUtils.isEmpty(refreshToken)) {
-            return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+            return new ResponseDto<>("잘못된 요청입니다.");
         }
         if(!refreshToken.equals(reissue.getRefreshToken())) {
-            return response.fail("Refresh Token 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+            return new ResponseDto<>("Refresh Token 정보가 일치하지 않습니다.");
         }
 
         // 4. 새로운 토큰 생성
@@ -107,13 +100,15 @@ public class UsersService {
         redisTemplate.opsForValue()
                 .set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
 
-        return response.success(tokenInfo, "Token 정보가 갱신되었습니다.", HttpStatus.OK);
+//        return response.success(tokenInfo, "Token 정보가 갱신되었습니다.", HttpStatus.OK);
+        return new ResponseDto<>(tokenInfo);
+
     }
 
-    public ResponseEntity<?> logout(UserRequestDto.Logout logout) {
+    public ResponseDto<?> logout(UserRequestDto.Logout logout) {
         // 1. Access Token 검증
         if (!jwtTokenProvider.validateToken(logout.getAccessToken())) {
-            return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+            return new ResponseDto<>("실패!");
         }
 
         // 2. Access Token 에서 User email 을 가져옵니다.
@@ -130,10 +125,10 @@ public class UsersService {
         redisTemplate.opsForValue()
                 .set(logout.getAccessToken(), "logout", expiration, TimeUnit.MILLISECONDS);
 
-        return response.success("로그아웃 되었습니다.");
+        return new ResponseDto<>("로그아웃 되었습니다.");
     }
 
-    public ResponseEntity<?> authority() {
+    public ResponseDto<?> authority() {
         // SecurityContext에 담겨 있는 authentication userEamil 정보
         String userEmail = SecurityUtil.getCurrentUserEmail();
 
@@ -144,7 +139,6 @@ public class UsersService {
         user.getRoles().add(Authority.ROLE_ADMIN.name());
         usersRepository.save(user);
 
-        return response.success();
+        return new ResponseDto<>(ResponseDto.success());
     }
-
 }
