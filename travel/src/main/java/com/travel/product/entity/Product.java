@@ -58,6 +58,15 @@ public class Product extends BaseEntity {
         product.productStatus = Status.HIDDEN;
     }
 
+    public void updateProduct(Product product) {
+        this.productName = product.getProductName();
+        this.productThumbnail = product.getProductThumbnail();
+        this.productPrice = product.getProductPrice();
+        this.productStatus = product.getProductStatus();
+        this.productContent = product.getProductContent();
+        this.contentDetail = product.getContentDetail();
+    }
+
     @Builder
     public Product(String productName, String productThumbnail, Integer productPrice, Status productStatus, String productContent, String contentDetail) {
         this.productName = productName;

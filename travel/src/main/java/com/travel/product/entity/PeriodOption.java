@@ -50,12 +50,16 @@ public class PeriodOption {
     @Column(name = "sold_quantity")
     private Integer soldQuantity;
 
+    @Column(name = "period_option_status")
+    @Enumerated(EnumType.STRING)
+    private Status periodOptionStatus;
+
     public void setProduct(Product product) {
         this.product = product;
     }
 
     @Builder
-    public PeriodOption(Product product, String optionName, LocalDate startDate, LocalDate endDate, Integer maximumQuantity, Integer minimumQuantity) {
+    public PeriodOption(Product product, String optionName, LocalDate startDate, LocalDate endDate, Integer maximumQuantity, Integer minimumQuantity, Status periodOptionStatus) {
         this.product = product;
         this.optionName = optionName;
         this.startDate = startDate;
@@ -63,6 +67,7 @@ public class PeriodOption {
         this.period = Period.between(startDate, endDate).getDays() + 1;
         this.maximumQuantity = maximumQuantity;
         this.minimumQuantity = minimumQuantity;
+        this.periodOptionStatus = periodOptionStatus;
         this.soldQuantity = 0;
     }
 
