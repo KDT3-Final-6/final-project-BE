@@ -3,8 +3,8 @@ package com.travel.admin.controller;
 import com.travel.global.exception.GlobalException;
 import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
-import com.travel.order.service.OrderService;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
+import com.travel.product.dto.request.ProductPatchRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
 import com.travel.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,6 @@ public class AdminController {
     public static final int PAGE_SIZE = 3;
 
     private final ProductService productService;
-    private final OrderService orderService;
 
     @PostMapping("/products")
     public ResponseEntity<String> postProduct(@RequestBody @Valid ProductPostRequestDTO productPostRequestDTO) {
@@ -49,7 +48,6 @@ public class AdminController {
     }
 
     /**
-     *
      * @param productId
      * delete지만 실제 db에서는 삭제 하지 않는다
      * 그냥 Member가 못보게 Status만 숨김으로 변경
@@ -58,6 +56,13 @@ public class AdminController {
     @DeleteMapping("/products/{productId}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
+        return ResponseEntity.ok(null);
+    }
+
+    @PatchMapping("/products/{productId}")
+    public ResponseEntity<String> patchProduct(@PathVariable Long productId,
+                                               @RequestBody ProductPatchRequestDTO productPatchRequestDTO) {
+        productService.updateProduct(productId, productPatchRequestDTO);
         return ResponseEntity.ok(null);
     }
 
