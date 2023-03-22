@@ -29,14 +29,14 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<PageResponseDTO> getOrders(@RequestParam(required = false, defaultValue = "1") int page, String status, String userEmail) {
+    public ResponseEntity<PageResponseDTO> getOrders(@RequestParam(required = false, defaultValue = "1") int page, String userEmail) {
         if (page < 1) {
             throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
 
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
 
-        PageResponseDTO orders = orderService.getOrders(pageRequest, status,userEmail);
+        PageResponseDTO orders = orderService.getOrders(pageRequest, userEmail);
 
         return ResponseEntity.ok(orders);
     }
