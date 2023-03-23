@@ -7,8 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface ProductCategoryRepository extends JpaRepository<ProductCategory, Long> {
 
     @EntityGraph(attributePaths = "product")
     Page<ProductCategory> findAllByCategory(Pageable pageable, Category category);
+    List<ProductCategory> findAllByCategory(Category category);
 }
