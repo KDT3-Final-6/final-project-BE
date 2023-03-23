@@ -1,10 +1,7 @@
 package com.travel.product.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -50,6 +47,7 @@ public class PeriodOption {
     @Column(name = "sold_quantity")
     private Integer soldQuantity;
 
+    @Setter
     @Column(name = "period_option_status")
     @Enumerated(EnumType.STRING)
     private Status periodOptionStatus;

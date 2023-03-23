@@ -3,6 +3,7 @@ package com.travel.admin.controller;
 import com.travel.global.exception.GlobalException;
 import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
+import com.travel.order.service.OrderService;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPatchRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
@@ -22,6 +23,7 @@ public class AdminController {
     public static final int PAGE_SIZE = 3;
 
     private final ProductService productService;
+    private final OrderService orderService;
 
     @PostMapping("/products")
     public ResponseEntity<String> postProduct(@RequestBody @Valid ProductPostRequestDTO productPostRequestDTO) {
