@@ -2,6 +2,7 @@ package com.travel.search.controller;
 
 import com.travel.global.exception.GlobalException;
 import com.travel.global.exception.GlobalExceptionType;
+import com.travel.global.response.PageResponseDTO;
 import com.travel.product.dto.response.ProductCategoryToProductPage;
 import com.travel.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,23 @@ public class SearchController {
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
 
         return ResponseEntity.ok(searchService.displayProductsByCategory(pageRequest, category));
+    }
+
+    @GetMapping
+    public ResponseEntity<PageResponseDTO> searchProducts(
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
+        }
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+
+        PageResponseDTO pageResponseDTO = searchService.searchProducts(pageRequest, title, category, startDate, endDate);
+
+        return ResponseEntity.ok(pageResponseDTO);
     }
 }
