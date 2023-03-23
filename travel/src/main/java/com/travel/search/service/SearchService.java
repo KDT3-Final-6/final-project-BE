@@ -32,7 +32,6 @@ public class SearchService {
     private final ProductRepository productRepository;
     private final PeriodOptionRepository periodOptionRepository;
 
-
     public ProductCategoryToProductPage displayProductsByCategory(Pageable pageable, String categoryKorean) {
         CategoryEnum categoryEnum = Stream.of(CategoryEnum.values())
                 .filter(c -> categoryKorean.equals(c.getKorean()))
@@ -74,6 +73,7 @@ public class SearchService {
         if (title != null) {
             nameContainingProducts = productRepository.findByProductNameContaining(title);
         }
+
         return nameContainingProducts;
     }
 
@@ -87,6 +87,7 @@ public class SearchService {
                     .map(PeriodOption::getProduct)
                     .collect(Collectors.toList());
         }
+
         return periodOptionProducts;
     }
 
@@ -105,6 +106,7 @@ public class SearchService {
                     .map(ProductCategory::getProduct)
                     .collect(Collectors.toList());
         }
+
         return categoryProducts;
     }
 
