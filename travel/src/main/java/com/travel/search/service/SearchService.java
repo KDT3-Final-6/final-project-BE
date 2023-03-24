@@ -85,6 +85,7 @@ public class SearchService {
             LocalDate endLocalDate = validateDate(endDate);
 
             periodOptionProducts = periodOptionRepository.findByStartDateAndEndDate(startLocalDate, endLocalDate).stream()
+                    .filter(periodOption -> periodOption.getPeriodOptionStatus() == Status.FORSALE)
                     .map(PeriodOption::getProduct)
                     .collect(Collectors.toList());
         }
