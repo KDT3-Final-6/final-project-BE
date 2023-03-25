@@ -50,6 +50,12 @@ public class CartServiceImpl implements CartService {
                     PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, addDTO.getPeriodOptionId())
                             .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
+                    Cart cart = cartRepository.findByMemberAndProductAndPeriodOption(member, product, periodOption).orElse(null);
+                    if (cart != null) {
+                        cart.setCartQuantity(cart.getCartQuantity() + addDTO.getQuantity());
+                        return cart;
+                    }
+
                     return Cart.builder()
                             .member(member)
                             .product(product)
