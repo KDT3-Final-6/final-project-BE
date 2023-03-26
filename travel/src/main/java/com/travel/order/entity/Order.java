@@ -31,10 +31,15 @@ public class Order extends BaseEntityWithModifiedDate {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<PurchasedProduct> purchasedProducts = new ArrayList<>();
 
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
     @Builder
-    public Order(Member member, List<PurchasedProduct> purchasedProducts) {
+    public Order(Member member, List<PurchasedProduct> purchasedProducts, PaymentMethod paymentMethod) {
         this.member = member;
         this.purchasedProducts = purchasedProducts;
+        this.paymentMethod = paymentMethod;
     }
 
 }
