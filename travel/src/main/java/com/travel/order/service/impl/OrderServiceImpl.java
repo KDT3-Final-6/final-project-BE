@@ -12,6 +12,7 @@ import com.travel.order.dto.response.OrderListAdminResponseDTO;
 import com.travel.order.dto.response.OrderListResponseDTO;
 import com.travel.order.dto.response.OrderResponseDTO;
 import com.travel.order.entity.Order;
+import com.travel.order.entity.PaymentMethod;
 import com.travel.order.exception.OrderException;
 import com.travel.order.exception.OrderExceptionType;
 import com.travel.order.repository.OrderRepository;
@@ -34,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -74,6 +76,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = Order.builder()
                 .member(member)
                 .purchasedProducts(purchasedProductList)
+                .paymentMethod(getPaymentMethod(orderCreateListDTO))
                 .build();
 
         purchasedProductList.forEach(purchasedProduct -> purchasedProduct.setOrder(order));
@@ -165,5 +168,12 @@ public class OrderServiceImpl implements OrderService {
             purchasedProduct.setProductProductQuantity(quantity);
         }
         return purchasedProduct;
+    }
+
+    private PaymentMethod getPaymentMethod(OrderCreateListDTO orderCreateListDTO) {
+        return Stream.of(PaymentMethod.values())
+                .filter(paymentMethod -> orderCreateListDTO.getPaymentMethod().equals(paymentMethod.getKorean()))
+                .findFirst()
+                .orElse(null);
     }
 }
