@@ -1,6 +1,6 @@
 package com.travel.cart.controller;
 
-import com.travel.cart.dto.request.CartAddDTO;
+import com.travel.cart.dto.request.CartAddListDTO;
 import com.travel.cart.dto.request.CartDeleteListDTO;
 import com.travel.cart.dto.request.CartUpdateDTO;
 import com.travel.cart.service.CartService;
@@ -24,8 +24,8 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping
-    public ResponseEntity<Void> addCart(@Valid @RequestBody CartAddDTO cartAddDTO, String userEmail) {
-        cartService.addCart(cartAddDTO, userEmail);
+    public ResponseEntity<Void> addCart(@Valid @RequestBody CartAddListDTO cartAddListDTO, String userEmail) {
+        cartService.addCart(cartAddListDTO, userEmail);
 
         return ResponseEntity.ok(null);
     }
