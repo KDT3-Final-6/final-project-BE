@@ -20,7 +20,7 @@ public class ProductDetailGetResponseDTO {
     private String contentDetail;
 
     private List<PeriodOption> periodOptions = new ArrayList<>();
-    private List<StringBuffer> productCategories = new ArrayList<>();
+    private List<String> productCategories = new ArrayList<>();
 
     public ProductDetailGetResponseDTO(Product product) {
         this.productName = product.getProductName();
@@ -31,16 +31,16 @@ public class ProductDetailGetResponseDTO {
         this.contentDetail = product.getContentDetail();
         this.periodOptions.addAll(product.getPeriodOptions());
 
+        int count = 0;
         for (ProductCategory productCategory : product.getProductCategories()) {
             if (productCategory.getCategory().getChild().size() == 0) {
-                StringBuffer stringBuffer = new StringBuffer();
-                stringBuffer.append(productCategory.getCategory().getCategoryEnum().getKorean());
+                productCategories.add(productCategory.getCategory().getCategoryEnum().getKorean());
                 Category parent = productCategory.getCategory().getParent();
                 while (parent != null) {
-                    stringBuffer.insert(0, ": ").insert(0, parent.getCategoryEnum().getKorean());
+                    productCategories.add(count, parent.getCategoryEnum().getKorean());
                     parent = parent.getParent();
                 }
-                productCategories.add(stringBuffer);
+                count = productCategories.size();
             }
         }
     }
