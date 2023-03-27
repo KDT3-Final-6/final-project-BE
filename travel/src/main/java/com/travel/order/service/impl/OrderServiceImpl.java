@@ -85,18 +85,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageResponseDTO getOrders(Pageable pageable, String status, String userEmail) {
+    public PageResponseDTO getOrders(Pageable pageable, String userEmail) {
         Member member = memberRepository.findByMemberEmail(userEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        List<Order> orderList;
-        if (status.equals("주문 취소")) {
-            orderList = orderRepository.findByMemberAndIsCanceled(member, true);
-        } else if (status.equals("주문 완료")) {
-            orderList = orderRepository.findByMemberAndIsCanceled(member, false);
-        } else {
-            orderList = orderRepository.findByMember(member);
-        }
+        List<Order> orderList = orderRepository.findByMember(member);
 
         List<OrderListResponseDTO> orderListResponseDTOS = orderList.stream()
                 .map(order -> {
