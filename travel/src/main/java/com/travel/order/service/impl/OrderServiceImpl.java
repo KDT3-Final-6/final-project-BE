@@ -147,6 +147,7 @@ public class OrderServiceImpl implements OrderService {
 
                     return OrderListAdminResponseDTO.builder()
                             .orderList(orderResponseDTOList)
+                            .order(order)
                             .build();
                 })
                 .collect(Collectors.toList());
