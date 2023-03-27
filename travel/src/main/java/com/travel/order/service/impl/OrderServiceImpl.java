@@ -106,6 +106,7 @@ public class OrderServiceImpl implements OrderService {
 
                     return OrderListResponseDTO.builder()
                             .orderList(orderResponseDTOList)
+                            .order(order)
                             .build();
                 })
                 .collect(Collectors.toList());
