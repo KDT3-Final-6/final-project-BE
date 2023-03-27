@@ -2,6 +2,7 @@ package com.travel.member.entity;
 
 import com.travel.global.entity.BaseEntity;
 import com.travel.order.entity.Order;
+import com.travel.post.entity.Post;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,6 +58,9 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Post> posts = new ArrayList<>();
 
     @Builder
     public Member(String memberEmail, String memberPassword, String memberName, String memberNickname, String memberPhone, LocalDate memberBirthDate, Hobby memberHobby) {
