@@ -23,6 +23,18 @@ public class PeriodOptionDTO {
     @Future
     private LocalDate endDate;
 
+    @NotBlank
+    private String startDetail;
+
+    @NotBlank
+    private String endDetail;
+
+    @NotBlank
+    private String startAirline;
+
+    @NotBlank
+    private String endAirline;
+
     @Positive
     private Integer maximumQuantity;
 
