@@ -1,6 +1,9 @@
 package com.travel.product.service;
 
 import com.travel.global.response.PageResponseDTO;
+import com.travel.image.entity.Image;
+import com.travel.image.repository.ImageRepository;
+import com.travel.image.service.FileUploadService;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPatchRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
@@ -22,7 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -39,11 +44,19 @@ public class ProductService {
     private final PeriodOptionRepository periodOptionRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final CategoryRepository categoryRepository;
+    private final ImageRepository imageRepository;
+    private final FileUploadService fileUploadService;
 
 
     @Transactional
-    public void createProduct(ProductPostRequestDTO productPostRequestDTO) {
-        Product product = productRepository.save(productPostRequestDTO.toEntity());
+    public void createProduct(ProductPostRequestDTO productPostRequestDTO, MultipartFile thumbnailFile, List<MultipartFile> imageFiles) throws IOException {
+        Image thumbnail = fileUploadService.upload(thumbnailFile);
+        List<Image> images = fileUploadService.uploads(imageFiles);
+        images.add(0, thumbnail);
+        Product product = productPostRequestDTO.toEntity();
+        product.addImages(images);
+        productRepository.save(product);
+        imageRepository.saveAll(images);
         List<Category> categories = categoryRepository.findAllById(productPostRequestDTO.getCategoryIds());
 
         /*
