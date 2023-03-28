@@ -41,16 +41,13 @@ public class SearchService {
 
     public PageResponseDTO searchProducts(
             Pageable pageable,
-            String title,
-            String categoryName,
-            String startDate,
-            String endDate) {
+            String keyword,
+            String sortTarget
+            ) {
 
-        List<Product> products = productRepository.findByProductStatusNot(Status.HIDDEN);
+        List<Product> categoryProducts = findCategoryNameProducts(keyword);
 
-        List<Product> categoryProducts = categoryNameNotNull(categoryName);
-
-        List<Product> nameContainingProducts = titleNotNull(title);
+        List<Product> nameContainingProducts = findTitleProducts(keyword);
 
         List<Product> periodOptionProducts = dateNotNull(startDate, endDate);
 

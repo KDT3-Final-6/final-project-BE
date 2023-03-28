@@ -37,17 +37,16 @@ public class SearchController {
     @GetMapping
     public ResponseEntity<PageResponseDTO> searchProducts(
             @RequestParam(required = false, defaultValue = "1") int page,
-            @RequestParam(required = false) String title,
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String startDate,
-            @RequestParam(required = false) String endDate) {
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String sortTarget
+            ) {
 
         if (page < 1) {
             throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
 
-        PageResponseDTO pageResponseDTO = searchService.searchProducts(pageRequest, title, category, startDate, endDate);
+        PageResponseDTO pageResponseDTO = searchService.searchProducts(pageRequest, keyword, sortTarget);
 
         return ResponseEntity.ok(pageResponseDTO);
     }
