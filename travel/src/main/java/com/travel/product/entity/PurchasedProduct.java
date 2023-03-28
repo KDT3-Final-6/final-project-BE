@@ -77,7 +77,7 @@ public class PurchasedProduct {
                 .optionName(this.optionName)
                 .productProductQuantity(this.productProductQuantity)
                 .orderDate(this.order.getCreatedDate())
-                .isCanceled(this.order.getIsCanceled())
+                .orderStatus(this.order.getOrderStatus())
                 .build();
     }
 
@@ -93,7 +93,7 @@ public class PurchasedProduct {
                 .optionName(this.optionName)
                 .productProductQuantity(this.productProductQuantity)
                 .orderDate(this.order.getCreatedDate())
-                .isCanceled(this.order.getIsCanceled())
+                .orderStatus(this.order.getOrderStatus())
                 .build();
     }
 }

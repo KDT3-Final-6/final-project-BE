@@ -12,6 +12,7 @@ import com.travel.order.dto.response.OrderListAdminResponseDTO;
 import com.travel.order.dto.response.OrderListResponseDTO;
 import com.travel.order.dto.response.OrderResponseDTO;
 import com.travel.order.entity.Order;
+import com.travel.order.entity.OrderStatus;
 import com.travel.order.entity.PaymentMethod;
 import com.travel.order.exception.OrderException;
 import com.travel.order.exception.OrderExceptionType;
@@ -115,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findByOrderIdAndMember(orderId, member)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.ORDER_NOT_FOUND));
 
-        order.setIsCanceled(true);
+        order.setOrderStatus(OrderStatus.WITHDRAW_ORDER);
 
         orderRepository.save(order);
     }
