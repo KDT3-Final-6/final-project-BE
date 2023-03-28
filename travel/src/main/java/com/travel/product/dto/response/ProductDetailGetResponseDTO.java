@@ -1,6 +1,5 @@
 package com.travel.product.dto.response;
 
-import com.travel.product.entity.Category;
 import com.travel.product.entity.PeriodOption;
 import com.travel.product.entity.Product;
 import com.travel.product.entity.ProductCategory;
@@ -20,7 +19,7 @@ public class ProductDetailGetResponseDTO {
     private String contentDetail;
 
     private List<PeriodOption> periodOptions = new ArrayList<>();
-    private List<String> productCategories = new ArrayList<>();
+    private List<CategoriesInProduct> productCategories = new ArrayList<>();
 
     public ProductDetailGetResponseDTO(Product product) {
         this.productName = product.getProductName();
@@ -31,16 +30,13 @@ public class ProductDetailGetResponseDTO {
         this.contentDetail = product.getContentDetail();
         this.periodOptions.addAll(product.getPeriodOptions());
 
-        int count = 0;
+        List<Long> categoryIds = new ArrayList<>();
         for (ProductCategory productCategory : product.getProductCategories()) {
-            if (productCategory.getCategory().getChild().size() == 0) {
-                productCategories.add(productCategory.getCategory().getCategoryName());
-                Category parent = productCategory.getCategory().getParent();
-                while (parent != null) {
-                    productCategories.add(count, parent.getCategoryName());
-                    parent = parent.getParent();
-                }
-                count = productCategories.size();
+             categoryIds.add(productCategory.getCategory().getCategoryId());
+        }
+        for (ProductCategory productCategory : product.getProductCategories()) {
+            if (productCategory.getCategory().getParent() == null) {
+                productCategories.add(CategoriesInProduct.of(productCategory.getCategory(),categoryIds));
             }
         }
     }
