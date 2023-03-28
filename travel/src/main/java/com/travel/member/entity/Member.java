@@ -1,23 +1,18 @@
 package com.travel.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.travel.global.entity.BaseEntity;
 import com.travel.order.entity.Order;
-
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import com.travel.post.entity.Post;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Getter
@@ -72,11 +67,22 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
+    public Member() {
 
-    @OneToMany(mappedBy = "member")
-    private List<Post> posts = new ArrayList<>();
+    }
 
+    public Member(Optional<Member> member) {
 
+    }
+
+    public Boolean isAdmin() {
+        if (this.memberAuthority) {
+            return true;
+        }
+        return false;
+    }
+
+    // 회원가입 입력
     @Builder
     public Member(String memberEmail, String memberPassword, String memberName, String memberNickname, String memberPhone, String memberBirthDate, Hobby memberHobby, List<String> roles) {
         this.memberEmail = memberEmail;
@@ -88,19 +94,6 @@ public class Member extends BaseEntity implements UserDetails {
         this.memberHobby = memberHobby;
         this.roles = roles;
     }
-    public Member() {
-
-    }
-
-    public Boolean isAdmin() {
-        if (this.memberAuthority) {
-            return true;
-        }
-        return false;
-    }
-
-
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -113,30 +106,31 @@ public class Member extends BaseEntity implements UserDetails {
     public String getPassword() {
         return memberPassword;
     }
-
     @Override
     public String getUsername() {
         return memberEmail;
     }
-
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
-
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
-
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void update(String memberPassword, String memberPhone, String memberNickname, Hobby memberHobby) {
+        this.memberPassword = memberPassword;
+        this.memberPhone = memberPhone;
+        this.memberNickname = memberNickname;
+        this.memberHobby = memberHobby;
     }
 }

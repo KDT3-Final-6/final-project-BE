@@ -1,6 +1,7 @@
 package com.travel.auth.dto.request;
 
 
+import com.travel.member.entity.Hobby;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,7 +31,8 @@ public class MemberRequestDto {
         private String memberNickname;
 
         @NotEmpty(message = "휴대폰 번호를 작성해주세요")
-        @Pattern(regexp = "^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$", message = "000-0000-0000 으로 작성해주세요")
+//        @Pattern(regexp = "^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$", message = "000-0000-0000 으로 작성해주세요")
+        @Pattern(regexp = "^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$", message = "-없이 작성해주세요")
         private String memberPhone;
 
         @NotEmpty(message = "생일을 적어주세요")
@@ -38,19 +40,8 @@ public class MemberRequestDto {
         private String memberBirthDate;
 
         @NotEmpty(message = "취미를 적어주세요")
-        private String memberHobby;
+        private Hobby memberHobby;
 
-//        public Member toEntity() {
-//
-//            return Member.builder()
-//                    .memberEmail(this.memberEmail)
-//                    .memberPassword(this.memberPassword)
-//                    .memberName(this.memberName)
-//                    .memberNickname(this.memberNickname)
-//                    .memberPhone(this.memberPhone)
-//                    .memberBirthDate(LocalDate.parse(this.memberBirthDate))
-//                    .build();
-//        }
     }
 
     @Getter
