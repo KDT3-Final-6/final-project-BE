@@ -10,5 +10,7 @@ public interface MemberService {
     ResponseDto<?> memberInfo(MemberRequestDto.Login login);
     Member getMemberById(Long id);
     Member getMemberByMemberEmail(String email);
+    ResponseDto<?> modifyMember(MemberRequestDto.Login login, MemberModifyRequestDTO.ModifyMemberRequestDTO modifyMemberInfoRequestDTO);
+
 
 }
