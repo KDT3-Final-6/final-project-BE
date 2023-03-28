@@ -1,5 +1,7 @@
 package com.travel.order.dto.response;
 
+import com.travel.order.entity.Order;
+import com.travel.order.entity.PaymentMethod;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +17,12 @@ public class OrderListAdminResponseDTO {
 
     private List<OrderAdminResponseDTO> orderList;
 
+    private PaymentMethod paymentMethod;
+
     @Builder
-    public OrderListAdminResponseDTO(List<OrderAdminResponseDTO> orderList) {
+    public OrderListAdminResponseDTO(List<OrderAdminResponseDTO> orderList, Order order) {
         this.orderDate = LocalDate.from(orderList.get(0).getOrderDate());
         this.orderList = orderList;
+        this.paymentMethod = order.getPaymentMethod();
     }
 }

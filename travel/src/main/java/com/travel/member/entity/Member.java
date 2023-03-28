@@ -2,10 +2,17 @@ package com.travel.member.entity;
 
 import com.travel.global.entity.BaseEntity;
 import com.travel.order.entity.Order;
+
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.travel.post.entity.Post;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -65,6 +72,9 @@ public class Member extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
+
+    @OneToMany(mappedBy = "member")
+    private List<Post> posts = new ArrayList<>();
 
 
     @Builder
