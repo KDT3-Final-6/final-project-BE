@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class Category {
 
     @JsonIgnore
     @OneToMany(mappedBy = "parent")
+    @BatchSize(size = 40)
     private List<Category> child = new ArrayList<>();
 
     @Column(name = "category_name")
