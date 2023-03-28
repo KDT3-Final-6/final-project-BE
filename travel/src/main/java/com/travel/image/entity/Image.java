@@ -1,9 +1,7 @@
-package com.travel.image;
+package com.travel.image.entity;
 
 import com.travel.product.entity.Product;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -14,11 +12,15 @@ import javax.persistence.*;
 public class Image {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id")
-    private String imageId;
+    private Long imageId;
 
     @Column(name = "image_name")
     private String imageName;
+
+    @Column(name = "image_original_name")
+    private String imageOriginalName;
 
     @Column(name = "image_path")
     private String imagePath;
@@ -31,6 +33,16 @@ public class Image {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @Setter
     @JoinColumn(name = "product_id")
     private Product product;
+
+    @Builder
+    public Image(String imageName, String imageOriginalName, String imagePath, String imageFormat, Long imageBytes) {
+        this.imageName = imageName;
+        this.imageOriginalName = imageOriginalName;
+        this.imagePath = imagePath;
+        this.imageFormat = imageFormat;
+        this.imageBytes = imageBytes;
+    }
 }
