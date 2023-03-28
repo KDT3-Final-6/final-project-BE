@@ -158,11 +158,7 @@ public class OrderServiceImpl implements OrderService {
         periodOption.setSoldQuantity(periodOptionSoldQuantity + quantity);
         periodOptionRepository.save(periodOption);
 
-        PurchasedProduct purchasedProduct = product.toPurchase(periodOption);
-        if (quantity > 1) {
-            purchasedProduct.setProductProductQuantity(quantity);
-        }
-        return purchasedProduct;
+        return product.toPurchase(periodOption, quantity);
     }
 
     private PaymentMethod getPaymentMethod(OrderCreateListDTO orderCreateListDTO) {

@@ -47,7 +47,7 @@ public class PurchasedProduct {
 
     @Setter
     @Column(name = "purchased_product_quantity")
-    private Integer productProductQuantity = 1;
+    private Integer productProductQuantity;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,7 +55,7 @@ public class PurchasedProduct {
     private Order order;
 
     @Builder
-    public PurchasedProduct(Product product, PeriodOption periodOption) {
+    public PurchasedProduct(Product product, PeriodOption periodOption, Integer quantity) {
         this.product = product;
         this.purchasedProductName = product.getProductName();
         this.purchasedProductThumbnail = product.getProductThumbnail();
@@ -64,6 +64,7 @@ public class PurchasedProduct {
         this.endDate = periodOption.getEndDate();
         this.period = periodOption.getPeriod();
         this.optionName = periodOption.getOptionName();
+        this.productProductQuantity = quantity;
     }
 
     public OrderResponseDTO toOrderResponseDTO() {
