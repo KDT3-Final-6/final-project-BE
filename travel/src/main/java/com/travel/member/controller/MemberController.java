@@ -1,6 +1,9 @@
 package com.travel.member.controller;
 
+import com.travel.auth.dto.ResponseDto;
+import com.travel.auth.dto.request.MemberRequestDto;
 import com.travel.auth.jwt.JwtTokenProvider;
+import com.travel.member.dto.requestDTO.MemberModifyRequestDTO;
 import com.travel.member.dto.responseDTO.MemberResponseDTO;
 import com.travel.member.entity.Member;
 import com.travel.member.service.MemberService;
@@ -54,6 +57,29 @@ public class MemberController {
         memberInfo.setGrade(member.getMemberGrade());
         // 회원 정보를 담은 DTO 객체와 200 응답 반환
         return ResponseEntity.ok(memberInfo);
+    }
+
+    // 회원정보 수정
+    @PatchMapping("/members")
+    public ResponseEntity<ResponseDto<?>> modifyMember(@RequestHeader("Authorization") String authorizationHeader,
+                                                       @RequestBody MemberModifyRequestDTO.ModifyMemberRequestDTO modifyMemberRequestDTO) {
+
+        String token = authorizationHeader.substring(7);
+
+        // JWT 토큰에서 이메일 추출
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(tokenProvider.getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        String memberEmail = (claims.getSubject());
+
+        // 회원 정보 수정 요청 처리
+        MemberRequestDto.Login login = new MemberRequestDto.Login();
+        login.setMemberEmail(memberEmail);
+        ResponseDto<?> responseDto = memberService.modifyMember(login, modifyMemberRequestDTO);
+
+        return ResponseEntity.ok(responseDto);
     }
 
 }
