@@ -1,8 +1,10 @@
 package com.travel.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -28,11 +30,13 @@ public class Category {
     @JoinColumn(name = "parent_id")
     private Category parent;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "parent")
+    @BatchSize(size = 40)
     private List<Category> child = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
-    private CategoryEnum categoryEnum;
+    @Column(name = "category_name")
+    private String categoryName;
 
     public void setParent(Category parent) {
         this.parent = parent;
@@ -43,7 +47,7 @@ public class Category {
         child.setParent(this);
     }
 
-    public Category(CategoryEnum categoryEnum) {
-        this.categoryEnum = categoryEnum;
+    public Category(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

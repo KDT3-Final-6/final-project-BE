@@ -8,6 +8,7 @@ import com.travel.order.service.OrderService;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPatchRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
+import com.travel.product.dto.response.CategoryListGetResponseDTO;
 import com.travel.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -67,6 +69,12 @@ public class AdminController {
                                                @RequestBody ProductPatchRequestDTO productPatchRequestDTO) {
         productService.updateProduct(productId, productPatchRequestDTO);
         return ResponseEntity.ok(null);
+    }
+
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<CategoryListGetResponseDTO>> getCategories() {
+        return ResponseEntity.ok(productService.displayCategories());
     }
 
     @GetMapping("/orders")

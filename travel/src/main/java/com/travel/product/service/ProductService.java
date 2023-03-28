@@ -4,6 +4,7 @@ import com.travel.global.response.PageResponseDTO;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPatchRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
+import com.travel.product.dto.response.CategoryListGetResponseDTO;
 import com.travel.product.dto.response.ProductDetailGetResponseDTO;
 import com.travel.product.dto.response.ProductListGetResponseDTO;
 import com.travel.product.entity.Category;
@@ -22,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -111,5 +113,17 @@ public class ProductService {
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
         product.updateProduct(productPatchRequestDTO.toEntity(product));
+    }
+
+    public List<CategoryListGetResponseDTO> displayCategories() {
+
+        List<CategoryListGetResponseDTO> result = new ArrayList<>();
+        List<Category> categories = categoryRepository.findAll();
+        for (Category c : categories) {
+            if (c.getParent() == null)
+                result.add(CategoryListGetResponseDTO.of(c));
+        }
+
+        return result;
     }
 }
