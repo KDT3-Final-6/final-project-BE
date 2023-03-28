@@ -1,25 +1,30 @@
 package com.travel.search.service;
 
-import com.travel.global.exception.GlobalException;
-import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.product.dto.response.ProductCategoryToProductPage;
-import com.travel.product.entity.*;
+import com.travel.product.entity.Category;
+import com.travel.product.entity.Product;
+import com.travel.product.entity.ProductCategory;
+import com.travel.product.entity.Status;
 import com.travel.product.exception.ProductException;
 import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.CategoryRepository;
-import com.travel.product.repository.PeriodOptionRepository;
 import com.travel.product.repository.ProductCategoryRepository;
 import com.travel.product.repository.product.ProductRepository;
+import com.travel.search.dto.request.SortTarget;
+import com.travel.search.dto.response.SearchResultResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +34,6 @@ public class SearchService {
     private final CategoryRepository categoryRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final ProductRepository productRepository;
-    private final PeriodOptionRepository periodOptionRepository;
 
     public ProductCategoryToProductPage displayProductsByCategory(Pageable pageable, String categoryName) {
 
@@ -41,72 +45,75 @@ public class SearchService {
 
     public PageResponseDTO searchProducts(
             Pageable pageable,
-            String title,
-            String categoryName,
-            String startDate,
-            String endDate) {
+            String keyword,
+            String sortTarget
+    ) {
 
-        List<Product> products = productRepository.findByProductStatusNot(Status.HIDDEN);
+        List<Product> categoryProducts = findCategoryNameProducts(keyword);
 
-        List<Product> categoryProducts = categoryNameNotNull(categoryName);
+        List<Product> nameContainingProducts = findTitleProducts(keyword);
 
-        List<Product> nameContainingProducts = titleNotNull(title);
-
-        List<Product> periodOptionProducts = dateNotNull(startDate, endDate);
-
-        List<Product> productList = products.stream()
-                .filter(product -> categoryProducts == null || categoryProducts.contains(product))
-                .filter(product -> nameContainingProducts == null || nameContainingProducts.contains(product))
-                .filter(product -> periodOptionProducts == null || periodOptionProducts.contains(product))
+        List<Product> productList = Stream.of(categoryProducts, nameContainingProducts)
+                .flatMap(Collection::stream)
+                .distinct()
                 .filter(product -> product.getProductStatus() == Status.FORSALE)
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(productList, pageable, productList.size()));
-    }
-
-    private List<Product> titleNotNull(String title) {
-        List<Product> nameContainingProducts = null;
-        if (title != null) {
-            nameContainingProducts = productRepository.findByProductNameContaining(title);
+        if (sortTarget != null) {
+            productList = sortList(productList, sortTarget);
         }
 
-        return nameContainingProducts;
-    }
-
-    private List<Product> dateNotNull(String startDate, String endDate) {
-        List<Product> periodOptionProducts = null;
-        if (startDate != null && endDate != null) {
-            LocalDate startLocalDate = validateDate(startDate);
-            LocalDate endLocalDate = validateDate(endDate);
-
-            periodOptionProducts = periodOptionRepository.findByStartDateAndEndDate(startLocalDate, endLocalDate).stream()
-                    .filter(periodOption -> periodOption.getPeriodOptionStatus() == Status.FORSALE)
-                    .map(PeriodOption::getProduct)
-                    .collect(Collectors.toList());
-        }
-
-        return periodOptionProducts;
-    }
-
-    private List<Product> categoryNameNotNull(String categoryName) {
-        List<Product> categoryProducts = null;
-
-        Category category = categoryRepository.findByCategoryName(categoryName)
-                .orElseThrow(() -> new ProductException(ProductExceptionType.CATEGORY_NOT_FOUND));
-
-        categoryProducts = productCategoryRepository.findAllByCategory(category).stream()
-                .map(ProductCategory::getProduct)
+        List<SearchResultResponseDTO> searchResult = productList.stream()
+                .map(product -> product.toSearchResultResponseDTO(true))
                 .collect(Collectors.toList());
 
-        return categoryProducts;
+        return new PageResponseDTO(new PageImpl<>(searchResult, pageable, searchResult.size()));
     }
 
-    private LocalDate validateDate(String date) {
-        String pattern = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$";
-        if (!date.matches(pattern)) {
-            throw new GlobalException(GlobalExceptionType.WRONG_DATE_FORMAT);
+    private List<Product> findTitleProducts(String keyword) {
+        List<Product> productNameContaining = productRepository.findByProductNameContaining(keyword);
+
+        if (productNameContaining == null) {
+            return Collections.emptyList();
         }
 
-        return LocalDate.parse(date);
+        return productNameContaining;
+    }
+
+    private List<Product> findCategoryNameProducts(String keyword) {
+        Category category = categoryRepository.findByCategoryName(keyword)
+                .orElse(null);
+
+        if (category == null) {
+            return Collections.emptyList();
+        }
+
+        return productCategoryRepository.findAllByCategory(category).stream()
+                .map(ProductCategory::getProduct)
+                .collect(Collectors.toList());
+    }
+
+    private List<Product> sortList(List<Product> products, String sortTarget) {
+        SortTarget target = Stream.of(SortTarget.values())
+                .filter(sort -> sortTarget.equals(sort.getKorean()))
+                .findFirst()
+                .orElse(null);
+
+        if (target.equals(SortTarget.BY_PRICE_DESC)) {
+            return products.stream()
+                    .sorted(Comparator.comparing(Product::getProductPrice).reversed())
+                    .collect(Collectors.toList());
+        } else if (target.equals(SortTarget.BY_PRICE_ASC)) {
+            return products.stream()
+                    .sorted(Comparator.comparing(Product::getProductPrice))
+                    .collect(Collectors.toList());
+        }
+//        else if (sort.equals(SortTarget.BY_POPULARITY)) { // 아직 구현 안됨
+//            return products.stream()
+//                    .sorted(Comparator.comparing(Product::get))
+//                    .collect(Collectors.toList());
+//        }
+
+        return products;
     }
 }

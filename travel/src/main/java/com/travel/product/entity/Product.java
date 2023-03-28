@@ -3,6 +3,7 @@ package com.travel.product.entity;
 import com.travel.global.entity.BaseEntity;
 import com.travel.image.Image;
 import com.travel.post.entity.Post;
+import com.travel.search.dto.response.SearchResultResponseDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -95,6 +96,16 @@ public class Product extends BaseEntity {
                 .product(this)
                 .periodOption(periodOption)
                 .quantity(quantity)
+                .build();
+    }
+
+    public SearchResultResponseDTO toSearchResultResponseDTO(Boolean isWished) {
+        return SearchResultResponseDTO.builder()
+                .productId(this.productId)
+                .productName(this.productName)
+                .productThumbnail(this.productThumbnail)
+                .productPrice(this.productPrice)
+                .isWished(isWished)
                 .build();
     }
 }
