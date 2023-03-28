@@ -90,10 +90,11 @@ public class Product extends BaseEntity {
     private List<String> images = new ArrayList<>();
     */
 
-    public PurchasedProduct toPurchase(PeriodOption periodOption) {
+    public PurchasedProduct toPurchase(PeriodOption periodOption, Integer quantity) {
         return PurchasedProduct.builder()
                 .product(this)
                 .periodOption(periodOption)
+                .quantity(quantity)
                 .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.travel.order.dto.response;
 
+import com.travel.order.entity.OrderStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,10 +27,10 @@ public class OrderResponseDTO {
 
     private Integer productProductQuantity;
 
-    private Boolean isCanceled;
+    private OrderStatus orderStatus;
 
     @Builder
-    public OrderResponseDTO(Long orderId, Long productId, String productName, String productThumbnail, Integer productPrice, LocalDateTime orderDate, String optionName, Integer productProductQuantity, Boolean isCanceled) {
+    public OrderResponseDTO(Long orderId, Long productId, String productName, String productThumbnail, Integer productPrice, LocalDateTime orderDate, String optionName, Integer productProductQuantity, OrderStatus orderStatus) {
         this.orderId = orderId;
         this.productId = productId;
         this.productName = productName;
@@ -38,6 +39,6 @@ public class OrderResponseDTO {
         this.orderDate = orderDate;
         this.optionName = optionName;
         this.productProductQuantity = productProductQuantity;
-        this.isCanceled = isCanceled;
+        this.orderStatus = orderStatus;
     }
 }

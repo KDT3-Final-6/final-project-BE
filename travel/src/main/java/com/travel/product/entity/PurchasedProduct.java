@@ -47,7 +47,7 @@ public class PurchasedProduct {
 
     @Setter
     @Column(name = "purchased_product_quantity")
-    private Integer productProductQuantity = 1;
+    private Integer productProductQuantity;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,15 +55,16 @@ public class PurchasedProduct {
     private Order order;
 
     @Builder
-    public PurchasedProduct(Product product, PeriodOption periodOption) {
+    public PurchasedProduct(Product product, PeriodOption periodOption, Integer quantity) {
         this.product = product;
         this.purchasedProductName = product.getProductName();
         this.purchasedProductThumbnail = product.getProductThumbnail();
-        this.purchasedProductPrice = product.getProductPrice(); //나중에 옵션이랑 더 해줄 예정
+        this.purchasedProductPrice = product.getProductPrice() * quantity; //나중에 옵션이랑 더 해줄 예정
         this.startDate = periodOption.getStartDate();
         this.endDate = periodOption.getEndDate();
         this.period = periodOption.getPeriod();
         this.optionName = periodOption.getOptionName();
+        this.productProductQuantity = quantity;
     }
 
     public OrderResponseDTO toOrderResponseDTO() {
@@ -76,7 +77,7 @@ public class PurchasedProduct {
                 .optionName(this.optionName)
                 .productProductQuantity(this.productProductQuantity)
                 .orderDate(this.order.getCreatedDate())
-                .isCanceled(this.order.getIsCanceled())
+                .orderStatus(this.order.getOrderStatus())
                 .build();
     }
 
@@ -92,7 +93,7 @@ public class PurchasedProduct {
                 .optionName(this.optionName)
                 .productProductQuantity(this.productProductQuantity)
                 .orderDate(this.order.getCreatedDate())
-                .isCanceled(this.order.getIsCanceled())
+                .orderStatus(this.order.getOrderStatus())
                 .build();
     }
 }

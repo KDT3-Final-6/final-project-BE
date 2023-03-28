@@ -3,6 +3,7 @@ package com.travel.admin.controller;
 import com.travel.global.exception.GlobalException;
 import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
+import com.travel.order.dto.request.OrderApproveDTO;
 import com.travel.order.service.OrderService;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPatchRequestDTO;
@@ -79,5 +80,12 @@ public class AdminController {
         PageResponseDTO orders = orderService.getOrdersAdmin(pageRequest, userEmail);
 
         return ResponseEntity.ok(orders);
+    }
+
+    @PatchMapping("/orders/approvals/{orderId}")
+    public ResponseEntity<Void> approveOrder(@PathVariable Long orderId, @RequestBody OrderApproveDTO orderApproveDTO, String userEmail) {
+        orderService.approveOrder(orderId, orderApproveDTO, userEmail);
+
+        return ResponseEntity.ok(null);
     }
 }

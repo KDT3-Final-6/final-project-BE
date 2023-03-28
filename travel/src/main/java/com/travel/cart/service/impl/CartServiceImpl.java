@@ -50,7 +50,7 @@ public class CartServiceImpl implements CartService {
                     PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, addDTO.getPeriodOptionId())
                             .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
-                    Cart cart = cartRepository.findByMemberAndProductAndPeriodOption(member, product, periodOption).orElse(null);
+                    Cart cart = cartRepository.findByMemberAndPeriodOption(member, periodOption).orElse(null);
                     if (cart != null) {
                         cart.setCartQuantity(cart.getCartQuantity() + addDTO.getQuantity());
                         return cart;
@@ -58,7 +58,6 @@ public class CartServiceImpl implements CartService {
 
                     return Cart.builder()
                             .member(member)
-                            .product(product)
                             .periodOption(periodOption)
                             .cartQuantity(addDTO.getQuantity())
                             .build();
@@ -96,7 +95,6 @@ public class CartServiceImpl implements CartService {
         PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, cartUpdateDTO.getPeriodOptionId())
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
-        cart.setProduct(product);
         cart.setPeriodOption(periodOption);
         cart.setCartQuantity(cartUpdateDTO.getQuantity());
 

@@ -27,11 +27,6 @@ public class Cart extends BaseEntity {
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
-
-    @Setter
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "period_option_id")
     private PeriodOption periodOption;
 
@@ -40,9 +35,8 @@ public class Cart extends BaseEntity {
     private Integer cartQuantity;
 
     @Builder
-    public Cart(Member member, Product product, PeriodOption periodOption, Integer cartQuantity) {
+    public Cart(Member member, PeriodOption periodOption, Integer cartQuantity) {
         this.member = member;
-        this.product = product;
         this.periodOption = periodOption;
         this.cartQuantity = cartQuantity;
     }
@@ -50,13 +44,13 @@ public class Cart extends BaseEntity {
     public CartResponseDTO toCartResponseDTO() {
         return CartResponseDTO.builder()
                 .cartId(this.getCartId())
-                .productId(this.getProduct().getProductId())
+                .productId(this.getPeriodOption().getProduct().getProductId())
                 .periodOptionId(this.getPeriodOption().getPeriodOptionId())
-                .cartPrice(this.getProduct().getProductPrice() * this.getCartQuantity())
-                .productName(this.getProduct().getProductName())
+                .cartPrice(this.getPeriodOption().getProduct().getProductPrice() * this.getCartQuantity())
+                .productName(this.getPeriodOption().getProduct().getProductName())
                 .periodOptionName(this.getPeriodOption().getOptionName())
-                .productThumbnail(this.getProduct().getProductThumbnail())
-                .productContent(this.getProduct().getProductContent())
+                .productThumbnail(this.getPeriodOption().getProduct().getProductThumbnail())
+                .productContent(this.getPeriodOption().getProduct().getProductContent())
                 .cartQuantity(this.getCartQuantity())
                 .build();
     }

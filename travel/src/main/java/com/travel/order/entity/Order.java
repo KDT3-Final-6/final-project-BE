@@ -25,8 +25,9 @@ public class Order extends BaseEntityWithModifiedDate {
     private Member member;
 
     @Setter
-    @Column(name = "is_canceled")
-    private Boolean isCanceled = false;
+    @Column(name = "order_status")
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus = OrderStatus.WAITING_FOR_PAYMENT;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<PurchasedProduct> purchasedProducts = new ArrayList<>();
