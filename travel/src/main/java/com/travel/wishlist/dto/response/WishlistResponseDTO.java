@@ -7,6 +7,8 @@ import lombok.Getter;
 @Builder
 public class WishlistResponseDTO {
 
+    private Long wishilistId;
+
     private Long productId;
 
     private String productName;

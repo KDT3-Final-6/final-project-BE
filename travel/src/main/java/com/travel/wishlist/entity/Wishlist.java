@@ -19,7 +19,7 @@ public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "wishlist_id")
-    private Long id;
+    private Long wishlistId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -37,6 +37,7 @@ public class Wishlist {
 
     public WishlistResponseDTO toResponseDTO() {
         return WishlistResponseDTO.builder()
+                .wishilistId(this.wishlistId)
                 .productId(this.product.getProductId())
                 .productName(this.product.getProductName())
                 .productThumbnail(this.product.getProductThumbnail())
