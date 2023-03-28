@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Collections;
@@ -46,7 +47,7 @@ public class MemberService {
                 .memberNickname(signUp.getMemberNickname())
                 .memberPhone(signUp.getMemberPhone())
                 .memberBirthDate(signUp.getMemberBirthDate())
-                .memberHobby(Hobby.valueOf(signUp.getMemberHobby()))
+                .memberHobby(Hobby.valueOf(signUp.getMemberHobby().toString()))
                 .roles(Collections.singletonList(Authority.ROLE_USER.name()))
                 .build();
         memberRepository.save(member);
@@ -54,15 +55,19 @@ public class MemberService {
         return new ResponseDto<>("회원가입 성공했습니다.");
     }
 
+    @Transactional
     public ResponseDto<?> login(MemberRequestDto.Login login) {
-        if (memberRepository.findByMemberEmail(login.getMemberEmail()).orElse(null) == null) {
-            return new ResponseDto<>("가입된 이메일이 아닙니다.");
+        Member member = memberRepository.findByMemberEmail(login.getMemberEmail())
+                .orElseThrow(()->new IllegalArgumentException("가입되지 않은 이메일 입니다."));
+        // 패스워드 불일치 시
+        if (!passwordEncoder.matches(login.getMemberPassword(), member.getPassword())) {
+            throw new IllegalArgumentException("잘못된 비밀번호 입니다.");
         }
-
         UsernamePasswordAuthenticationToken authenticationToken = login.toAuthentication();
-        System.out.println("authenticationToken = " + authenticationToken);
-        //67번 라인 문제있음
+
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        System.out.println("authenticationManagerBuilder = " + authenticationManagerBuilder);
+        System.out.println(login.getMemberPassword());
 
         MemberResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
         redisTemplate.opsForValue()
@@ -76,7 +81,6 @@ public class MemberService {
         if (!jwtTokenProvider.validateToken(reissue.getRefreshToken())) {
             return new ResponseDto<>("Refresh Token 정보가 유효하지 않습니다.");
         }
-
         // 2. Access Token 에서 User email 을 가져옵니다.
         Authentication authentication = jwtTokenProvider.getAuthentication(reissue.getAccessToken());
 
@@ -101,26 +105,22 @@ public class MemberService {
         return new ResponseDto<>(tokenInfo);
 
     }
-
+    @Transactional
     public ResponseDto<?> logout(MemberRequestDto.Logout logout) {
-        // 1. Access Token 검증
+        // 로그아웃 하고 싶은 토큰이 유효한지 검증
         if (!jwtTokenProvider.validateToken(logout.getAccessToken())) {
-            return new ResponseDto<>("실패!");
+            throw new IllegalArgumentException("로그아웃: 유효하지 않은 토큰입니다.");
         }
-
-        // 2. Access Token 에서 User email 을 가져옵니다.
+        // access token에서 mail 가져온다.
         Authentication authentication = jwtTokenProvider.getAuthentication(logout.getAccessToken());
 
-        // 3. Redis 에서 해당 User email 로 저장된 Refresh Token 이 있는지 여부를 확인 후 있을 경우 삭제합니다.
+        // redis에서 해당 mail 로 저장된 refresh token이 있는지 여부를 확인 후에 있을 경우 삭제
         if (redisTemplate.opsForValue().get("RT:" + authentication.getName()) != null) {
-            // Refresh Token 삭제
             redisTemplate.delete("RT:" + authentication.getName());
         }
 
-        // 4. 해당 Access Token 유효시간 가지고 와서 BlackList 로 저장하기
-        Long expiration = jwtTokenProvider.getExpiration(logout.getAccessToken());
-        redisTemplate.opsForValue()
-                .set(logout.getAccessToken(), "logout", expiration, TimeUnit.MILLISECONDS);
+        Long expireToken = jwtTokenProvider.getExpiration(logout.getAccessToken());
+        redisTemplate.opsForValue().set(logout.getAccessToken(), "logout", expireToken, TimeUnit.MILLISECONDS);
 
         return new ResponseDto<>("로그아웃 되었습니다.");
     }
@@ -136,6 +136,10 @@ public class MemberService {
         member.getRoles().add(Authority.ROLE_ADMIN.name());
         memberRepository.save(member);
 
-        return new ResponseDto<>(ResponseDto.success());
+        return new ResponseDto<>(ResponseDto.empty());
+    }
+
+    public boolean checkToken(String token) {
+        return redisTemplate.hasKey("token");
     }
 }
