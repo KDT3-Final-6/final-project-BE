@@ -15,7 +15,7 @@ public class ResponseDto<T> {
         this.data = data;
     }
 
-    public static <T> ResponseDto<T> success() {
+    public static <T> ResponseDto<T> empty() {
         return new ResponseDto<>(null);
     }
 }
