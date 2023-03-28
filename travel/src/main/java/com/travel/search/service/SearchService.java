@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -32,13 +31,9 @@ public class SearchService {
     private final ProductRepository productRepository;
     private final PeriodOptionRepository periodOptionRepository;
 
-    public ProductCategoryToProductPage displayProductsByCategory(Pageable pageable, String categoryKorean) {
-        CategoryEnum categoryEnum = Stream.of(CategoryEnum.values())
-                .filter(c -> categoryKorean.equals(c.getKorean()))
-                .findFirst()
-                .orElse(null);
+    public ProductCategoryToProductPage displayProductsByCategory(Pageable pageable, String categoryName) {
 
-        Category category = categoryRepository.findByCategoryEnum(categoryEnum)
+        Category category = categoryRepository.findByCategoryName(categoryName)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.CATEGORY_NOT_FOUND));
 
         return new ProductCategoryToProductPage(productCategoryRepository.findAllByCategory(pageable, category));
@@ -47,13 +42,13 @@ public class SearchService {
     public PageResponseDTO searchProducts(
             Pageable pageable,
             String title,
-            String categoryKorean,
+            String categoryName,
             String startDate,
             String endDate) {
 
         List<Product> products = productRepository.findByProductStatusNot(Status.HIDDEN);
 
-        List<Product> categoryProducts = categoryKoreanNotNull(categoryKorean);
+        List<Product> categoryProducts = categoryNameNotNull(categoryName);
 
         List<Product> nameContainingProducts = titleNotNull(title);
 
@@ -93,21 +88,15 @@ public class SearchService {
         return periodOptionProducts;
     }
 
-    private List<Product> categoryKoreanNotNull(String categoryKorean) {
+    private List<Product> categoryNameNotNull(String categoryName) {
         List<Product> categoryProducts = null;
-        if (categoryKorean != null) {
-            CategoryEnum categoryEnum = Stream.of(CategoryEnum.values())
-                    .filter(c -> categoryKorean.equals(c.getKorean()))
-                    .findFirst()
-                    .orElse(null);
 
-            Category category = categoryRepository.findByCategoryEnum(categoryEnum)
-                    .orElseThrow(() -> new ProductException(ProductExceptionType.CATEGORY_NOT_FOUND));
+        Category category = categoryRepository.findByCategoryName(categoryName)
+                .orElseThrow(() -> new ProductException(ProductExceptionType.CATEGORY_NOT_FOUND));
 
-            categoryProducts = productCategoryRepository.findAllByCategory(category).stream()
-                    .map(ProductCategory::getProduct)
-                    .collect(Collectors.toList());
-        }
+        categoryProducts = productCategoryRepository.findAllByCategory(category).stream()
+                .map(ProductCategory::getProduct)
+                .collect(Collectors.toList());
 
         return categoryProducts;
     }

@@ -34,10 +34,10 @@ public class ProductDetailGetResponseDTO {
         int count = 0;
         for (ProductCategory productCategory : product.getProductCategories()) {
             if (productCategory.getCategory().getChild().size() == 0) {
-                productCategories.add(productCategory.getCategory().getCategoryEnum().getKorean());
+                productCategories.add(productCategory.getCategory().getCategoryName());
                 Category parent = productCategory.getCategory().getParent();
                 while (parent != null) {
-                    productCategories.add(count, parent.getCategoryEnum().getKorean());
+                    productCategories.add(count, parent.getCategoryName());
                     parent = parent.getParent();
                 }
                 count = productCategories.size();
