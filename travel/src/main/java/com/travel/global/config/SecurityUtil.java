@@ -1,4 +1,4 @@
-package com.travel.auth.security;
+package com.travel.global.config;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

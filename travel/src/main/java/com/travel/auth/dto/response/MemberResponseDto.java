@@ -1,10 +1,10 @@
-package com.travel.auth.dto;
+package com.travel.auth.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-public class UserResponseDto {
+public class MemberResponseDto {
 
     @Builder
     @Getter

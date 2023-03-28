@@ -1,13 +1,14 @@
 package com.travel.auth.service;
 
 import com.travel.auth.dto.ResponseDto;
-import com.travel.auth.dto.UserRequestDto;
-import com.travel.auth.dto.UserResponseDto;
-import com.travel.auth.entity.Users;
+import com.travel.auth.dto.request.MemberRequestDto;
+import com.travel.auth.dto.response.MemberResponseDto;
 import com.travel.auth.enums.Authority;
 import com.travel.auth.jwt.JwtTokenProvider;
-import com.travel.auth.repository.UsersRepository;
-import com.travel.auth.security.SecurityUtil;
+import com.travel.member.repository.MemberRepository;
+import com.travel.global.config.SecurityUtil;
+import com.travel.member.entity.Hobby;
+import com.travel.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,52 +26,52 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class UsersService {
+public class MemberService {
 
-    private final UsersRepository usersRepository;
+    private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RedisTemplate redisTemplate;
 
-    public ResponseDto<?> signUp(UserRequestDto.SignUp signUp) {
-        if (usersRepository.existsByEmail(signUp.getEmail())) {
+    public ResponseDto<?> signUp(MemberRequestDto.SignUp signUp) {
+        if (memberRepository.existsByMemberEmail(signUp.getMemberEmail())) {
             return new ResponseDto<>("이미 회원가입된 이메일입니다.");
         }
 
-        Users user = Users.builder()
-                .email(signUp.getEmail())
-                .password(passwordEncoder.encode(signUp.getPassword()))
-                .nickname(signUp.getNickname())
-                .phoneNumber(signUp.getPhoneNumber())
-                .birthDate(signUp.getBirthDate())
-                .hobby(signUp.getHobby())
+        Member member = Member.builder()
+                .memberEmail(signUp.getMemberEmail())
+                .memberPassword(passwordEncoder.encode(signUp.getMemberPassword()))
+                .memberName(signUp.getMemberName())
+                .memberNickname(signUp.getMemberNickname())
+                .memberPhone(signUp.getMemberPhone())
+                .memberBirthDate(signUp.getMemberBirthDate())
+                .memberHobby(Hobby.valueOf(signUp.getMemberHobby()))
                 .roles(Collections.singletonList(Authority.ROLE_USER.name()))
                 .build();
-        usersRepository.save(user);
-        System.out.println("아이디: " + user.getEmail() + " 비밀번호: " + user.getPassword() + "생일: "
-                + user.getBirthDate() + " 취미: " + user.getHobby());
+        memberRepository.save(member);
 
         return new ResponseDto<>("회원가입 성공했습니다.");
     }
 
-    public ResponseDto<?> login(UserRequestDto.Login login) {
-
-        if (usersRepository.findByEmail(login.getEmail()).orElse(null) == null) {
+    public ResponseDto<?> login(MemberRequestDto.Login login) {
+        if (memberRepository.findByMemberEmail(login.getMemberEmail()).orElse(null) == null) {
             return new ResponseDto<>("가입된 이메일이 아닙니다.");
         }
 
         UsernamePasswordAuthenticationToken authenticationToken = login.toAuthentication();
-
+        System.out.println("authenticationToken = " + authenticationToken);
+        //67번 라인 문제있음
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        UserResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+        MemberResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
         redisTemplate.opsForValue()
                 .set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
+
         return new ResponseDto<>(tokenInfo);
     }
 
-    public ResponseDto<?> reissue(UserRequestDto.Reissue reissue) {
+    public ResponseDto<?> reissue(MemberRequestDto.Reissue reissue) {
         // 1. Refresh Token 검증
         if (!jwtTokenProvider.validateToken(reissue.getRefreshToken())) {
             return new ResponseDto<>("Refresh Token 정보가 유효하지 않습니다.");
@@ -90,7 +91,7 @@ public class UsersService {
         }
 
         // 4. 새로운 토큰 생성
-        UserResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+        MemberResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
 
         // 5. RefreshToken Redis 업데이트
         redisTemplate.opsForValue()
@@ -101,7 +102,7 @@ public class UsersService {
 
     }
 
-    public ResponseDto<?> logout(UserRequestDto.Logout logout) {
+    public ResponseDto<?> logout(MemberRequestDto.Logout logout) {
         // 1. Access Token 검증
         if (!jwtTokenProvider.validateToken(logout.getAccessToken())) {
             return new ResponseDto<>("실패!");
@@ -126,14 +127,14 @@ public class UsersService {
 
     public ResponseDto<?> authority() {
         // SecurityContext에 담겨 있는 authentication userEamil 정보
-        String userEmail = SecurityUtil.getCurrentUserEmail();
+        String memberEmail = SecurityUtil.getCurrentUserEmail();
 
-        Users user = usersRepository.findByEmail(userEmail)
+        Member member = memberRepository.findByMemberEmail(memberEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("No authentication information."));
 
         // add ROLE_ADMIN
-        user.getRoles().add(Authority.ROLE_ADMIN.name());
-        usersRepository.save(user);
+        member.getRoles().add(Authority.ROLE_ADMIN.name());
+        memberRepository.save(member);
 
         return new ResponseDto<>(ResponseDto.success());
     }
