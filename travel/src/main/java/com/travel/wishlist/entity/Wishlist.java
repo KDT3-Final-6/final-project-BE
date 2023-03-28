@@ -2,6 +2,7 @@ package com.travel.wishlist.entity;
 
 import com.travel.member.entity.Member;
 import com.travel.product.entity.Product;
+import com.travel.wishlist.dto.response.WishlistResponseDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,5 +33,14 @@ public class Wishlist {
     public Wishlist(Member member, Product product) {
         this.member = member;
         this.product = product;
+    }
+
+    public WishlistResponseDTO toResponseDTO() {
+        return WishlistResponseDTO.builder()
+                .productId(this.product.getProductId())
+                .productName(this.product.getProductName())
+                .productThumbnail(this.product.getProductThumbnail())
+                .productPrice(this.product.getProductPrice())
+                .build();
     }
 }
