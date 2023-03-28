@@ -19,12 +19,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class WishlistServiceImpl implements WishlistService {
 
     private final WishlistRepository wishlistRepository;
@@ -61,5 +63,16 @@ public class WishlistServiceImpl implements WishlistService {
                 .collect(Collectors.toList());
 
         return new PageResponseDTO(new PageImpl<>(wishlistResponseDTOList, pageable, wishlistResponseDTOList.size()));
+    }
+
+    @Override
+    public void deleteWishlist(Long wishlistId, String userEmail) {
+        Member member = memberRepository.findByMemberEmail(userEmail)
+                                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        Wishlist wishlist = wishlistRepository.findByWishlistIdAndMember(wishlistId, member)
+                .orElseThrow(() -> new WishlistException(WishlistExceptionType.WISHLIST_NOT_FOUND));
+
+        wishlistRepository.delete(wishlist);
     }
 }

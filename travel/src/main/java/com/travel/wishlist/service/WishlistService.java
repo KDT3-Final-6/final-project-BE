@@ -11,4 +11,6 @@ public interface WishlistService {
     void addWishlist(Long productId, String userEmail);
 
     PageResponseDTO getWishlists(Pageable pageable, String userEmail);
+
+    void deleteWishlist(Long wishlistId, String userEmail);
 }
