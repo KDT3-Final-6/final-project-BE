@@ -11,7 +11,6 @@ import java.util.Optional;
 public class ProductPatchRequestDTO {
 
     private String productName;
-    private String productThumbnail;
     private String productStatus;
     private String productContent;
     private String contentDetail;
@@ -30,7 +29,6 @@ public class ProductPatchRequestDTO {
 
     public Product toEntity(Product product) {
         productName = Optional.ofNullable(productName).orElse(product.getProductName());
-        productThumbnail = Optional.ofNullable(productThumbnail).orElse(product.getProductThumbnail());
         productStatus = Optional.ofNullable(productStatus).orElse(product.getProductStatus().getKorean());
         productContent = Optional.ofNullable(productContent).orElse(product.getProductContent());
         contentDetail = Optional.ofNullable(contentDetail).orElse(product.getContentDetail());
@@ -38,7 +36,6 @@ public class ProductPatchRequestDTO {
 
         return Product.builder()
                 .productName(productName)
-                .productThumbnail(productThumbnail)
                 .productPrice(productPrice)
                 .productStatus(setEnumProductStatus(productStatus))
                 .productContent(productContent)

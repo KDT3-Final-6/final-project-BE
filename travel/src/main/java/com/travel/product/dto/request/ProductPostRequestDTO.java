@@ -15,9 +15,6 @@ public class ProductPostRequestDTO {
     @NotBlank
     private String productName;
 
-    @NotBlank
-    private String productThumbnail;
-
     @Positive
     private Integer productPrice;
 
@@ -44,7 +41,6 @@ public class ProductPostRequestDTO {
     public Product toEntity() {
         return Product.builder()
                 .productName(productName)
-                .productThumbnail(productThumbnail)
                 .productPrice(productPrice)
                 .productStatus(setEnumProductStatus(productStatus))
                 .productContent(productContent)
