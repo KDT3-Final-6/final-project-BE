@@ -5,6 +5,7 @@ import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
+import com.travel.order.dto.request.OrderApproveDTO;
 import com.travel.order.dto.request.OrderCreateDTO;
 import com.travel.order.dto.request.OrderCreateListDTO;
 import com.travel.order.dto.response.OrderAdminResponseDTO;
@@ -148,6 +149,27 @@ public class OrderServiceImpl implements OrderService {
 
         return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS, pageable, orderListResponseDTOS.size()));
     }
+
+    @Override
+    public void approveOrder(Long orderId, OrderApproveDTO orderApproveDTO, String userEmail) {
+        Member admin = memberRepository.findByMemberEmail(userEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        if (!admin.isAdmin()) {
+            throw new MemberException(MemberExceptionType.MEMBER_IS_NOT_ADMIN);
+        }
+
+        Member member = memberRepository.findById(orderApproveDTO.getMemberId())
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        Order order = orderRepository.findByOrderIdAndMember(orderId, member)
+                .orElseThrow(() -> new OrderException(OrderExceptionType.ORDER_NOT_FOUND));
+
+        order.setOrderStatus(OrderStatus.COMPLETE_PAYMENT);
+
+        orderRepository.save(order);
+    }
+
 
     private PurchasedProduct updateQuantity(Integer quantity, Product product, PeriodOption periodOption) {
         Integer periodOptionSoldQuantity = periodOption.getSoldQuantity();
