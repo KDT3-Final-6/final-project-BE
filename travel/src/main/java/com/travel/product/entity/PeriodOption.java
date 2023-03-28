@@ -32,6 +32,18 @@ public class PeriodOption {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    @Column(name = "start_detail")
+    private String startDetail;
+
+    @Column(name = "end_detail")
+    private String endDetail;
+
+    @Column(name = "start_airline")
+    private String startAirline;
+
+    @Column(name = "end_airline")
+    private String endAirline;
+
     @Column(name = "period")
     private Integer period;
 
@@ -57,7 +69,8 @@ public class PeriodOption {
     }
 
     @Builder
-    public PeriodOption(Product product, String optionName, LocalDate startDate, LocalDate endDate, Integer maximumQuantity, Integer minimumQuantity, Status periodOptionStatus) {
+    public PeriodOption(Product product, String optionName, LocalDate startDate, LocalDate endDate, Integer maximumQuantity, Integer minimumQuantity, Status periodOptionStatus
+            , String startDetail, String endDetail, String startAirline, String endAirline) {
         this.product = product;
         this.optionName = optionName;
         this.startDate = startDate;
@@ -67,6 +80,10 @@ public class PeriodOption {
         this.minimumQuantity = minimumQuantity;
         this.periodOptionStatus = periodOptionStatus;
         this.soldQuantity = 0;
+        this.startDetail = startDetail;
+        this.endDetail = endDetail;
+        this.startAirline = startAirline;
+        this.endAirline = endAirline;
     }
 
     public void setSoldQuantity(Integer soldQuantity) {
