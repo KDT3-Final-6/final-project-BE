@@ -1,5 +1,6 @@
 package com.travel.product.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,10 +29,10 @@ public class Category {
     @JoinColumn(name = "parent_id")
     private Category parent;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "parent")
     private List<Category> child = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
     private String categoryName;
 
     public void setParent(Category parent) {
