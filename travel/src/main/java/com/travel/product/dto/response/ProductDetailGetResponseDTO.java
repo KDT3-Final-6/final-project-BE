@@ -1,12 +1,13 @@
 package com.travel.product.dto.response;
 
-import com.travel.product.entity.PeriodOption;
 import com.travel.product.entity.Product;
 import com.travel.product.entity.ProductCategory;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Getter
 public class ProductDetailGetResponseDTO {
@@ -18,7 +19,7 @@ public class ProductDetailGetResponseDTO {
     private String productContent;
     private String contentDetail;
 
-    private List<PeriodOption> periodOptions = new ArrayList<>();
+    private List<PeriodOptionsInProduct> periodOptions = new ArrayList<>();
     private List<CategoriesInProduct> productCategories = new ArrayList<>();
 
     public ProductDetailGetResponseDTO(Product product) {
@@ -28,15 +29,16 @@ public class ProductDetailGetResponseDTO {
         this.productStatus = product.getProductStatus().getKorean();
         this.productContent = product.getProductContent();
         this.contentDetail = product.getContentDetail();
-        this.periodOptions.addAll(product.getPeriodOptions());
+        this.periodOptions.addAll(product.getPeriodOptions().stream().map(PeriodOptionsInProduct::new)
+                .collect(toList()));
 
         List<Long> categoryIds = new ArrayList<>();
         for (ProductCategory productCategory : product.getProductCategories()) {
-             categoryIds.add(productCategory.getCategory().getCategoryId());
+            categoryIds.add(productCategory.getCategory().getCategoryId());
         }
         for (ProductCategory productCategory : product.getProductCategories()) {
             if (productCategory.getCategory().getParent() == null) {
-                productCategories.add(CategoriesInProduct.of(productCategory.getCategory(),categoryIds));
+                productCategories.add(CategoriesInProduct.of(productCategory.getCategory(), categoryIds));
             }
         }
     }
