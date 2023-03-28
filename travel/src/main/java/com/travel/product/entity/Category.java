@@ -33,6 +33,7 @@ public class Category {
     @OneToMany(mappedBy = "parent")
     private List<Category> child = new ArrayList<>();
 
+    @Column(name = "category_name")
     private String categoryName;
 
     public void setParent(Category parent) {
