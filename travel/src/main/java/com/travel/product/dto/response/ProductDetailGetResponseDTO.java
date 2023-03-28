@@ -1,5 +1,6 @@
 package com.travel.product.dto.response;
 
+import com.travel.image.entity.Image;
 import com.travel.product.entity.Product;
 import com.travel.product.entity.ProductCategory;
 import lombok.Getter;
@@ -14,6 +15,7 @@ public class ProductDetailGetResponseDTO {
 
     private String productName;
     private String productThumbnail;
+    private List<String> productImages;
     private Integer productPrice;
     private String productStatus;
     private String productContent;
@@ -24,7 +26,9 @@ public class ProductDetailGetResponseDTO {
 
     public ProductDetailGetResponseDTO(Product product) {
         this.productName = product.getProductName();
-        this.productThumbnail = product.getProductThumbnail();
+        this.productThumbnail = product.getProductImages().get(0).getImagePath();
+        this.productImages=product.getProductImages().stream()
+                .map(Image::getImagePath).collect(toList()).subList(1,product.getProductImages().size());
         this.productPrice = product.getProductPrice();
         this.productStatus = product.getProductStatus().getKorean();
         this.productContent = product.getProductContent();

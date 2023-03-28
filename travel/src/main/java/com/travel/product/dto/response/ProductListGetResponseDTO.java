@@ -17,7 +17,7 @@ public class ProductListGetResponseDTO {
     public ProductListGetResponseDTO(Product product) {
         this.productId = product.getProductId();
         this.productName = product.getProductName();
-        this.productThumbnail = product.getProductThumbnail();
+        this.productThumbnail = product.getProductImages().get(0).getImagePath();
         this.productPrice = product.getProductPrice();
         this.productStatus = product.getProductStatus().getKorean();
         this.productContent = product.getProductContent();
