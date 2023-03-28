@@ -14,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -29,8 +31,10 @@ public class AdminController {
     private final OrderService orderService;
 
     @PostMapping("/products")
-    public ResponseEntity<String> postProduct(@RequestBody @Valid ProductPostRequestDTO productPostRequestDTO) {
-        productService.createProduct(productPostRequestDTO);
+    public ResponseEntity<String> postProduct(@RequestPart @Valid ProductPostRequestDTO productPostRequestDTO,
+                                              @RequestPart("thumbnail") MultipartFile thumbnail,
+                                              @RequestPart("images") List<MultipartFile> images) throws IOException {
+        productService.createProduct(productPostRequestDTO, thumbnail, images);
         return ResponseEntity.ok(null);
     }
 
