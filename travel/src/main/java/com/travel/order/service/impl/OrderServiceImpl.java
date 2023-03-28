@@ -12,6 +12,7 @@ import com.travel.order.dto.response.OrderListAdminResponseDTO;
 import com.travel.order.dto.response.OrderListResponseDTO;
 import com.travel.order.dto.response.OrderResponseDTO;
 import com.travel.order.entity.Order;
+import com.travel.order.entity.PaymentMethod;
 import com.travel.order.exception.OrderException;
 import com.travel.order.exception.OrderExceptionType;
 import com.travel.order.repository.OrderRepository;
@@ -34,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -74,6 +76,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = Order.builder()
                 .member(member)
                 .purchasedProducts(purchasedProductList)
+                .paymentMethod(getPaymentMethod(orderCreateListDTO))
                 .build();
 
         purchasedProductList.forEach(purchasedProduct -> purchasedProduct.setOrder(order));
@@ -82,18 +85,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageResponseDTO getOrders(Pageable pageable, String status, String userEmail) {
+    public PageResponseDTO getOrders(Pageable pageable, String userEmail) {
         Member member = memberRepository.findByMemberEmail(userEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        List<Order> orderList;
-        if (status.equals("주문 취소")) {
-            orderList = orderRepository.findByMemberAndIsCanceled(member, true);
-        } else if (status.equals("주문 완료")) {
-            orderList = orderRepository.findByMemberAndIsCanceled(member, false);
-        } else {
-            orderList = orderRepository.findByMember(member);
-        }
+        List<Order> orderList = orderRepository.findByMember(member);
 
         List<OrderListResponseDTO> orderListResponseDTOS = orderList.stream()
                 .map(order -> {
@@ -103,6 +99,7 @@ public class OrderServiceImpl implements OrderService {
 
                     return OrderListResponseDTO.builder()
                             .orderList(orderResponseDTOList)
+                            .order(order)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -143,6 +140,7 @@ public class OrderServiceImpl implements OrderService {
 
                     return OrderListAdminResponseDTO.builder()
                             .orderList(orderResponseDTOList)
+                            .order(order)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -165,5 +163,12 @@ public class OrderServiceImpl implements OrderService {
             purchasedProduct.setProductProductQuantity(quantity);
         }
         return purchasedProduct;
+    }
+
+    private PaymentMethod getPaymentMethod(OrderCreateListDTO orderCreateListDTO) {
+        return Stream.of(PaymentMethod.values())
+                .filter(paymentMethod -> orderCreateListDTO.getPaymentMethod().equals(paymentMethod.getKorean()))
+                .findFirst()
+                .orElse(null);
     }
 }

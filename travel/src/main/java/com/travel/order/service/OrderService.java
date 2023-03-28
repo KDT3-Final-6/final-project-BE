@@ -8,7 +8,7 @@ public interface OrderService {
 
     void createOrder(OrderCreateListDTO orderCreateListDTO, String userEmail);
 
-    PageResponseDTO getOrders(Pageable pageable, String status, String userEmail);
+    PageResponseDTO getOrders(Pageable pageable, String userEmail);
 
     void deleteOrder(Long orderId, String userEmail);
 

@@ -1,6 +1,8 @@
 package com.travel.product.entity;
 
 import com.travel.global.entity.BaseEntity;
+import com.travel.image.Image;
+import com.travel.post.entity.Post;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,6 +43,12 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product")
     private List<ProductCategory> productCategories = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product")
+    private List<Image> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product")
+    private List<Post> posts = new ArrayList<>();
+
     //내용
     @Column(name = "product_content")
     private String productContent;
@@ -54,7 +62,7 @@ public class Product extends BaseEntity {
         periodOptions.add(periodOption);
     }
 
-    public void changeStatusToHidden(Product product){
+    public void changeStatusToHidden(Product product) {
         product.productStatus = Status.HIDDEN;
     }
 

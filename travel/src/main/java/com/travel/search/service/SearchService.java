@@ -63,6 +63,7 @@ public class SearchService {
                 .filter(product -> categoryProducts == null || categoryProducts.contains(product))
                 .filter(product -> nameContainingProducts == null || nameContainingProducts.contains(product))
                 .filter(product -> periodOptionProducts == null || periodOptionProducts.contains(product))
+                .filter(product -> product.getProductStatus() == Status.FORSALE)
                 .collect(Collectors.toList());
 
         return new PageResponseDTO(new PageImpl<>(productList, pageable, productList.size()));
@@ -84,6 +85,7 @@ public class SearchService {
             LocalDate endLocalDate = validateDate(endDate);
 
             periodOptionProducts = periodOptionRepository.findByStartDateAndEndDate(startLocalDate, endLocalDate).stream()
+                    .filter(periodOption -> periodOption.getPeriodOptionStatus() == Status.FORSALE)
                     .map(PeriodOption::getProduct)
                     .collect(Collectors.toList());
         }

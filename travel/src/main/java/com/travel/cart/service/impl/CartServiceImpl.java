@@ -1,6 +1,6 @@
 package com.travel.cart.service.impl;
 
-import com.travel.cart.dto.request.CartAddDTO;
+import com.travel.cart.dto.request.CartAddListDTO;
 import com.travel.cart.dto.request.CartDeleteListDTO;
 import com.travel.cart.dto.request.CartUpdateDTO;
 import com.travel.cart.dto.response.CartResponseDTO;
@@ -39,22 +39,33 @@ public class CartServiceImpl implements CartService {
 
 
     @Override
-    public void addCart(CartAddDTO cartAddDTO, String userEmail) {
+    public void addCart(CartAddListDTO cartAddListDTO, String userEmail) {
         Member member = memberRepository.findByMemberEmail(userEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        Product product = productRepository.findById(cartAddDTO.getProductId())
-                .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
+        List<Cart> cartList = cartAddListDTO.getProductIds().stream()
+                .map(addDTO -> {
+                    Product product = productRepository.findById(addDTO.getProductId())
+                            .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
+                    PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, addDTO.getPeriodOptionId())
+                            .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
-        PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, cartAddDTO.getPeriodOptionId())
-                .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
+                    Cart cart = cartRepository.findByMemberAndProductAndPeriodOption(member, product, periodOption).orElse(null);
+                    if (cart != null) {
+                        cart.setCartQuantity(cart.getCartQuantity() + addDTO.getQuantity());
+                        return cart;
+                    }
 
-        cartRepository.save(Cart.builder()
-                .member(member)
-                .product(product)
-                .periodOption(periodOption)
-                .cartQuantity(cartAddDTO.getQuantity())
-                .build());
+                    return Cart.builder()
+                            .member(member)
+                            .product(product)
+                            .periodOption(periodOption)
+                            .cartQuantity(addDTO.getQuantity())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        cartRepository.saveAll(cartList);
     }
 
     @Override

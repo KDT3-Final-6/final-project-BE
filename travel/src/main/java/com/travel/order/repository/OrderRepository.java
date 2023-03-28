@@ -13,7 +13,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByMember(Member member);
 
-    List<Order> findByMemberAndIsCanceled(Member member, Boolean isCanceled);
-
     Optional<Order> findByOrderIdAndMember(Long orderId, Member member);
 }
