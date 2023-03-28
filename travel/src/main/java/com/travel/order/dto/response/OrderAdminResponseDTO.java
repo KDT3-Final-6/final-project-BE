@@ -33,7 +33,7 @@ public class OrderAdminResponseDTO {
 
     private Integer productProductQuantity;
 
-    private OrderStatus orderStatus;
+    private String orderStatus;
 
     @Builder
     public OrderAdminResponseDTO(Long orderId, Long productId, Long memberId, String memberName, String memberEmail, String productName, String productThumbnail, Integer productPrice, LocalDateTime orderDate, String optionName, Integer productProductQuantity, OrderStatus orderStatus) {
@@ -48,6 +48,6 @@ public class OrderAdminResponseDTO {
         this.orderDate = orderDate;
         this.optionName = optionName;
         this.productProductQuantity = productProductQuantity;
-        this.orderStatus = orderStatus;
+        this.orderStatus = orderStatus.getKorean();
     }
 }

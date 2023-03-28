@@ -17,12 +17,12 @@ public class OrderListAdminResponseDTO {
 
     private List<OrderAdminResponseDTO> orderList;
 
-    private PaymentMethod paymentMethod;
+    private String paymentMethod;
 
     @Builder
     public OrderListAdminResponseDTO(List<OrderAdminResponseDTO> orderList, Order order) {
         this.orderDate = LocalDate.from(orderList.get(0).getOrderDate());
         this.orderList = orderList;
-        this.paymentMethod = order.getPaymentMethod();
+        this.paymentMethod = order.getPaymentMethod().getKorean();
     }
 }
