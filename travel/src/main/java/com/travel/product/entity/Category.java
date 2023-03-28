@@ -32,7 +32,7 @@ public class Category {
     private List<Category> child = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
-    private CategoryEnum categoryEnum;
+    private String categoryName;
 
     public void setParent(Category parent) {
         this.parent = parent;
@@ -43,7 +43,7 @@ public class Category {
         child.setParent(this);
     }
 
-    public Category(CategoryEnum categoryEnum) {
-        this.categoryEnum = categoryEnum;
+    public Category(String categoryName) {
+        this.categoryName = categoryName;
     }
 }
