@@ -1,7 +1,6 @@
 package com.travel.search.service;
 
 import com.travel.global.response.PageResponseDTO;
-import com.travel.product.dto.response.ProductCategoryToProductPage;
 import org.springframework.data.domain.Pageable;
 
 public interface SearchService {

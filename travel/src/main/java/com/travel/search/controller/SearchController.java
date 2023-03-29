@@ -3,7 +3,6 @@ package com.travel.search.controller;
 import com.travel.global.exception.GlobalException;
 import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
-import com.travel.product.dto.response.ProductCategoryToProductPage;
 import com.travel.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -36,14 +35,14 @@ public class SearchController {
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
 
         PageResponseDTO pageResponseDTO;
-               if (authentication == null) {
-                   // 로그인되지 않은 사용자용 정보를 반환
-                   pageResponseDTO = searchService.displayProductsByCategory(pageRequest, category, sortTarget,null);
-               } else {
-                   // 로그인된 사용자용 정보를 반환
-                   String memberEmail = authentication.getName();
-                   pageResponseDTO = searchService.displayProductsByCategory(pageRequest, category, sortTarget, memberEmail);
-               }
+        if (authentication == null) {
+            // 로그인되지 않은 사용자용 정보를 반환
+            pageResponseDTO = searchService.displayProductsByCategory(pageRequest, category, sortTarget, null);
+        } else {
+            // 로그인된 사용자용 정보를 반환
+            String memberEmail = authentication.getName();
+            pageResponseDTO = searchService.displayProductsByCategory(pageRequest, category, sortTarget, memberEmail);
+        }
 
         return ResponseEntity.ok(pageResponseDTO);
     }
@@ -68,7 +67,7 @@ public class SearchController {
         } else {
             // 로그인된 사용자용 정보를 반환
             String memberEmail = authentication.getName();
-            pageResponseDTO = searchService.searchProducts(pageRequest, keyword, sortTarget , memberEmail);
+            pageResponseDTO = searchService.searchProducts(pageRequest, keyword, sortTarget, memberEmail);
         }
 
         return ResponseEntity.ok(pageResponseDTO);
