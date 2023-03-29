@@ -19,7 +19,9 @@ public class MemberResponseDTO {
         private String memberPhone;
         private String memberBirthDate;
         private String memberHobby;
-        private Grade grade;
+        private Boolean memberSmsAgree;
+        private Boolean memberEmailAgree;
+//        private Grade grade;
 
         public MemberInfoResponseDTO(Member member) {
         }
@@ -48,6 +50,14 @@ public class MemberResponseDTO {
         public String getMemberHobby() {
             return memberHobby;
         }
+        public Boolean getMemberSmsAgree() {
+            return memberSmsAgree;
+        }
+
+        public Boolean getMemberEmailAgree() {
+            return memberEmailAgree;
+        }
+
     }
 
 
