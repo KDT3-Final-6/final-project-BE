@@ -1,9 +1,12 @@
 package com.travel.member.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.travel.global.entity.BaseEntity;
+import com.travel.image.entity.Image;
+import com.travel.image.entity.MemberImage;
 import com.travel.order.entity.Order;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -64,6 +67,9 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(name = "member_emailAgree", nullable = false)
     private Boolean memberEmailAgree = false;
 
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "member")
+    private MemberImage memberImage;
+
     @Column
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
@@ -76,6 +82,14 @@ public class Member extends BaseEntity implements UserDetails {
 
     public Member(Optional<Member> member) {
 
+    }
+
+    public MemberImage addImage(Image image) {
+        MemberImage convertedImage = image.toMemberImage();
+        convertedImage.setMember(this);
+        this.memberImage = convertedImage;
+
+        return this.memberImage;
     }
 
     public Boolean isAdmin() {
@@ -110,22 +124,27 @@ public class Member extends BaseEntity implements UserDetails {
     public String getPassword() {
         return memberPassword;
     }
+
     @Override
     public String getUsername() {
         return memberEmail;
     }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
+
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
+
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
+
     @Override
     public boolean isEnabled() {
         return true;
@@ -137,6 +156,7 @@ public class Member extends BaseEntity implements UserDetails {
         this.memberNickname = memberNickname;
         this.memberHobby = memberHobby;
     }
+
     public void delete() {
         this.memberDeleteCheck = true;
     }

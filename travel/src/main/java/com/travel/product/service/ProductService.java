@@ -2,7 +2,8 @@ package com.travel.product.service;
 
 import com.travel.global.response.PageResponseDTO;
 import com.travel.image.entity.Image;
-import com.travel.image.repository.ImageRepository;
+import com.travel.image.entity.ProductImage;
+import com.travel.image.repository.ProductImageRepository;
 import com.travel.image.service.FileUploadService;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPatchRequestDTO;
@@ -44,7 +45,7 @@ public class ProductService {
     private final PeriodOptionRepository periodOptionRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final CategoryRepository categoryRepository;
-    private final ImageRepository imageRepository;
+    private final ProductImageRepository productImageRepository;
     private final FileUploadService fileUploadService;
 
 
@@ -54,9 +55,9 @@ public class ProductService {
         List<Image> images = fileUploadService.uploads(imageFiles);
         images.add(0, thumbnail);
         Product product = productPostRequestDTO.toEntity();
-        product.addImages(images);
+        List<ProductImage> productImages = product.addImages(images);
         productRepository.save(product);
-        imageRepository.saveAll(images);
+        productImageRepository.saveAll(productImages);
         List<Category> categories = categoryRepository.findAllById(productPostRequestDTO.getCategoryIds());
 
         /*
