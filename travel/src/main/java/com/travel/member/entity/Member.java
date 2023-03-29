@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 @Setter
 @Table(name = "member")
 public class Member extends BaseEntity implements UserDetails {
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
@@ -59,6 +57,12 @@ public class Member extends BaseEntity implements UserDetails {
     @Column(name = "member_hobby")
     @Enumerated(EnumType.STRING)
     private Hobby memberHobby;
+    @Column(name = "member_gender")
+    private String memberGender;
+    @Column(name = "member_smsAgree", nullable = false)
+    private Boolean memberSmsAgree = false;
+    @Column(name = "member_emailAgree", nullable = false)
+    private Boolean memberEmailAgree = false;
 
     @Column
     @ElementCollection(fetch = FetchType.EAGER)
@@ -68,7 +72,6 @@ public class Member extends BaseEntity implements UserDetails {
     private List<Order> orders = new ArrayList<>();
 
     public Member() {
-
     }
 
     public Member(Optional<Member> member) {
@@ -84,7 +87,7 @@ public class Member extends BaseEntity implements UserDetails {
 
     // 회원가입 입력
     @Builder
-    public Member(String memberEmail, String memberPassword, String memberName, String memberNickname, String memberPhone, String memberBirthDate, Hobby memberHobby, List<String> roles) {
+    public Member(String memberEmail, String memberPassword, String memberName, String memberNickname, String memberPhone, String memberBirthDate, Hobby memberHobby, List<String> roles, String memberGender) {
         this.memberEmail = memberEmail;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
@@ -93,6 +96,7 @@ public class Member extends BaseEntity implements UserDetails {
         this.memberBirthDate = memberBirthDate;
         this.memberHobby = memberHobby;
         this.roles = roles;
+        this.memberGender = memberGender;
     }
 
     @Override
@@ -133,4 +137,8 @@ public class Member extends BaseEntity implements UserDetails {
         this.memberNickname = memberNickname;
         this.memberHobby = memberHobby;
     }
+    public void delete() {
+        this.memberDeleteCheck = true;
+    }
+
 }
