@@ -2,19 +2,27 @@ package com.travel.member.service.impl;
 
 import com.travel.auth.dto.ResponseDto;
 import com.travel.auth.dto.request.MemberRequestDto;
+import com.travel.image.entity.Image;
+import com.travel.image.entity.MemberImage;
+import com.travel.image.repository.MemberImageRepository;
+import com.travel.image.service.FileUploadService;
 import com.travel.member.dto.requestDTO.DeleteMemberDTO;
 import com.travel.member.dto.requestDTO.MemberModifyRequestDTO;
 import com.travel.member.dto.responseDTO.MemberResponseDTO;
 import com.travel.member.entity.Member;
+import com.travel.member.exception.MemberException;
+import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
 import com.travel.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -22,7 +30,9 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final MemberImageRepository memberImageRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FileUploadService fileUploadService;
 
     @Override
     public ResponseDto<?> memberInfo(MemberRequestDto.Login login) {
@@ -84,6 +94,20 @@ public class MemberServiceImpl implements MemberService {
         } catch (IllegalArgumentException e) {
             return new ResponseDto<>("로그인 정보가 없습니다.");
         }
+    }
+
+    @Transactional
+    @Override
+    public void updateProfile(String memberEmail, MultipartFile profile) throws IOException {
+        Member member = memberRepository.findByMemberEmail(memberEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        memberImageRepository.deleteByMember(member);
+
+        Image newProfile = fileUploadService.upload(profile);
+        MemberImage memberImage = member.addImage(newProfile);
+
+        memberImageRepository.save(memberImage);
     }
 
     @Override
