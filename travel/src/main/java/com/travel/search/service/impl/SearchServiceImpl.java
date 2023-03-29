@@ -5,13 +5,10 @@ import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
-import com.travel.product.dto.response.ProductCategoryToProductPage;
 import com.travel.product.entity.Category;
 import com.travel.product.entity.Product;
 import com.travel.product.entity.ProductCategory;
 import com.travel.product.entity.Status;
-import com.travel.product.exception.ProductException;
-import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.CategoryRepository;
 import com.travel.product.repository.ProductCategoryRepository;
 import com.travel.product.repository.product.ProductRepository;
@@ -44,12 +41,22 @@ public class SearchServiceImpl implements SearchService {
     private final WishlistRepository wishlistRepository;
 
     @Override
-    public ProductCategoryToProductPage displayProductsByCategory(Pageable pageable, String categoryName) {
+    public PageResponseDTO displayProductsByCategory(Pageable pageable, String categoryName, String sortTarget, String memberEmail) {
+        List<Product> productList = findCategoryNameProducts(categoryName).stream()
+                .filter(product -> product.getProductStatus() == Status.FORSALE)
+                .collect(Collectors.toList());
 
-        Category category = categoryRepository.findByCategoryName(categoryName)
-                .orElseThrow(() -> new ProductException(ProductExceptionType.CATEGORY_NOT_FOUND));
+        if (sortTarget.equals("인기순")) {
+            productList = productList.stream()
+                    .sorted(Comparator.comparing(Product::getWishlistCount).reversed())
+                    .collect(Collectors.toList());
+        }
 
-        return new ProductCategoryToProductPage(productCategoryRepository.findAllByCategory(pageable, category));
+        List<SearchResultResponseDTO> searchResult = productList.stream()
+                .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO(new PageImpl<>(searchResult));
     }
 
     @Override
@@ -75,19 +82,20 @@ public class SearchServiceImpl implements SearchService {
         }
 
         List<SearchResultResponseDTO> searchResult = productList.stream()
-                .map(product -> {
-                    boolean existsByMemberAndProduct = false;
-                    if (memberEmail != null) {
-                        Member member = memberRepository.findByMemberEmail(memberEmail)
-                                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
-                        existsByMemberAndProduct = wishlistRepository.existsByMemberAndProduct(member, product);
-                    }
-
-                    return product.toSearchResultResponseDTO(existsByMemberAndProduct);
-                })
+                .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
                 .collect(Collectors.toList());
 
         return new PageResponseDTO(new PageImpl<>(searchResult, pageable, searchResult.size()));
+    }
+
+    private boolean isExistsByMemberAndProduct(String memberEmail, Product product) {
+        boolean existsByMemberAndProduct = false;
+        if (memberEmail != null) {
+            Member member = memberRepository.findByMemberEmail(memberEmail)
+                    .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+            existsByMemberAndProduct = wishlistRepository.existsByMemberAndProduct(member, product);
+        }
+        return existsByMemberAndProduct;
     }
 
     private List<Product> findTitleProducts(String keyword) {

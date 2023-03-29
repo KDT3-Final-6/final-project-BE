@@ -24,15 +24,28 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping("/category")
-    public ResponseEntity<ProductCategoryToProductPage> getProductsByCategory(
-            @RequestParam String category, @RequestParam(required = false, defaultValue = "1") int page) {
+    public ResponseEntity<PageResponseDTO> getProductsByCategory(
+            @RequestParam String category,
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false) String sortTarget,
+            Authentication authentication) {
 
         if (page < 1) {
             throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
 
-        return ResponseEntity.ok(searchService.displayProductsByCategory(pageRequest, category));
+        PageResponseDTO pageResponseDTO;
+               if (authentication == null) {
+                   // 로그인되지 않은 사용자용 정보를 반환
+                   pageResponseDTO = searchService.displayProductsByCategory(pageRequest, category, sortTarget,null);
+               } else {
+                   // 로그인된 사용자용 정보를 반환
+                   String memberEmail = authentication.getName();
+                   pageResponseDTO = searchService.displayProductsByCategory(pageRequest, category, sortTarget, memberEmail);
+               }
+
+        return ResponseEntity.ok(pageResponseDTO);
     }
 
     @GetMapping

@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface SearchService {
 
-    ProductCategoryToProductPage displayProductsByCategory(Pageable pageable, String categoryName);
+    PageResponseDTO displayProductsByCategory(Pageable pageable, String categoryName, String sortTarget, String memberEmail);
 
     PageResponseDTO searchProducts(Pageable pageable, String keyword, String sortTarget, String memberEmail);
 }
