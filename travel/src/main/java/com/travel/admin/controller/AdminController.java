@@ -9,6 +9,7 @@ import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPatchRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
 import com.travel.product.dto.response.CategoryListGetResponseDTO;
+import com.travel.product.dto.response.ProductDetailGetResponseDTO;
 import com.travel.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -48,6 +49,11 @@ public class AdminController {
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
 
         return ResponseEntity.ok(productService.displayProductsByAdmin(pageRequest));
+    }
+
+    @GetMapping("/products/{productId}")
+    public ResponseEntity<ProductDetailGetResponseDTO> getProductDetail(@PathVariable Long productId) {
+        return ResponseEntity.ok(productService.displayProductDetail(productId));
     }
 
     @PostMapping("/products/periods")
