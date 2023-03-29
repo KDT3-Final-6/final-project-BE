@@ -40,7 +40,7 @@ public class Wishlist {
                 .wishilistId(this.wishlistId)
                 .productId(this.product.getProductId())
                 .productName(this.product.getProductName())
-                .productThumbnail(this.product.getProductThumbnail())
+                .productThumbnail(this.product.getProductImages().get(0).getImagePath())
                 .productPrice(this.product.getProductPrice())
                 .build();
     }
