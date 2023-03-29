@@ -2,6 +2,7 @@ package com.travel.product.entity;
 
 import com.travel.global.entity.BaseEntity;
 import com.travel.image.entity.Image;
+import com.travel.image.entity.ProductImage;
 import com.travel.post.entity.Post;
 import com.travel.search.dto.response.SearchResultResponseDTO;
 import lombok.AccessLevel;
@@ -42,7 +43,7 @@ public class Product extends BaseEntity {
     private List<ProductCategory> productCategories = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
-    private List<Image> productImages = new ArrayList<>();
+    private List<ProductImage> productImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
     private List<Post> posts = new ArrayList<>();
@@ -60,11 +61,13 @@ public class Product extends BaseEntity {
         periodOptions.add(periodOption);
     }
 
-    public void addImages(List<Image> images) {
+    public List<ProductImage> addImages(List<Image> images) {
         for (Image image : images) {
-            image.setProduct(this);
+            ProductImage productImage = image.toProductImage();
+            productImage.setProduct(this);
+            this.productImages.add(productImage);
         }
-        images.addAll(images);
+        return this.productImages;
     }
 
     public void changeStatusToHidden(Product product) {
@@ -100,7 +103,7 @@ public class Product extends BaseEntity {
         return SearchResultResponseDTO.builder()
                 .productId(this.productId)
                 .productName(this.productName)
-                .productThumbnail(this.productThumbnail)
+                .productThumbnail(this.getProductImages().get(0).getImagePath())
                 .productPrice(this.productPrice)
                 .isWished(isWished)
                 .build();
