@@ -1,6 +1,7 @@
 package com.travel.product.repository;
 
 import com.travel.product.entity.Category;
+import com.travel.product.entity.Product;
 import com.travel.product.entity.ProductCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,4 +15,5 @@ public interface ProductCategoryRepository extends JpaRepository<ProductCategory
     @EntityGraph(attributePaths = "product")
     Page<ProductCategory> findAllByCategory(Pageable pageable, Category category);
     List<ProductCategory> findAllByCategory(Category category);
+    void deleteAllByProduct(Product product);
 }
