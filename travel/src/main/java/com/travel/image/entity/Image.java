@@ -1,14 +1,18 @@
 package com.travel.image.entity;
 
-import com.travel.product.entity.Product;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "image")
+@DiscriminatorColumn
 public class Image {
 
     @Id
@@ -30,12 +34,6 @@ public class Image {
 
     @Column(name = "image_bytes")
     private Long imageBytes;
-
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @Setter
-    @JoinColumn(name = "product_id")
-    private Product product;
 
     @Builder
     public Image(String imageName, String imageOriginalName, String imagePath, String imageFormat, Long imageBytes) {
