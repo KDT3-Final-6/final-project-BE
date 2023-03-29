@@ -43,4 +43,20 @@ public class Image {
         this.imageFormat = imageFormat;
         this.imageBytes = imageBytes;
     }
+
+    public Image(Image image) {
+        this.imageName = image.getImageName();
+        this.imageOriginalName = image.getImageOriginalName();
+        this.imagePath = image.getImagePath();
+        this.imageFormat = image.getImageFormat();
+        this.imageBytes = image.getImageBytes();
+    }
+
+    public ProductImage toProductImage() {
+        return new ProductImage(this);
+    }
+
+    public MemberImage toMemberImage() {
+        return new MemberImage(this);
+    }
 }
