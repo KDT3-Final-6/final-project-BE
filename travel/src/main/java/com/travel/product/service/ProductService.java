@@ -9,6 +9,7 @@ import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPatchRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
 import com.travel.product.dto.response.CategoryListGetResponseDTO;
+import com.travel.product.dto.response.ProductDetailByMemberDTO;
 import com.travel.product.dto.response.ProductDetailGetResponseDTO;
 import com.travel.product.dto.response.ProductListGetResponseDTO;
 import com.travel.product.entity.Category;
@@ -111,6 +112,13 @@ public class ProductService {
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
         return new ProductDetailGetResponseDTO(product);
+    }
+
+    public ProductDetailByMemberDTO displayProductDetailByMember(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
+
+        return new ProductDetailByMemberDTO(product);
     }
 
     @Transactional
