@@ -127,6 +127,14 @@ public class ProductService {
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
         product.updateProduct(productPatchRequestDTO.toEntity(product));
+        if (productPatchRequestDTO.getCategoryIds() != null) {
+            List<Category> categories = categoryRepository.findAllById(productPatchRequestDTO.getCategoryIds());
+            productCategoryRepository.deleteAllByProduct(product);
+            List<ProductCategory> productCategories = IntStream.range(0, categories.size())
+                    .mapToObj(i -> new ProductCategory(product, categories.get(i)))
+                    .collect(toList());
+            productCategoryRepository.saveAll(productCategories);
+        }
     }
 
     public List<CategoryListGetResponseDTO> displayCategories() {
