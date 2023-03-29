@@ -14,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 
 @Slf4j
@@ -109,10 +111,25 @@ public class MemberController {
             ResponseDto<?> responseDto = new ResponseDto<>("success");
             return ResponseEntity.ok(responseDto);
         } else {
-            ResponseDto<?> responseDto = new ResponseDto<>( "회원 삭제에 실패하였습니다.");
+            ResponseDto<?> responseDto = new ResponseDto<>("회원 삭제에 실패하였습니다.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
         }
     }
 
+    @PutMapping("/members/profile")
+    public ResponseEntity<String> putProfile(@RequestHeader("Authorization") String authorizationHeader,
+                                             @RequestPart("profile") MultipartFile profile) throws IOException{
+
+        String token = authorizationHeader.substring(7);
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(tokenProvider.getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        String memberEmail = claims.getSubject();
+
+        memberService.updateProfile(memberEmail, profile);
+        return ResponseEntity.ok(null);
+    }
 }
 
