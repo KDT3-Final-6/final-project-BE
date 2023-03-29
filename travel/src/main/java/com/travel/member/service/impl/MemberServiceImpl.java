@@ -60,31 +60,31 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new ResourceAccessException((email)));
     }
 
-//    @Override
-//    public ResponseDto<?> modifyMember(MemberRequestDto.Login login, MemberModifyRequestDTO.ModifyMemberRequestDTO modifyMemberRequestDTO) {
-//        try {
-//            // 회원 정보를 찾습니다.
-//            Member member = memberRepository.findByMemberEmail(login.getMemberEmail())
-//                    .orElseThrow(IllegalArgumentException::new);
-//
-//            // 비밀번호 검증을 수행합니다.
-//            passwordCheck(modifyMemberRequestDTO.getMemberPassword(), member.getMemberPassword());
-//
-//            // 회원 정보를 업데이트합니다.
-//            member.setMemberPassword(encodingPassword(modifyMemberRequestDTO.getMemberRenewPassword()));
-//            member.setMemberNickname(modifyMemberRequestDTO.getMemberNickname());
-//            member.setMemberHobby(modifyMemberRequestDTO.getMemberHobby());
-//            member.setMemberPhone(modifyMemberRequestDTO.getMemberPhone());
-//            member.setMemberSmsAgree(modifyMemberRequestDTO.getMemberSmsAgree());
-//            member.setMemberEmailAgree(modifyMemberRequestDTO.getMemberEmailAgree());
-//
-//            memberRepository.save(member);
-//
-//            return new ResponseDto<>("회원정보 수정 성공하였습니다.");
-//        } catch (IllegalArgumentException e) {
-//            return new ResponseDto<>("로그인 정보가 없습니다.");
-//        }
-//    }
+    @Override
+    public ResponseDto<?> modifyMember(MemberRequestDto.Login login, MemberModifyRequestDTO.ModifyMemberRequestDTO modifyMemberRequestDTO) {
+        try {
+            // 회원 정보를 찾습니다.
+            Member member = memberRepository.findByMemberEmail(login.getMemberEmail())
+                    .orElseThrow(IllegalArgumentException::new);
+
+            // 비밀번호 검증을 수행합니다.
+            passwordCheck(modifyMemberRequestDTO.getMemberPassword(), member.getMemberPassword());
+
+            // 회원 정보를 업데이트합니다.
+            member.setMemberPassword(encodingPassword(modifyMemberRequestDTO.getMemberRenewPassword()));
+            member.setMemberNickname(modifyMemberRequestDTO.getMemberNickname());
+            member.setMemberHobby(modifyMemberRequestDTO.getMemberHobby());
+            member.setMemberPhone(modifyMemberRequestDTO.getMemberPhone());
+            member.setMemberSmsAgree(modifyMemberRequestDTO.getMemberSmsAgree());
+            member.setMemberEmailAgree(modifyMemberRequestDTO.getMemberEmailAgree());
+
+            memberRepository.save(member);
+
+            return new ResponseDto<>("회원정보 수정 성공하였습니다.");
+        } catch (IllegalArgumentException e) {
+            return new ResponseDto<>("로그인 정보가 없습니다.");
+        }
+    }
 
     @Override
     public Boolean deleteMember(DeleteMemberDTO delete) {

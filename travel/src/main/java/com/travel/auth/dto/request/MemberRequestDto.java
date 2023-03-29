@@ -39,7 +39,7 @@ public class MemberRequestDto {
         @Pattern(regexp = "^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$", message = "YYYY-MM-DD 으로 작성해주세요")
         private String memberBirthDate;
 
-        @NotEmpty(message = "취미를 적어주세요")
+//        @NotEmpty(message = "취미를 적어주세요")
         private Hobby memberHobby;
 
     }
