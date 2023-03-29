@@ -62,12 +62,12 @@ public class AdminController {
         return ResponseEntity.ok(null);
     }
 
-    /**
-     * @param productId
-     * delete지만 실제 db에서는 삭제 하지 않는다
-     * 그냥 Member가 못보게 Status만 숨김으로 변경
-     * @return void
-     */
+    @DeleteMapping("/products/periods/{periodOptionId}")
+    public ResponseEntity<String> deletePeriod(@PathVariable Long periodOptionId) {
+        productService.deletePeriodOption(periodOptionId);
+        return ResponseEntity.ok(null);
+    }
+
     @DeleteMapping("/products/{productId}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
