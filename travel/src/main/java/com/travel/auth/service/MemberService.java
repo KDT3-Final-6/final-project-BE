@@ -4,6 +4,8 @@ import com.travel.auth.dto.ResponseDto;
 import com.travel.auth.dto.request.MemberRequestDto;
 import com.travel.auth.dto.response.MemberResponseDto;
 import com.travel.auth.enums.Authority;
+import com.travel.auth.exception.AuthException;
+import com.travel.auth.exception.AuthExceptionType;
 import com.travel.auth.jwt.JwtTokenProvider;
 import com.travel.member.repository.MemberRepository;
 import com.travel.global.config.SecurityUtil;
@@ -58,10 +60,14 @@ public class MemberService {
     @Transactional
     public ResponseDto<?> login(MemberRequestDto.Login login) {
         Member member = memberRepository.findByMemberEmail(login.getMemberEmail())
-                .orElseThrow(()->new IllegalArgumentException("가입되지 않은 이메일 입니다."));
+                .orElseThrow(() -> new AuthException(AuthExceptionType.INVALID_EMAIL_OR_PASSWORD));
+        // 회원 삭제 여부
+        if (member.getMemberDeleteCheck()) {
+            throw new AuthException(AuthExceptionType.ACCOUNT_DISABLED);
+        }
         // 패스워드 불일치 시
         if (!passwordEncoder.matches(login.getMemberPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("잘못된 비밀번호 입니다.");
+            throw new AuthException(AuthExceptionType.INVALID_EMAIL_OR_PASSWORD);
         }
         UsernamePasswordAuthenticationToken authenticationToken = login.toAuthentication();
 
