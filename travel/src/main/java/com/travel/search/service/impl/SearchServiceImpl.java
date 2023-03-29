@@ -1,6 +1,10 @@
-package com.travel.search.service;
+package com.travel.search.service.impl;
 
 import com.travel.global.response.PageResponseDTO;
+import com.travel.member.entity.Member;
+import com.travel.member.exception.MemberException;
+import com.travel.member.exception.MemberExceptionType;
+import com.travel.member.repository.MemberRepository;
 import com.travel.product.dto.response.ProductCategoryToProductPage;
 import com.travel.product.entity.Category;
 import com.travel.product.entity.Product;
@@ -13,6 +17,8 @@ import com.travel.product.repository.ProductCategoryRepository;
 import com.travel.product.repository.product.ProductRepository;
 import com.travel.search.dto.request.SortTarget;
 import com.travel.search.dto.response.SearchResultResponseDTO;
+import com.travel.search.service.SearchService;
+import com.travel.wishlist.repository.WishlistRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -29,12 +35,15 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class SearchService {
+public class SearchServiceImpl implements SearchService {
 
     private final CategoryRepository categoryRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final ProductRepository productRepository;
+    private final MemberRepository memberRepository;
+    private final WishlistRepository wishlistRepository;
 
+    @Override
     public ProductCategoryToProductPage displayProductsByCategory(Pageable pageable, String categoryName) {
 
         Category category = categoryRepository.findByCategoryName(categoryName)
@@ -43,10 +52,12 @@ public class SearchService {
         return new ProductCategoryToProductPage(productCategoryRepository.findAllByCategory(pageable, category));
     }
 
+    @Override
     public PageResponseDTO searchProducts(
             Pageable pageable,
             String keyword,
-            String sortTarget
+            String sortTarget,
+            String memberEmail
     ) {
 
         List<Product> categoryProducts = findCategoryNameProducts(keyword);
@@ -64,7 +75,16 @@ public class SearchService {
         }
 
         List<SearchResultResponseDTO> searchResult = productList.stream()
-                .map(product -> product.toSearchResultResponseDTO(true))
+                .map(product -> {
+                    boolean existsByMemberAndProduct = false;
+                    if (memberEmail != null) {
+                        Member member = memberRepository.findByMemberEmail(memberEmail)
+                                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+                        existsByMemberAndProduct = wishlistRepository.existsByMemberAndProduct(member, product);
+                    }
+
+                    return product.toSearchResultResponseDTO(existsByMemberAndProduct);
+                })
                 .collect(Collectors.toList());
 
         return new PageResponseDTO(new PageImpl<>(searchResult, pageable, searchResult.size()));
