@@ -5,10 +5,7 @@ import com.travel.image.entity.Image;
 import com.travel.image.entity.ProductImage;
 import com.travel.post.entity.Post;
 import com.travel.search.dto.response.SearchResultResponseDTO;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -55,6 +52,10 @@ public class Product extends BaseEntity {
     //내용 상세
     @Column(name = "content_detail")
     private String contentDetail;
+
+    @Setter
+    @Column(name = "wishlist_count")
+    private Long wishlistCount = 0L;
 
     public void addPeriodOption(PeriodOption periodOption) {
         periodOption.setProduct(this);
