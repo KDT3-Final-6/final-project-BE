@@ -50,6 +50,7 @@ public class MemberService {
                 .memberPhone(signUp.getMemberPhone())
                 .memberBirthDate(signUp.getMemberBirthDate())
                 .memberHobby(Hobby.valueOf(signUp.getMemberHobby().toString()))
+                .memberGender(signUp.getMemberGender())
                 .roles(Collections.singletonList(Authority.ROLE_USER.name()))
                 .build();
         memberRepository.save(member);
