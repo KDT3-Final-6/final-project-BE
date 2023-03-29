@@ -1,7 +1,7 @@
 package com.travel.product.controller;
 
 import com.travel.global.response.PageResponseDTO;
-import com.travel.product.dto.response.ProductDetailByMemberDTO;
+import com.travel.product.dto.response.ProductDetailGetResponseDTO;
 import com.travel.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -34,7 +34,7 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductDetailByMemberDTO> getProductDetail(@PathVariable Long productId) {
-        return ResponseEntity.ok(productService.displayProductDetailByMember(productId));
+    public ResponseEntity<ProductDetailGetResponseDTO> getProductDetail(@PathVariable Long productId) {
+        return ResponseEntity.ok(productService.displayProductDetail(productId));
     }
 }
