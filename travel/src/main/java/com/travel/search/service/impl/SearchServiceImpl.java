@@ -119,6 +119,10 @@ public class SearchServiceImpl implements SearchService {
                 .findFirst()
                 .orElse(null);
 
+        if (target == null) {
+            return products;
+        }
+
         if (target.equals(SortTarget.BY_PRICE_DESC)) {
             return products.stream()
                     .sorted(Comparator.comparing(Product::getProductPrice).reversed())
@@ -127,12 +131,11 @@ public class SearchServiceImpl implements SearchService {
             return products.stream()
                     .sorted(Comparator.comparing(Product::getProductPrice))
                     .collect(Collectors.toList());
+        } else if (target.equals(SortTarget.BY_POPULARITY)) { // 아직 구현 안됨
+            return products.stream()
+                    .sorted(Comparator.comparing(Product::getWishlistCount).reversed())
+                    .collect(Collectors.toList());
         }
-//        else if (sort.equals(SortTarget.BY_POPULARITY)) { // 아직 구현 안됨
-//            return products.stream()
-//                    .sorted(Comparator.comparing(Product::get))
-//                    .collect(Collectors.toList());
-//        }
 
         return products;
     }
