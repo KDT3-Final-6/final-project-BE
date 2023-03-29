@@ -12,10 +12,7 @@ import com.travel.product.dto.response.CategoryListGetResponseDTO;
 import com.travel.product.dto.response.ProductDetailByMemberDTO;
 import com.travel.product.dto.response.ProductDetailGetResponseDTO;
 import com.travel.product.dto.response.ProductListGetResponseDTO;
-import com.travel.product.entity.Category;
-import com.travel.product.entity.PeriodOption;
-import com.travel.product.entity.Product;
-import com.travel.product.entity.ProductCategory;
+import com.travel.product.entity.*;
 import com.travel.product.exception.ProductException;
 import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.CategoryRepository;
@@ -155,5 +152,13 @@ public class ProductService {
         }
 
         return result;
+    }
+
+    @Transactional
+    public void deletePeriodOption(Long id) {
+        PeriodOption periodOption = periodOptionRepository.findById(id)
+                .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
+
+        periodOption.setPeriodOptionStatus(Status.HIDDEN);
     }
 }
