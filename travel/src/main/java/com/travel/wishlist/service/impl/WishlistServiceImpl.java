@@ -45,16 +45,19 @@ public class WishlistServiceImpl implements WishlistService {
             throw new WishlistException(WishlistExceptionType.ALREADY_IN_WISHLIST);
         }
 
+        product.setWishlistCount(product.getWishlistCount() + 1);
+        productRepository.save(product);
+
         wishlistRepository.save(Wishlist.builder()
-                        .member(member)
-                        .product(product)
-                        .build());
+                .member(member)
+                .product(product)
+                .build());
     }
 
     @Override
     public PageResponseDTO getWishlists(Pageable pageable, String userEmail) {
         Member member = memberRepository.findByMemberEmail(userEmail)
-                        .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
         List<Wishlist> wishlists = wishlistRepository.findByMember(member);
 
@@ -68,10 +71,14 @@ public class WishlistServiceImpl implements WishlistService {
     @Override
     public void deleteWishlist(Long wishlistId, String userEmail) {
         Member member = memberRepository.findByMemberEmail(userEmail)
-                                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
         Wishlist wishlist = wishlistRepository.findByWishlistIdAndMember(wishlistId, member)
-                .orElseThrow(() -> new WishlistException(WishlistExceptionType.WISHLIST_NOT_FOUND));
+                .orElseThrow(() -> new WishlistException(WishlistExceptionType.WISHLIST_NOT_FOUND)); // 나중에 예외 구체적으로 바꾸가
+
+        Product product = wishlist.getProduct();
+        product.setWishlistCount(product.getWishlistCount() - 1);
+        productRepository.save(product);
 
         wishlistRepository.delete(wishlist);
     }
