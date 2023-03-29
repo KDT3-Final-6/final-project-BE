@@ -7,6 +7,8 @@ import com.travel.auth.enums.Authority;
 import com.travel.auth.exception.AuthException;
 import com.travel.auth.exception.AuthExceptionType;
 import com.travel.auth.jwt.JwtTokenProvider;
+import com.travel.image.entity.MemberImage;
+import com.travel.image.repository.MemberImageRepository;
 import com.travel.member.repository.MemberRepository;
 import com.travel.global.config.SecurityUtil;
 import com.travel.member.entity.Hobby;
@@ -32,15 +34,19 @@ import java.util.concurrent.TimeUnit;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final MemberImageRepository memberImageRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RedisTemplate redisTemplate;
 
+    @Transactional
     public ResponseDto<?> signUp(MemberRequestDto.SignUp signUp) {
         if (memberRepository.existsByMemberEmail(signUp.getMemberEmail())) {
             return new ResponseDto<>("이미 회원가입된 이메일입니다.");
         }
+
+        MemberImage defaultImage = MemberImage.CreateDefaultMemberImage();
 
         Member member = Member.builder()
                 .memberEmail(signUp.getMemberEmail())
@@ -52,8 +58,9 @@ public class MemberService {
                 .memberHobby(Hobby.valueOf(signUp.getMemberHobby().toString()))
                 .roles(Collections.singletonList(Authority.ROLE_USER.name()))
                 .build();
+        MemberImage memberImage = member.addImage(defaultImage);
         memberRepository.save(member);
-
+        memberImageRepository.save(memberImage);
         return new ResponseDto<>("회원가입 성공했습니다.");
     }
 
