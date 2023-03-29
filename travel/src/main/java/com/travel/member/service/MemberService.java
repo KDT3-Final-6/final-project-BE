@@ -12,6 +12,6 @@ public interface MemberService {
     Member getMemberById(Long id);
     Member getMemberByMemberEmail(String email);
     Boolean deleteMember(DeleteMemberDTO delete);
-//    ResponseDto<?> modifyMember(MemberRequestDto.Login login, MemberModifyRequestDTO.ModifyMemberRequestDTO modifyMemberInfoRequestDTO);
+    ResponseDto<?> modifyMember(MemberRequestDto.Login login, MemberModifyRequestDTO.ModifyMemberRequestDTO modifyMemberInfoRequestDTO);
 
 }
