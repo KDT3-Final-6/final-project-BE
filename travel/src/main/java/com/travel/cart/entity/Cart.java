@@ -4,7 +4,6 @@ import com.travel.cart.dto.response.CartResponseDTO;
 import com.travel.global.entity.BaseEntity;
 import com.travel.member.entity.Member;
 import com.travel.product.entity.PeriodOption;
-import com.travel.product.entity.Product;
 import lombok.*;
 
 import javax.persistence.*;
@@ -49,7 +48,7 @@ public class Cart extends BaseEntity {
                 .cartPrice(this.getPeriodOption().getProduct().getProductPrice() * this.getCartQuantity())
                 .productName(this.getPeriodOption().getProduct().getProductName())
                 .periodOptionName(this.getPeriodOption().getOptionName())
-                .productThumbnail(this.getPeriodOption().getProduct().getProductThumbnail())
+                .productThumbnail(this.getPeriodOption().getProduct().getProductImages().get(0).getImagePath())
                 .productContent(this.getPeriodOption().getProduct().getProductContent())
                 .cartQuantity(this.getCartQuantity())
                 .build();

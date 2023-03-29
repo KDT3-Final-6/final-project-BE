@@ -1,7 +1,7 @@
 package com.travel.product.entity;
 
 import com.travel.global.entity.BaseEntity;
-import com.travel.image.Image;
+import com.travel.image.entity.Image;
 import com.travel.post.entity.Post;
 import com.travel.search.dto.response.SearchResultResponseDTO;
 import lombok.AccessLevel;
@@ -28,9 +28,6 @@ public class Product extends BaseEntity {
     @Column(name = "product_name")
     private String productName;
 
-    @Column(name = "product_thumbnail")
-    private String productThumbnail;
-
     @Column(name = "product_price")
     private Integer productPrice;
 
@@ -45,7 +42,7 @@ public class Product extends BaseEntity {
     private List<ProductCategory> productCategories = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
-    private List<Image> images = new ArrayList<>();
+    private List<Image> productImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
     private List<Post> posts = new ArrayList<>();
@@ -63,13 +60,19 @@ public class Product extends BaseEntity {
         periodOptions.add(periodOption);
     }
 
+    public void addImages(List<Image> images) {
+        for (Image image : images) {
+            image.setProduct(this);
+        }
+        images.addAll(images);
+    }
+
     public void changeStatusToHidden(Product product) {
         product.productStatus = Status.HIDDEN;
     }
 
     public void updateProduct(Product product) {
         this.productName = product.getProductName();
-        this.productThumbnail = product.getProductThumbnail();
         this.productPrice = product.getProductPrice();
         this.productStatus = product.getProductStatus();
         this.productContent = product.getProductContent();
@@ -77,19 +80,13 @@ public class Product extends BaseEntity {
     }
 
     @Builder
-    public Product(String productName, String productThumbnail, Integer productPrice, Status productStatus, String productContent, String contentDetail) {
+    public Product(String productName, Integer productPrice, Status productStatus, String productContent, String contentDetail) {
         this.productName = productName;
-        this.productThumbnail = productThumbnail;
         this.productPrice = productPrice;
         this.productStatus = productStatus;
         this.productContent = productContent;
         this.contentDetail = contentDetail;
     }
-    /*
-    @ElementCollection
-    @CollectionTable(name = "image")
-    private List<String> images = new ArrayList<>();
-    */
 
     public PurchasedProduct toPurchase(PeriodOption periodOption, Integer quantity) {
         return PurchasedProduct.builder()

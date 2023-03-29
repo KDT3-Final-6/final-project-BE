@@ -58,7 +58,7 @@ public class PurchasedProduct {
     public PurchasedProduct(Product product, PeriodOption periodOption, Integer quantity) {
         this.product = product;
         this.purchasedProductName = product.getProductName();
-        this.purchasedProductThumbnail = product.getProductThumbnail();
+        this.purchasedProductThumbnail = product.getProductImages().get(0).getImagePath();
         this.purchasedProductPrice = product.getProductPrice() * quantity; //나중에 옵션이랑 더 해줄 예정
         this.startDate = periodOption.getStartDate();
         this.endDate = periodOption.getEndDate();
