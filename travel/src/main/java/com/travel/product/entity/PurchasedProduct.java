@@ -71,6 +71,7 @@ public class PurchasedProduct {
         return OrderResponseDTO.builder()
                 .orderId(this.order.getOrderId())
                 .productId(this.product.getProductId())
+                .purchasedProductId(this.purchasedProductId)
                 .productName(this.purchasedProductName)
                 .productThumbnail(this.purchasedProductThumbnail)
                 .productPrice(this.purchasedProductPrice)

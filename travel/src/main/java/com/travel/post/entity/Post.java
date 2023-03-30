@@ -2,17 +2,16 @@ package com.travel.post.entity;
 
 import com.travel.global.entity.BaseEntityWithMemberAndDates;
 import com.travel.member.entity.Member;
-import com.travel.product.entity.Product;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "post")
+@DiscriminatorColumn(name = "post_type")
 public class Post extends BaseEntityWithMemberAndDates {
 
     @Id
@@ -21,16 +20,23 @@ public class Post extends BaseEntityWithMemberAndDates {
     private Long postId;
 
     @Column(name = "post_title")
-    private String title;
+    private String postTitle;
 
     @Column(name = "post_content")
-    private String content;
+    private String postContent;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @Setter
+    @Column(name = "is_Canceled")
+    private boolean isCanceled = false;
+
+    @Builder
+    public Post(String postTitle, String postContent, Member member) {
+        this.postTitle = postTitle;
+        this.postContent = postContent;
+        this.member = member;
+    }
 }

@@ -127,7 +127,7 @@ public class OrderServiceImpl implements OrderService {
         Member member = memberRepository.findByMemberEmail(userEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        if (!member.isAdmin()) {
+        if (!member.getRoles().contains("ROLE_ADMIN")) {
             throw new MemberException(MemberExceptionType.MEMBER_IS_NOT_ADMIN);
         }
 
@@ -155,7 +155,7 @@ public class OrderServiceImpl implements OrderService {
         Member admin = memberRepository.findByMemberEmail(userEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        if (!admin.isAdmin()) {
+        if (!admin.getRoles().contains("ROLE_ADMIN")) {
             throw new MemberException(MemberExceptionType.MEMBER_IS_NOT_ADMIN);
         }
 

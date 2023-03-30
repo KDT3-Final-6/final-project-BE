@@ -15,6 +15,8 @@ public class OrderResponseDTO {
 
     private Long productId;
 
+    private Long purchasedProductId;
+
     private String productName;
 
     private String productThumbnail;
@@ -30,9 +32,10 @@ public class OrderResponseDTO {
     private String orderStatus;
 
     @Builder
-    public OrderResponseDTO(Long orderId, Long productId, String productName, String productThumbnail, Integer productPrice, LocalDateTime orderDate, String optionName, Integer productProductQuantity, OrderStatus orderStatus) {
+    public OrderResponseDTO(Long orderId, Long productId, Long purchasedProductId, String productName, String productThumbnail, Integer productPrice, LocalDateTime orderDate, String optionName, Integer productProductQuantity, OrderStatus orderStatus) {
         this.orderId = orderId;
         this.productId = productId;
+        this.purchasedProductId = purchasedProductId;
         this.productName = productName;
         this.productThumbnail = productThumbnail;
         this.productPrice = productPrice;
