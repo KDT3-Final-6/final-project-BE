@@ -77,14 +77,17 @@ public class QnAServiceImpl implements QnAService {
 
         List<QnAResponseDTO> qnAPostDTOList = qnAPostList.stream()
                 .map(qnAPost -> {
+                    AnswerPost answerPost = answerRepository.findByQnAPost(qnAPost)
+                            .orElse(null);
+
                     QnAProductPost qnAProductPost = qnAProductRepository.findById(qnAPost.getPostId())
                             .orElse(null);
 
                     if (qnAProductPost != null) {
-                        return qnAProductPost.toQnAResponseDTO();
+                        return qnAProductPost.toQnAResponseDTO(answerPost);
                     }
 
-                    return qnAPost.toQnAResponseDTO();
+                    return qnAPost.toQnAResponseDTO(answerPost);
                 })
                 .collect(Collectors.toList());
 
@@ -119,14 +122,17 @@ public class QnAServiceImpl implements QnAService {
 
         List<QnAAdminResponseDTO> qnAPostDTOList = qnAPostList.stream()
                 .map(qnAPost -> {
+                    AnswerPost answerPost = answerRepository.findByQnAPost(qnAPost)
+                                                .orElse(null);
+
                     QnAProductPost qnAProductPost = qnAProductRepository.findById(qnAPost.getPostId())
                             .orElse(null);
 
                     if (qnAProductPost != null) {
-                        return qnAProductPost.toQnAAdminResponseDTO();
+                        return qnAProductPost.toQnAAdminResponseDTO(answerPost);
                     }
 
-                    return qnAPost.toQnAAdminResponseDTO();
+                    return qnAPost.toQnAAdminResponseDTO(answerPost);
                 })
                 .collect(Collectors.toList());
 

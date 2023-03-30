@@ -31,24 +31,36 @@ public class QnAPost extends Post {
         this.inquiryType = inquiryType;
     }
 
-    public QnAResponseDTO toQnAResponseDTO() {
+    public QnAResponseDTO toQnAResponseDTO(AnswerPost answerPost) {
+        String answerContent = null;
+        if (answerPost != null) {
+            answerContent = answerPost.getAnswerContent();
+        }
+
         return QnAResponseDTO.builder()
                 .postId(this.getPostId())
                 .postTitle(this.getPostTitle())
                 .postContent(this.getPostContent())
                 .inquiryType(this.getInquiryType().getKorean())
                 .qnAStatus(this.getQnAStatus().getKorean())
+                .answer(answerContent)
                 .createdDate(this.getCreatedDate())
                 .build();
     }
 
-    public QnAAdminResponseDTO toQnAAdminResponseDTO() {
+    public QnAAdminResponseDTO toQnAAdminResponseDTO(AnswerPost answerPost) {
+        String answerContent = null;
+        if (answerPost != null) {
+            answerContent = answerPost.getAnswerContent();
+        }
+
         return QnAAdminResponseDTO.builder()
                 .postId(this.getPostId())
                 .postTitle(this.getPostTitle())
                 .postContent(this.getPostContent())
                 .inquiryType(this.getInquiryType().getKorean())
                 .qnAStatus(this.getQnAStatus().getKorean())
+                .answer(answerContent)
                 .createdDate(this.getCreatedDate())
                 .memberName(this.getMember().getMemberName())
                 .build();

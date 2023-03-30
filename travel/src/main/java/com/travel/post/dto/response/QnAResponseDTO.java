@@ -19,6 +19,8 @@ public class QnAResponseDTO {
 
     private String qnAStatus;
 
+    private String answer;
+
     private String purchasedProductName;
 
     private LocalDateTime createdDate;
