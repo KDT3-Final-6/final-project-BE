@@ -5,6 +5,7 @@ import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.order.dto.request.OrderApproveDTO;
 import com.travel.order.service.OrderService;
+import com.travel.post.service.QnAService;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPatchRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
@@ -31,6 +32,7 @@ public class AdminController {
 
     private final ProductService productService;
     private final OrderService orderService;
+    private final QnAService qnAService;
 
     @PostMapping("/products")
     public ResponseEntity<String> postProduct(@RequestPart @Valid ProductPostRequestDTO productPostRequestDTO,
@@ -106,5 +108,18 @@ public class AdminController {
         orderService.approveOrder(orderId, orderApproveDTO, authentication.getName());
 
         return ResponseEntity.ok(null);
+    }
+
+    @GetMapping("/qna")
+    public ResponseEntity<PageResponseDTO> getQnAs(@RequestParam(required = false, defaultValue = "1") int page, Authentication authentication) {
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+
+        PageResponseDTO pageResponseDTO = qnAService.getQnAsAdmin(pageRequest, authentication.getName());
+
+        return ResponseEntity.ok(pageResponseDTO);
     }
 }
