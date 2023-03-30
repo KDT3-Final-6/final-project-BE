@@ -3,7 +3,6 @@ package com.travel.product.entity;
 import com.travel.global.entity.BaseEntity;
 import com.travel.image.entity.Image;
 import com.travel.image.entity.ProductImage;
-import com.travel.post.entity.Post;
 import com.travel.search.dto.response.SearchResultResponseDTO;
 import lombok.*;
 
@@ -41,9 +40,6 @@ public class Product extends BaseEntity {
 
     @OneToMany(mappedBy = "product")
     private List<ProductImage> productImages = new ArrayList<>();
-
-    @OneToMany(mappedBy = "product")
-    private List<Post> posts = new ArrayList<>();
 
     //내용
     @Column(name = "product_content")

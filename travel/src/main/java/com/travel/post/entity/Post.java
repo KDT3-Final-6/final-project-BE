@@ -12,7 +12,9 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "post")
+@DiscriminatorColumn(name = "post_type")
 public class Post extends BaseEntityWithMemberAndDates {
 
     @Id
@@ -29,8 +31,4 @@ public class Post extends BaseEntityWithMemberAndDates {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
 }
