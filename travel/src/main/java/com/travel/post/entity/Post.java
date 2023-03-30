@@ -4,6 +4,7 @@ import com.travel.global.entity.BaseEntityWithMemberAndDates;
 import com.travel.member.entity.Member;
 import com.travel.product.entity.Product;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,4 +32,11 @@ public class Post extends BaseEntityWithMemberAndDates {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder
+    public Post(String title, String content, Member member) {
+        this.title = title;
+        this.content = content;
+        this.member = member;
+    }
 }
