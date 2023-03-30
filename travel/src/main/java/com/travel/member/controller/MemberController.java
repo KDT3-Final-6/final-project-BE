@@ -42,35 +42,13 @@ public class MemberController {
                 .getBody();
         String memberEmail = (claims.getSubject());
 
+        return memberService.getMemberByMemberEmail(memberEmail);
 
-        // 회원 아이디를 토대로 회원 정보 조회
-        Member member = memberService.getMemberByMemberEmail(memberEmail);
-
-        // 회원 정보가 없는 경우 404 응답 반환
-        if (member == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        // 회원 정보를 DTO 객체에 매핑
-        MemberResponseDTO.MemberInfoResponseDTO memberInfo = new MemberResponseDTO.MemberInfoResponseDTO();
-        memberInfo.setMemberEmail(member.getMemberEmail());
-        memberInfo.setMemberName(member.getMemberName());
-        memberInfo.setMemberNickName(member.getMemberNickname());
-        memberInfo.setMemberPhone(member.getMemberPhone());
-        memberInfo.setMemberBirthDate(member.getMemberBirthDate());
-        memberInfo.setMemberHobby(member.getMemberHobby().toString());
-        memberInfo.setMemberEmailAgree(member.getMemberEmailAgree());
-        memberInfo.setMemberSmsAgree(member.getMemberSmsAgree());
-        memberInfo.setMemberImage(member.getMemberImage().getImagePath());
-//        memberInfo.setGrade(member.getMemberGrade());
-        // 회원 정보를 담은 DTO 객체와 200 응답 반환
-        return ResponseEntity.ok(memberInfo);
     }
 
     // 회원정보 수정
     @PatchMapping("/members")
-    public ResponseEntity<ResponseDto<?>> modifyMember(@RequestHeader("Authorization") String authorizationHeader,
-                                                       @RequestBody MemberModifyRequestDTO.ModifyMemberRequestDTO modifyMemberRequestDTO) {
+    public ResponseEntity<?> modifyMember(@RequestHeader("Authorization") String authorizationHeader,@RequestBody MemberModifyRequestDTO.ModifyMemberRequestDTO modifyMemberRequestDTO) {
 
         String token = authorizationHeader.substring(7);
 
@@ -82,13 +60,14 @@ public class MemberController {
                 .getBody();
         String memberEmail = (claims.getSubject());
 
+
         // 회원 정보 수정 요청 처리
-        MemberRequestDto.Login login = new MemberRequestDto.Login();
-        login.setMemberEmail(memberEmail);
-        ResponseDto<?> responseDto = memberService.modifyMember(login, modifyMemberRequestDTO);
+//        MemberRequestDto.Login login = new MemberRequestDto.Login();
+//        login.setMemberEmail(memberEmail);
+//        ResponseDto<?> responseDto = memberService.modifyMember(login, modifyMemberRequestDTO);
 
 
-        return ResponseEntity.ok(responseDto);
+        return memberService.exampleOfUpdate(memberEmail,modifyMemberRequestDTO);
     }
 
     @DeleteMapping("/members")
