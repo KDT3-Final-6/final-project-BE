@@ -12,4 +12,6 @@ public interface QnAService {
 
     void deleteQnA(Long postId, String memberEmail);
 
+    PageResponseDTO getQnAsAdmin(Pageable pageable, String memberEmail);
+
 }

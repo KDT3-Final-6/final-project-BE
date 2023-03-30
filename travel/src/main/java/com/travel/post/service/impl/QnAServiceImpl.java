@@ -6,6 +6,7 @@ import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
 import com.travel.post.dto.request.QnARequsetDTO;
+import com.travel.post.dto.response.QnAAdminResponseDTO;
 import com.travel.post.dto.response.QnAResponseDTO;
 import com.travel.post.entity.InquiryType;
 import com.travel.post.entity.Post;
@@ -80,28 +81,12 @@ public class QnAServiceImpl implements QnAService {
                             .orElse(null);
 
                     if (qnAProductPost != null) {
-                        return QnAResponseDTO.builder()
-                                .postId(qnAProductPost.getPostId())
-                                .postTitle(qnAProductPost.getPostTitle())
-                                .postContent(qnAProductPost.getPostContent())
-                                .inquiryType(qnAProductPost.getInquiryType().getKorean())
-                                .qnAStatus(qnAProductPost.getQnAStatus().getKorean())
-                                .purchasedProductName(qnAProductPost.getPurchasedProduct().getPurchasedProductName())
-                                .createdDate(qnAProductPost.getCreatedDate())
-                                .build();
+                        return qnAProductPost.toQnAResponseDTO();
                     }
 
-                    return QnAResponseDTO.builder()
-                            .postId(qnAPost.getPostId())
-                            .postTitle(qnAPost.getPostTitle())
-                            .postContent(qnAPost.getPostContent())
-                            .inquiryType(qnAPost.getInquiryType().getKorean())
-                            .qnAStatus(qnAPost.getQnAStatus().getKorean())
-                            .createdDate(qnAPost.getCreatedDate())
-                            .build();
+                    return qnAPost.toQnAResponseDTO();
                 })
                 .collect(Collectors.toList());
-
 
         return new PageResponseDTO(new PageImpl<>(qnAPostDTOList, pageable, qnAPostDTOList.size()));
     }
@@ -117,6 +102,35 @@ public class QnAServiceImpl implements QnAService {
         post.setCanceled(true);
 
         postRepository.save(post);
+    }
+
+    @Override
+    public PageResponseDTO getQnAsAdmin(Pageable pageable, String memberEmail) {
+        Member member = memberRepository.findByMemberEmail(memberEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        if (!member.getRoles().contains("ROLE_ADMIN")) {
+            throw new MemberException(MemberExceptionType.MEMBER_IS_NOT_ADMIN);
+        }
+
+        List<QnAPost> qnAPostList = qnARepository.findAll().stream()
+                .filter(qnAPost -> !qnAPost.isCanceled())
+                .collect(Collectors.toList());
+
+        List<QnAAdminResponseDTO> qnAPostDTOList = qnAPostList.stream()
+                .map(qnAPost -> {
+                    QnAProductPost qnAProductPost = qnAProductRepository.findById(qnAPost.getPostId())
+                            .orElse(null);
+
+                    if (qnAProductPost != null) {
+                        return qnAProductPost.toQnAAdminResponseDTO();
+                    }
+
+                    return qnAPost.toQnAAdminResponseDTO();
+                })
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO(new PageImpl<>(qnAPostDTOList, pageable, qnAPostDTOList.size()));
     }
 
     private InquiryType getInquiryType(String inquiry) {
