@@ -9,6 +9,7 @@ import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPatchRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
 import com.travel.product.dto.response.CategoryListGetResponseDTO;
+import com.travel.product.dto.response.ProductDetailGetResponseDTO;
 import com.travel.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -50,18 +51,23 @@ public class AdminController {
         return ResponseEntity.ok(productService.displayProductsByAdmin(pageRequest));
     }
 
+    @GetMapping("/products/{productId}")
+    public ResponseEntity<ProductDetailGetResponseDTO> getProductDetail(@PathVariable Long productId) {
+        return ResponseEntity.ok(productService.displayProductDetail(productId));
+    }
+
     @PostMapping("/products/periods")
     public ResponseEntity<String> postPeriod(@RequestBody @Valid PeriodPostRequestDTO periodPostRequestDTO) {
         productService.createPeriodOptions(periodPostRequestDTO);
         return ResponseEntity.ok(null);
     }
 
-    /**
-     * @param productId
-     * delete지만 실제 db에서는 삭제 하지 않는다
-     * 그냥 Member가 못보게 Status만 숨김으로 변경
-     * @return void
-     */
+    @DeleteMapping("/products/periods/{periodOptionId}")
+    public ResponseEntity<String> deletePeriod(@PathVariable Long periodOptionId) {
+        productService.deletePeriodOption(periodOptionId);
+        return ResponseEntity.ok(null);
+    }
+
     @DeleteMapping("/products/{productId}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);

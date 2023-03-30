@@ -11,10 +11,7 @@ import com.travel.product.dto.request.ProductPostRequestDTO;
 import com.travel.product.dto.response.CategoryListGetResponseDTO;
 import com.travel.product.dto.response.ProductDetailGetResponseDTO;
 import com.travel.product.dto.response.ProductListGetResponseDTO;
-import com.travel.product.entity.Category;
-import com.travel.product.entity.PeriodOption;
-import com.travel.product.entity.Product;
-import com.travel.product.entity.ProductCategory;
+import com.travel.product.entity.*;
 import com.travel.product.exception.ProductException;
 import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.CategoryRepository;
@@ -127,6 +124,14 @@ public class ProductService {
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
         product.updateProduct(productPatchRequestDTO.toEntity(product));
+        if (productPatchRequestDTO.getCategoryIds() != null) {
+            List<Category> categories = categoryRepository.findAllById(productPatchRequestDTO.getCategoryIds());
+            productCategoryRepository.deleteAllByProduct(product);
+            List<ProductCategory> productCategories = IntStream.range(0, categories.size())
+                    .mapToObj(i -> new ProductCategory(product, categories.get(i)))
+                    .collect(toList());
+            productCategoryRepository.saveAll(productCategories);
+        }
     }
 
     public List<CategoryListGetResponseDTO> displayCategories() {
@@ -139,5 +144,13 @@ public class ProductService {
         }
 
         return result;
+    }
+
+    @Transactional
+    public void deletePeriodOption(Long id) {
+        PeriodOption periodOption = periodOptionRepository.findById(id)
+                .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
+
+        periodOption.setPeriodOptionStatus(Status.HIDDEN);
     }
 }

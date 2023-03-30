@@ -5,6 +5,7 @@ import com.travel.product.entity.Status;
 import lombok.Getter;
 
 import javax.validation.constraints.Positive;
+import java.util.List;
 import java.util.Optional;
 
 @Getter
@@ -14,6 +15,7 @@ public class ProductPatchRequestDTO {
     private String productStatus;
     private String productContent;
     private String contentDetail;
+    private List<Long> categoryIds;
 
     @Positive
     private Integer productPrice;
