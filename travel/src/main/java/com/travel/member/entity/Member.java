@@ -51,8 +51,8 @@ public class Member extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Grade memberGrade = Grade.NORMAL;
 
-    @Column(name = "member_authority", nullable = false)
-    private Boolean memberAuthority = false;
+//    @Column(name = "member_authority", nullable = false)
+//    private Boolean memberAuthority = false;
 
     @Column(name = "member_deleteCheck", nullable = false)
     private Boolean memberDeleteCheck = false;
@@ -92,12 +92,12 @@ public class Member extends BaseEntity implements UserDetails {
         return this.memberImage;
     }
 
-    public Boolean isAdmin() {
-        if (this.memberAuthority) {
-            return true;
-        }
-        return false;
-    }
+//    public Boolean isAdmin() {
+//        if (this.memberAuthority) {
+//            return true;
+//        }
+//        return false;
+//    }
 
     // 회원가입 입력
     @Builder

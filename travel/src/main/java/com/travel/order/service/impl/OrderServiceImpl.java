@@ -127,9 +127,9 @@ public class OrderServiceImpl implements OrderService {
         Member member = memberRepository.findByMemberEmail(userEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        if (!member.isAdmin()) {
-            throw new MemberException(MemberExceptionType.MEMBER_IS_NOT_ADMIN);
-        }
+//        if (!member.isAdmin()) {
+//            throw new MemberException(MemberExceptionType.MEMBER_IS_NOT_ADMIN);
+//        }
 
         List<Order> orderList = orderRepository.findAll();
 
@@ -155,9 +155,9 @@ public class OrderServiceImpl implements OrderService {
         Member admin = memberRepository.findByMemberEmail(userEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        if (!admin.isAdmin()) {
-            throw new MemberException(MemberExceptionType.MEMBER_IS_NOT_ADMIN);
-        }
+//        if (!admin.isAdmin()) {
+//            throw new MemberException(MemberExceptionType.MEMBER_IS_NOT_ADMIN);
+//        }
 
         Member member = memberRepository.findById(orderApproveDTO.getMemberId())
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
