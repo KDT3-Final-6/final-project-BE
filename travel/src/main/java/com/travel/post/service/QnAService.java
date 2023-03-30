@@ -1,6 +1,7 @@
 package com.travel.post.service;
 
 import com.travel.global.response.PageResponseDTO;
+import com.travel.post.dto.request.QnAAnswerRequestDTO;
 import com.travel.post.dto.request.QnARequestDTO;
 import org.springframework.data.domain.Pageable;
 
@@ -14,4 +15,5 @@ public interface QnAService {
 
     PageResponseDTO getQnAsAdmin(Pageable pageable, String memberEmail);
 
+    void createAnswer(QnAAnswerRequestDTO qnAAnswerRequestDTO, String memberEmail);
 }

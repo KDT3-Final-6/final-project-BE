@@ -5,15 +5,14 @@ import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
-import com.travel.post.dto.request.QnARequsetDTO;
+import com.travel.post.dto.request.QnAAnswerRequestDTO;
+import com.travel.post.dto.request.QnARequestDTO;
 import com.travel.post.dto.response.QnAAdminResponseDTO;
 import com.travel.post.dto.response.QnAResponseDTO;
-import com.travel.post.entity.InquiryType;
-import com.travel.post.entity.Post;
-import com.travel.post.entity.QnAPost;
-import com.travel.post.entity.QnAProductPost;
+import com.travel.post.entity.*;
 import com.travel.post.exception.PostException;
 import com.travel.post.exception.PostExceptionType;
+import com.travel.post.repository.AnswerRepository;
 import com.travel.post.repository.PostRepository;
 import com.travel.post.repository.QnAProductRepository;
 import com.travel.post.repository.QnARepository;
@@ -42,22 +41,23 @@ public class QnAServiceImpl implements QnAService {
     private final MemberRepository memberRepository;
     private final PurchasedProductRepository purchasedProductRepository;
     private final PostRepository postRepository;
+    private final AnswerRepository answerRepository;
 
     @Override
-    public void createQnA(QnARequsetDTO qnARequsetDTO, String memberEmail) {
+    public void createQnA(QnARequestDTO qnARequestDTO, String memberEmail) {
         Member member = memberRepository.findByMemberEmail(memberEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        InquiryType inquiryType = getInquiryType(qnARequsetDTO.getInquiryType());
+        InquiryType inquiryType = getInquiryType(qnARequestDTO.getInquiryType());
 
-        QnAPost qnAPost = new QnAPost(qnARequsetDTO.getTitle(), qnARequsetDTO.getContent(), member, inquiryType);
+        QnAPost qnAPost = new QnAPost(qnARequestDTO.getTitle(), qnARequestDTO.getContent(), member, inquiryType);
 
         if (inquiryType.equals(InquiryType.PRODUCT)) {
-            if (qnARequsetDTO.getPurchasedProductId() == null) {
+            if (qnARequestDTO.getPurchasedProductId() == null) {
                 throw new PostException(PostExceptionType.PRODUCT_INQUIRY_REQUIRES_PRODUCT_NUM);
             }
 
-            PurchasedProduct purchasedProduct = purchasedProductRepository.findById(qnARequsetDTO.getPurchasedProductId())
+            PurchasedProduct purchasedProduct = purchasedProductRepository.findById(qnARequestDTO.getPurchasedProductId())
                     .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
             qnAProductRepository.save(new QnAProductPost(qnAPost, purchasedProduct));
@@ -131,6 +131,26 @@ public class QnAServiceImpl implements QnAService {
                 .collect(Collectors.toList());
 
         return new PageResponseDTO(new PageImpl<>(qnAPostDTOList, pageable, qnAPostDTOList.size()));
+    }
+
+    @Override
+    public void createAnswer(QnAAnswerRequestDTO qnAAnswerRequestDTO, String memberEmail) {
+        Member member = memberRepository.findByMemberEmail(memberEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        if (!member.getRoles().contains("ROLE_ADMIN")) {
+            throw new MemberException(MemberExceptionType.MEMBER_IS_NOT_ADMIN);
+        }
+
+        QnAPost qnAPost = qnARepository.findById(qnAAnswerRequestDTO.getPostId())
+                .orElseThrow(() -> new PostException(PostExceptionType.POST_NOT_FOUND));
+
+        qnAPost.setQnAStatus(QnAStatus.ANSWER_COMPLETE);
+
+        answerRepository.save(AnswerPost.builder()
+                .answerContent(qnAAnswerRequestDTO.getContent())
+                .qnAPost(qnAPost)
+                .build());
     }
 
     private InquiryType getInquiryType(String inquiry) {
