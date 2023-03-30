@@ -15,6 +15,8 @@ import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
 import com.travel.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -65,11 +68,17 @@ public class MemberServiceImpl implements MemberService {
 
     // optional을 안쓸꺼면 orElse 를 써서 예외처리를 해주거나
     @Override
-    public Member getMemberByMemberEmail(String email) {
-        return memberRepository.findByMemberEmail(email)
-                .orElseThrow(() -> new ResourceAccessException((email)));
+    public ResponseEntity<MemberResponseDTO.MemberInfoResponseDTO> getMemberByMemberEmail(String email) {
+        try {
+            Member member = memberRepository.findByMemberEmail(email).orElseThrow(NoSuchElementException::new);
+            return new ResponseEntity<>(new MemberResponseDTO.MemberInfoResponseDTO(member),HttpStatus.OK);
+
+        }catch (NoSuchElementException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
+    @Transactional
     @Override
     public ResponseDto<?> modifyMember(MemberRequestDto.Login login, MemberModifyRequestDTO.ModifyMemberRequestDTO modifyMemberRequestDTO) {
         try {
@@ -82,11 +91,13 @@ public class MemberServiceImpl implements MemberService {
 
             // 회원 정보를 업데이트합니다.
             member.setMemberPassword(encodingPassword(modifyMemberRequestDTO.getMemberRenewPassword()));
+            member.setMemberPassword(modifyMemberRequestDTO.getMemberPassword());
             member.setMemberNickname(modifyMemberRequestDTO.getMemberNickname());
             member.setMemberHobby(modifyMemberRequestDTO.getMemberHobby());
             member.setMemberPhone(modifyMemberRequestDTO.getMemberPhone());
             member.setMemberSmsAgree(modifyMemberRequestDTO.getMemberSmsAgree());
             member.setMemberEmailAgree(modifyMemberRequestDTO.getMemberEmailAgree());
+            member.setMemberImage(modifyMemberRequestDTO.getMemberImage());
 
             memberRepository.save(member);
 
@@ -108,6 +119,19 @@ public class MemberServiceImpl implements MemberService {
         MemberImage memberImage = member.addImage(newProfile);
 
         memberImageRepository.save(memberImage);
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> exampleOfUpdate(String email, MemberModifyRequestDTO.ModifyMemberRequestDTO dto) {
+        try {
+            Member member = memberRepository.findByMemberEmail(email).orElseThrow(NoSuchElementException::new);
+            dto.setMemberRenewPassword(encodingPassword(dto.getMemberRenewPassword()));
+            member.update(dto);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override
