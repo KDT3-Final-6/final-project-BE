@@ -18,15 +18,15 @@ import com.travel.post.repository.QnAProductRepository;
 import com.travel.post.repository.QnARepository;
 import com.travel.post.service.QnAService;
 import com.travel.product.entity.PurchasedProduct;
-import com.travel.product.entity.Status;
 import com.travel.product.exception.ProductException;
 import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.PurchasedProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -63,6 +63,47 @@ public class QnAServiceImpl implements QnAService {
         } else {
             qnARepository.save(qnAPost);
         }
+    }
+
+    @Override
+    public PageResponseDTO getQnAs(Pageable pageable, String memberEmail) {
+        Member member = memberRepository.findByMemberEmail(memberEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        List<QnAPost> qnAPostList = qnARepository.findByMember(member).stream()
+                .filter(qnAPost -> !qnAPost.isCanceled())
+                .collect(Collectors.toList());
+
+        List<QnAResponseDTO> qnAPostDTOList = qnAPostList.stream()
+                .map(qnAPost -> {
+                    QnAProductPost qnAProductPost = qnAProductRepository.findById(qnAPost.getPostId())
+                            .orElse(null);
+
+                    if (qnAProductPost != null) {
+                        return QnAResponseDTO.builder()
+                                .postId(qnAProductPost.getPostId())
+                                .postTitle(qnAProductPost.getPostTitle())
+                                .postContent(qnAProductPost.getPostContent())
+                                .inquiryType(qnAProductPost.getInquiryType().getKorean())
+                                .qnAStatus(qnAProductPost.getQnAStatus().getKorean())
+                                .purchasedProductName(qnAProductPost.getPurchasedProduct().getPurchasedProductName())
+                                .createdDate(qnAProductPost.getCreatedDate())
+                                .build();
+                    }
+
+                    return QnAResponseDTO.builder()
+                            .postId(qnAPost.getPostId())
+                            .postTitle(qnAPost.getPostTitle())
+                            .postContent(qnAPost.getPostContent())
+                            .inquiryType(qnAPost.getInquiryType().getKorean())
+                            .qnAStatus(qnAPost.getQnAStatus().getKorean())
+                            .createdDate(qnAPost.getCreatedDate())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+
+        return new PageResponseDTO(new PageImpl<>(qnAPostDTOList, pageable, qnAPostDTOList.size()));
     }
 
     @Override
