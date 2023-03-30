@@ -1,6 +1,6 @@
 package com.travel.post.controller;
 
-import com.travel.post.dto.QnARequsetDTO;
+import com.travel.post.dto.request.QnARequsetDTO;
 import com.travel.post.service.QnAService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

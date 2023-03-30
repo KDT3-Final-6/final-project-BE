@@ -1,14 +1,10 @@
 package com.travel.post.entity;
 
 
-import com.travel.member.entity.Member;
-import com.travel.order.entity.Order;
 import com.travel.product.entity.PurchasedProduct;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
@@ -24,7 +20,7 @@ public class QnAProductPost extends QnAPost {
     private PurchasedProduct purchasedProduct;
 
     public QnAProductPost(QnAPost qnAPost, PurchasedProduct purchasedProduct) {
-        super(qnAPost.getTitle(), qnAPost.getContent(), qnAPost.getMember(), qnAPost.getInquiryType());
+        super(qnAPost.getPostTitle(), qnAPost.getPostContent(), qnAPost.getMember(), qnAPost.getInquiryType());
         this.purchasedProduct = purchasedProduct;
     }
 }

@@ -1,11 +1,11 @@
 package com.travel.post.service;
 
-import com.travel.post.dto.QnACreateDTO;
+import com.travel.post.dto.request.QnARequsetDTO;
 
 public interface QnAService {
 
-    void createQnA(QnACreateDTO qnACreateDTO, String memberEmail);
+    void createQnA(QnARequsetDTO qnARequsetDTO, String memberEmail);
 
-    void deleteQnA(Long postId,String memberEmail);
+    void deleteQnA(Long postId, String memberEmail);
 
 }

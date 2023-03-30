@@ -1,4 +1,4 @@
-package com.travel.post.dto;
+package com.travel.post.dto.request;
 
 import lombok.Getter;
 

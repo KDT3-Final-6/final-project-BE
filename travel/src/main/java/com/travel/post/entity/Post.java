@@ -20,10 +20,10 @@ public class Post extends BaseEntityWithMemberAndDates {
     private Long postId;
 
     @Column(name = "post_title")
-    private String title;
+    private String postTitle;
 
     @Column(name = "post_content")
-    private String content;
+    private String postContent;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -34,9 +34,9 @@ public class Post extends BaseEntityWithMemberAndDates {
     private boolean isCanceled = false;
 
     @Builder
-    public Post(String title, String content, Member member) {
-        this.title = title;
-        this.content = content;
+    public Post(String postTitle, String postContent, Member member) {
+        this.postTitle = postTitle;
+        this.postContent = postContent;
         this.member = member;
     }
 }
