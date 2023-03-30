@@ -135,23 +135,36 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Boolean deleteMember(DeleteMemberDTO delete) {
+    public ResponseEntity<?> deleteMember(String email, DeleteMemberDTO deleteMemberDTO) {
         try {
-            Member member = memberRepository.findByMemberEmail(delete.getMemberEmail())
-                    .orElseThrow(() -> new IllegalArgumentException("해당 이메일 주소로 가입한 회원이 존재하지 않습니다."));
-
-            // 비밀번호 일치 여부 확인
-            if (!passwordEncoder.matches(delete.getMemberPassword(), member.getPassword())) {
-                throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-            }
-
+            Member member = memberRepository.findByMemberEmail(email).orElseThrow(NoSuchElementException::new);
+            deleteMemberDTO.setMemberPassword(encodingPassword(deleteMemberDTO.getMemberPassword()));
             member.setMemberDeleteCheck(true);
             memberRepository.save(member);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+//    @Override
+//    public Boolean deleteMember(DeleteMemberDTO delete) {
+//        try {
+//            Member member = memberRepository.findByMemberEmail(delete.getMemberEmail())
+//                    .orElseThrow(() -> new IllegalArgumentException("해당 이메일 주소로 가입한 회원이 존재하지 않습니다."));
+//
+//            // 비밀번호 일치 여부 확인
+//            if (!passwordEncoder.matches(delete.getMemberPassword(), member.getPassword())) {
+//                throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+//            }
+//
+//            member.setMemberDeleteCheck(true);
+//            memberRepository.save(member);
+//            return true;
+//        } catch (IllegalArgumentException e) {
+//            return false;
+//        }
+//    }
 
 
     private void passwordCheck(String checkMemberPassword, String memberPassword) {
