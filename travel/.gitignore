@@ -39,5 +39,8 @@ out/
 ### application.properties ###.properties
 /src/main/resources/*.properties
 
+### logback ###
+/src/main/resources/logback-spring.xml
+
 ### For DB Test Data ###
 src/main/java/com/travel/InitDb.java
