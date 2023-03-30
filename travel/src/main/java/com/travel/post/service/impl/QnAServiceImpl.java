@@ -6,10 +6,12 @@ import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
 import com.travel.post.dto.QnACreateDTO;
 import com.travel.post.entity.InquiryType;
+import com.travel.post.entity.Post;
 import com.travel.post.entity.QnAPost;
 import com.travel.post.entity.QnAProductPost;
 import com.travel.post.exception.PostException;
 import com.travel.post.exception.PostExceptionType;
+import com.travel.post.repository.PostRepository;
 import com.travel.post.repository.QnAProductRepository;
 import com.travel.post.repository.QnARepository;
 import com.travel.post.service.QnAService;
@@ -32,6 +34,7 @@ public class QnAServiceImpl implements QnAService {
     private final QnAProductRepository qnAProductRepository;
     private final MemberRepository memberRepository;
     private final PurchasedProductRepository purchasedProductRepository;
+    private final PostRepository postRepository;
 
     @Override
     public void createQnA(QnACreateDTO qnACreateDTO, String memberEmail) {
@@ -54,6 +57,19 @@ public class QnAServiceImpl implements QnAService {
         } else {
             qnARepository.save(qnAPost);
         }
+    }
+
+    @Override
+    public void deleteQnA(Long postId, String memberEmail) {
+        Member member = memberRepository.findByMemberEmail(memberEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        Post post = postRepository.findByMemberAndPostId(member, postId)
+                .orElseThrow(() -> new PostException(PostExceptionType.POST_NOT_FOUND));
+
+        post.setCanceled(true);
+
+        postRepository.save(post);
     }
 
     private InquiryType getInquiryType(String inquiry) {
