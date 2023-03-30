@@ -3,7 +3,7 @@ package com.travel.post.controller;
 import com.travel.global.exception.GlobalException;
 import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
-import com.travel.post.dto.request.QnARequsetDTO;
+import com.travel.post.dto.request.QnARequestDTO;
 import com.travel.post.service.QnAService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -20,8 +20,8 @@ public class QnAController {
     private final QnAService qnAService;
 
     @PostMapping
-    public ResponseEntity<Void> createQnA(@RequestBody QnARequsetDTO qnARequsetDTO, Authentication authentication) {
-        qnAService.createQnA(qnARequsetDTO, authentication.getName());
+    public ResponseEntity<Void> createQnA(@RequestBody QnARequestDTO qnARequestDTO, Authentication authentication) {
+        qnAService.createQnA(qnARequestDTO, authentication.getName());
 
         return ResponseEntity.ok(null);
     }
