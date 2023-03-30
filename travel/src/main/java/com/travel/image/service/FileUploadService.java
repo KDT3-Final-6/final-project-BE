@@ -79,6 +79,7 @@ public class FileUploadService {
             objMeta.setContentType(contentType);
             objMeta.setContentLength(multipartFile.getInputStream().available()); //파일의 사이즈 S3에 알려주기
             amazonS3.putObject(bucket, s3FileName, multipartFile.getInputStream(), objMeta); //S3 API 메소드 이용해서 S3에 파일 업로드
+            multipartFile.getInputStream().close();
         } catch (AmazonServiceException e) {
             e.printStackTrace();
         } catch (SdkClientException e) {

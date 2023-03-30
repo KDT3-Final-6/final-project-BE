@@ -61,6 +61,7 @@ public class MemberController {
         memberInfo.setMemberHobby(member.getMemberHobby().toString());
         memberInfo.setMemberEmailAgree(member.getMemberEmailAgree());
         memberInfo.setMemberSmsAgree(member.getMemberSmsAgree());
+        memberInfo.setMemberImage(member.getMemberImage().getImagePath());
 //        memberInfo.setGrade(member.getMemberGrade());
         // 회원 정보를 담은 DTO 객체와 200 응답 반환
         return ResponseEntity.ok(memberInfo);
