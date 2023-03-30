@@ -5,7 +5,7 @@ import lombok.Getter;
 import javax.validation.constraints.NotEmpty;
 
 @Getter
-public class QnARequsetDTO {
+public class QnARequestDTO {
 
     @NotEmpty
     private String title;
