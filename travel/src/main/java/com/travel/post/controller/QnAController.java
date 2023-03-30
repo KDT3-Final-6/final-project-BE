@@ -1,6 +1,6 @@
 package com.travel.post.controller;
 
-import com.travel.post.dto.QnACreateDTO;
+import com.travel.post.dto.QnARequsetDTO;
 import com.travel.post.service.QnAService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +15,14 @@ public class QnAController {
     private final QnAService qnAService;
 
     @PostMapping
-    public ResponseEntity<Void> createQnA(@RequestBody QnACreateDTO qnACreateDTO, Authentication authentication) {
-        qnAService.createQnA(qnACreateDTO, authentication.getName());
+    public ResponseEntity<Void> createQnA(@RequestBody QnARequsetDTO qnARequsetDTO, Authentication authentication) {
+        qnAService.createQnA(qnARequsetDTO, authentication.getName());
 
         return ResponseEntity.ok(null);
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> createQnA(@PathVariable Long postId, Authentication authentication) {
+    public ResponseEntity<Void> deleteQnA(@PathVariable Long postId, Authentication authentication) {
         qnAService.deleteQnA(postId, authentication.getName());
 
         return ResponseEntity.ok(null);
