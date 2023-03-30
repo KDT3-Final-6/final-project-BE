@@ -1,6 +1,7 @@
 package com.travel.member.dto.responseDTO;
 
 import com.travel.member.entity.Grade;
+import com.travel.member.entity.Hobby;
 import com.travel.member.entity.Member;
 import lombok.*;
 
@@ -18,20 +19,30 @@ public class MemberResponseDTO {
         private String memberNickName;
         private String memberPhone;
         private String memberBirthDate;
-        private String memberHobby;
+        private Hobby memberHobby;
         private Boolean memberSmsAgree;
         private Boolean memberEmailAgree;
-//        private Grade grade;
+        private Grade memberGrade;
         private String memberImage;
 
         public MemberInfoResponseDTO(Member member) {
+            this.memberEmail = member.getMemberEmail();
+            this.memberName = member.getMemberName();
+            this.memberNickName = member.getMemberNickname();
+            this.memberPhone = member.getMemberPhone();
+            this.memberBirthDate = member.getMemberBirthDate();
+            this.memberHobby = member.getMemberHobby();
+            this.memberSmsAgree = member.getMemberSmsAgree();
+            this.memberEmailAgree = member.getMemberEmailAgree();
+            this.memberGrade = member.getMemberGrade();
+            this.memberImage = member.getMemberImage().getImagePath();
         }
+
+
 
         public String getMemberEmail() {
             return memberEmail;
         }
-
-
         public String getMemberName() {
             return memberName;
         }
@@ -48,7 +59,7 @@ public class MemberResponseDTO {
             return memberBirthDate;
         }
 
-        public String getMemberHobby() {
+        public Hobby getMemberHobby() {
             return memberHobby;
         }
         public Boolean getMemberSmsAgree() {
@@ -59,6 +70,9 @@ public class MemberResponseDTO {
             return memberEmailAgree;
         }
 
+        public Grade getMemberGrade() {
+            return memberGrade;
+        }
     }
 
 
