@@ -16,6 +16,8 @@ import com.travel.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -136,7 +138,7 @@ public class MemberService {
         Long expireToken = jwtTokenProvider.getExpiration(logout.getAccessToken());
         redisTemplate.opsForValue().set(logout.getAccessToken(), "logout", expireToken, TimeUnit.MILLISECONDS);
 
-        return new ResponseDto<>("로그아웃 되었습니다.");
+        return new ResponseDto<>(HttpStatus.OK);
     }
 
     public ResponseDto<?> authority() {
