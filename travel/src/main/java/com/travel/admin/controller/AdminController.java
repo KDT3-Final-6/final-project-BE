@@ -5,6 +5,7 @@ import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.order.dto.request.OrderApproveDTO;
 import com.travel.order.service.OrderService;
+import com.travel.post.dto.request.QnAAnswerRequestDTO;
 import com.travel.post.service.QnAService;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPatchRequestDTO;
@@ -121,5 +122,12 @@ public class AdminController {
         PageResponseDTO pageResponseDTO = qnAService.getQnAsAdmin(pageRequest, authentication.getName());
 
         return ResponseEntity.ok(pageResponseDTO);
+    }
+
+    @PostMapping("/qna/answers")
+    public ResponseEntity<Void> createAnswer(@RequestBody QnAAnswerRequestDTO qnAAnswerRequestDTO, Authentication authentication) {
+        qnAService.createAnswer(qnAAnswerRequestDTO, authentication.getName());
+
+        return ResponseEntity.ok(null);
     }
 }
