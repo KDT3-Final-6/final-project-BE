@@ -14,6 +14,7 @@ import com.travel.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -88,21 +89,21 @@ public class AdminController {
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<PageResponseDTO> getOrders(@RequestParam(required = false, defaultValue = "1") int page, String userEmail) {
+    public ResponseEntity<PageResponseDTO> getOrders(@RequestParam(required = false, defaultValue = "1") int page, Authentication authentication) {
         if (page < 1) {
             throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
 
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
 
-        PageResponseDTO orders = orderService.getOrdersAdmin(pageRequest, userEmail);
+        PageResponseDTO orders = orderService.getOrdersAdmin(pageRequest, authentication.getName());
 
         return ResponseEntity.ok(orders);
     }
 
     @PatchMapping("/orders/approvals/{orderId}")
-    public ResponseEntity<Void> approveOrder(@PathVariable Long orderId, @RequestBody OrderApproveDTO orderApproveDTO, String userEmail) {
-        orderService.approveOrder(orderId, orderApproveDTO, userEmail);
+    public ResponseEntity<Void> approveOrder(@PathVariable Long orderId, @RequestBody OrderApproveDTO orderApproveDTO, Authentication authentication) {
+        orderService.approveOrder(orderId, orderApproveDTO, authentication.getName());
 
         return ResponseEntity.ok(null);
     }
