@@ -1,8 +1,10 @@
 package com.travel.member.entity;
 
 import com.travel.global.entity.BaseEntity;
+import com.travel.global.entity.BaseEntityWithModifiedDate;
 import com.travel.image.entity.Image;
 import com.travel.image.entity.MemberImage;
+import com.travel.member.dto.requestDTO.MemberModifyRequestDTO;
 import com.travel.order.entity.Order;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 @Entity
 @Setter
 @Table(name = "member")
-public class Member extends BaseEntity implements UserDetails {
+public class Member extends BaseEntityWithModifiedDate implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
@@ -51,8 +53,8 @@ public class Member extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Grade memberGrade = Grade.NORMAL;
 
-    @Column(name = "member_authority", nullable = false)
-    private Boolean memberAuthority = false;
+//    @Column(name = "member_authority", nullable = false)
+//    private Boolean memberAuthority = false;
 
     @Column(name = "member_deleteCheck", nullable = false)
     private Boolean memberDeleteCheck = false;
@@ -92,12 +94,12 @@ public class Member extends BaseEntity implements UserDetails {
         return this.memberImage;
     }
 
-    public Boolean isAdmin() {
-        if (this.memberAuthority) {
-            return true;
-        }
-        return false;
-    }
+//    public Boolean isAdmin() {
+//        if (this.memberAuthority) {
+//            return true;
+//        }
+//        return false;
+//    }
 
     // 회원가입 입력
     @Builder
@@ -150,15 +152,17 @@ public class Member extends BaseEntity implements UserDetails {
         return true;
     }
 
-    public void update(String memberPassword, String memberPhone, String memberNickname, Hobby memberHobby) {
-        this.memberPassword = memberPassword;
-        this.memberPhone = memberPhone;
-        this.memberNickname = memberNickname;
-        this.memberHobby = memberHobby;
-    }
 
     public void delete() {
         this.memberDeleteCheck = true;
     }
 
+    public void update(MemberModifyRequestDTO.ModifyMemberRequestDTO dto){
+        this.memberPassword=dto.getMemberRenewPassword();
+        this.memberNickname = dto.getMemberNickname();
+        this.memberPhone = dto.getMemberPhone();
+        this.memberHobby = dto.getMemberHobby();
+        this.memberSmsAgree = dto.getMemberSmsAgree();
+        this.memberEmailAgree = dto.getMemberEmailAgree();
+    }
 }
