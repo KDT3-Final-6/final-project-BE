@@ -2,11 +2,7 @@ package com.travel.post.entity;
 
 import com.travel.global.entity.BaseEntityWithMemberAndDates;
 import com.travel.member.entity.Member;
-import com.travel.product.entity.Product;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -32,6 +28,10 @@ public class Post extends BaseEntityWithMemberAndDates {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Setter
+    @Column(name = "is_Canceled")
+    private boolean isCanceled = false;
 
     @Builder
     public Post(String title, String content, Member member) {

@@ -5,10 +5,7 @@ import com.travel.post.service.QnAService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/qna")
@@ -20,6 +17,13 @@ public class QnAController {
     @PostMapping
     public ResponseEntity<Void> createQnA(@RequestBody QnACreateDTO qnACreateDTO, Authentication authentication) {
         qnAService.createQnA(qnACreateDTO, authentication.getName());
+
+        return ResponseEntity.ok(null);
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> createQnA(@PathVariable Long postId, Authentication authentication) {
+        qnAService.deleteQnA(postId, authentication.getName());
 
         return ResponseEntity.ok(null);
     }
