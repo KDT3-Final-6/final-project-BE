@@ -22,6 +22,7 @@ public class MemberResponseDTO {
         private Boolean memberSmsAgree;
         private Boolean memberEmailAgree;
 //        private Grade grade;
+        private String memberImage;
 
         public MemberInfoResponseDTO(Member member) {
         }
