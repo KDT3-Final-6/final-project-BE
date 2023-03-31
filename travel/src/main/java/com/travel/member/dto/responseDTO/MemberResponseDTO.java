@@ -5,6 +5,8 @@ import com.travel.member.entity.Hobby;
 import com.travel.member.entity.Member;
 import lombok.*;
 
+import java.util.List;
+
 public class MemberResponseDTO {
 
     @Getter
@@ -19,7 +21,7 @@ public class MemberResponseDTO {
         private String memberNickName;
         private String memberPhone;
         private String memberBirthDate;
-        private Hobby memberHobby;
+        private List<Hobby> memberHobby;
         private Boolean memberSmsAgree;
         private Boolean memberEmailAgree;
         private Grade memberGrade;
@@ -59,7 +61,7 @@ public class MemberResponseDTO {
             return memberBirthDate;
         }
 
-        public Hobby getMemberHobby() {
+        public List<Hobby> getMemberHobby() {
             return memberHobby;
         }
         public Boolean getMemberSmsAgree() {
