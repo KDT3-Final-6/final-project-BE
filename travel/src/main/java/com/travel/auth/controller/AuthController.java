@@ -53,7 +53,7 @@ public class AuthController {
         return ResponseEntity.ok("로그아웃 성공");
     }
     @GetMapping("/authority")
-    public ResponseDto<?> authority() {
+    public ResponseEntity<?> authority() {
         log.info("ADD ROLE_ADMIN");
         return memberService.authority();
     }

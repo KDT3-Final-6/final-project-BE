@@ -145,8 +145,7 @@ public class MemberService {
         return new ResponseDto<>(HttpStatus.OK);
     }
 
-    public ResponseDto<?> authority() {
-        // SecurityContext에 담겨 있는 authentication userEamil 정보
+    public ResponseEntity<?> authority() {
         String memberEmail = SecurityUtil.getCurrentUserEmail();
 
         Member member = memberRepository.findByMemberEmail(memberEmail)
@@ -156,7 +155,7 @@ public class MemberService {
         member.getRoles().add(Authority.ROLE_ADMIN.name());
         memberRepository.save(member);
 
-        return new ResponseDto<>(ResponseDto.empty());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     public boolean checkToken(String token) {
