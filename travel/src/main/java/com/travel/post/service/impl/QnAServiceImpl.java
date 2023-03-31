@@ -15,7 +15,7 @@ import com.travel.post.exception.PostExceptionType;
 import com.travel.post.repository.AnswerRepository;
 import com.travel.post.repository.PostRepository;
 import com.travel.post.repository.QnAProductRepository;
-import com.travel.post.repository.QnARepository;
+import com.travel.post.repository.qnapost.QnARepository;
 import com.travel.post.service.QnAService;
 import com.travel.product.entity.PurchasedProduct;
 import com.travel.product.exception.ProductException;
@@ -123,7 +123,7 @@ public class QnAServiceImpl implements QnAService {
         List<QnAAdminResponseDTO> qnAPostDTOList = qnAPostList.stream()
                 .map(qnAPost -> {
                     AnswerPost answerPost = answerRepository.findByQnAPost(qnAPost)
-                                                .orElse(null);
+                            .orElse(null);
 
                     QnAProductPost qnAProductPost = qnAProductRepository.findById(qnAPost.getPostId())
                             .orElse(null);
@@ -160,15 +160,10 @@ public class QnAServiceImpl implements QnAService {
     }
 
     private InquiryType getInquiryType(String inquiry) {
-        InquiryType inquiryType = Stream.of(InquiryType.values())
+
+        return Stream.of(InquiryType.values())
                 .filter(type -> inquiry.equals(type.getKorean()))
                 .findFirst()
-                .orElse(null);
-
-        if (inquiryType == null) {
-            throw new PostException(PostExceptionType.INQUIRTY_TYPE_NOT_FOUND);
-        }
-
-        return inquiryType;
+                .orElseThrow(() -> new PostException(PostExceptionType.INQUIRTY_TYPE_NOT_FOUND));
     }
 }
