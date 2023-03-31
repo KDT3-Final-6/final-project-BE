@@ -16,4 +16,6 @@ public interface QnAService {
     PageResponseDTO getQnAsAdmin(Pageable pageable, String memberEmail);
 
     void createAnswer(QnAAnswerRequestDTO qnAAnswerRequestDTO, String memberEmail);
+
+    void updateAnswer(QnAAnswerRequestDTO qnAAnswerRequestDTO);
 }

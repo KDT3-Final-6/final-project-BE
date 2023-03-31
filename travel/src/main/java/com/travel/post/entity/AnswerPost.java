@@ -1,10 +1,6 @@
 package com.travel.post.entity;
 
-import com.travel.product.entity.PurchasedProduct;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -19,6 +15,7 @@ public class AnswerPost {
     @Column(name = "answer_id")
     private Long answerId;
 
+    @Setter
     @Column(name = "answer_content")
     private String answerContent;
 

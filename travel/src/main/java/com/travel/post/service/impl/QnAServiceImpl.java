@@ -159,6 +159,19 @@ public class QnAServiceImpl implements QnAService {
                 .build());
     }
 
+    @Override
+    public void updateAnswer(QnAAnswerRequestDTO qnAAnswerRequestDTO) {
+        QnAPost qnAPost = qnARepository.findById(qnAAnswerRequestDTO.getPostId())
+                .orElseThrow(() -> new PostException(PostExceptionType.POST_NOT_FOUND));
+
+        AnswerPost answerPost = answerRepository.findByQnAPost(qnAPost)
+                .orElseThrow(() -> new PostException(PostExceptionType.POST_NOT_FOUND));
+
+        answerPost.setAnswerContent(qnAAnswerRequestDTO.getContent());
+
+        answerRepository.save(answerPost);
+    }
+
     private InquiryType getInquiryType(String inquiry) {
 
         return Stream.of(InquiryType.values())
