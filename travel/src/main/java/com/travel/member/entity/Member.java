@@ -74,6 +74,10 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "member")
     private MemberImage memberImage;
 
+    @Setter
+    @Column(name = "is_non_members")
+    private boolean isNonMembers = false;
+
     @Column
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default

@@ -8,6 +8,7 @@ import com.travel.member.repository.MemberRepository;
 import com.travel.order.dto.request.OrderApproveDTO;
 import com.travel.order.dto.request.OrderCreateDTO;
 import com.travel.order.dto.request.OrderCreateListDTO;
+import com.travel.order.dto.request.OrderNonMemberCreateDTO;
 import com.travel.order.dto.response.OrderAdminResponseDTO;
 import com.travel.order.dto.response.OrderListAdminResponseDTO;
 import com.travel.order.dto.response.OrderListResponseDTO;
@@ -56,29 +57,12 @@ public class OrderServiceImpl implements OrderService {
         Member member = memberRepository.findByMemberEmail(userEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        List<OrderCreateDTO> createList = orderCreateListDTO.getProductIds();
-
-        List<PurchasedProduct> purchasedProductList = createList.stream()
-                .map(createDTO -> {
-                    Integer quantity = createDTO.getQuantity();
-
-                    Product product = productRepository.findById(createDTO.getProductId())
-                            .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
-                    PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, createDTO.getPeriodOptionId())
-                            .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
-
-                    if (periodOption.getPeriodOptionStatus() != Status.FORSALE) {
-                        throw new OrderException(OrderExceptionType.PRODUCTS_CANNOT_BE_ORDERED);
-                    }
-
-                    return updateQuantity(quantity, product, periodOption);
-                })
-                .collect(Collectors.toList());
+        List<PurchasedProduct> purchasedProductList = getPurchasedProducts(orderCreateListDTO.getProductIds());
 
         Order order = Order.builder()
                 .member(member)
                 .purchasedProducts(purchasedProductList)
-                .paymentMethod(getPaymentMethod(orderCreateListDTO))
+                .paymentMethod(getPaymentMethod(orderCreateListDTO.getPaymentMethod()))
                 .build();
 
         purchasedProductList.forEach(purchasedProduct -> purchasedProduct.setOrder(order));
@@ -170,6 +154,55 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
     }
 
+    @Override
+    public void createOrderNonMember(OrderNonMemberCreateDTO orderNonMemberCreateDTO) {
+        String memberEmail = null;
+        if (orderNonMemberCreateDTO.getMemberEmail() != null) {
+            memberEmail = orderNonMemberCreateDTO.getMemberEmail();
+        }
+
+        Member member = Member.builder()
+                .memberName(orderNonMemberCreateDTO.getMemberName())
+                .memberPhone(orderNonMemberCreateDTO.getMemberPhone())
+                .memberEmail(memberEmail)
+                .build();
+
+        member.setNonMembers(true);
+
+        memberRepository.save(member);
+
+
+        List<PurchasedProduct> purchasedProductList = getPurchasedProducts(orderNonMemberCreateDTO.getProductIds());
+
+        Order order = Order.builder()
+                .member(member)
+                .purchasedProducts(purchasedProductList)
+                .paymentMethod(getPaymentMethod(orderNonMemberCreateDTO.getPaymentMethod()))
+                .build();
+
+        purchasedProductList.forEach(purchasedProduct -> purchasedProduct.setOrder(order));
+
+        orderRepository.save(order);
+    }
+
+    private List<PurchasedProduct> getPurchasedProducts(List<OrderCreateDTO> orderCreateDTOList) {
+        return orderCreateDTOList.stream()
+                .map(createDTO -> {
+                    Integer quantity = createDTO.getQuantity();
+
+                    Product product = productRepository.findById(createDTO.getProductId())
+                            .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
+                    PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, createDTO.getPeriodOptionId())
+                            .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
+
+                    if (periodOption.getPeriodOptionStatus() != Status.FORSALE) {
+                        throw new OrderException(OrderExceptionType.PRODUCTS_CANNOT_BE_ORDERED);
+                    }
+
+                    return updateQuantity(quantity, product, periodOption);
+                })
+                .collect(Collectors.toList());
+    }
 
     private PurchasedProduct updateQuantity(Integer quantity, Product product, PeriodOption periodOption) {
         Integer periodOptionSoldQuantity = periodOption.getSoldQuantity();
@@ -184,9 +217,9 @@ public class OrderServiceImpl implements OrderService {
         return product.toPurchase(periodOption, quantity);
     }
 
-    private PaymentMethod getPaymentMethod(OrderCreateListDTO orderCreateListDTO) {
+    private PaymentMethod getPaymentMethod(String paymentMethod) {
         return Stream.of(PaymentMethod.values())
-                .filter(paymentMethod -> orderCreateListDTO.getPaymentMethod().equals(paymentMethod.getKorean()))
+                .filter(payment -> paymentMethod.equals(payment.getKorean()))
                 .findFirst()
                 .orElse(null);
     }

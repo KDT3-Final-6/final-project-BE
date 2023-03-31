@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/qna")
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class QnAController {
     private final QnAService qnAService;
 
     @PostMapping
-    public ResponseEntity<Void> createQnA(@RequestBody QnARequestDTO qnARequestDTO, Authentication authentication) {
+    public ResponseEntity<Void> createQnA(@Valid @RequestBody QnARequestDTO qnARequestDTO, Authentication authentication) {
         qnAService.createQnA(qnARequestDTO, authentication.getName());
 
         return ResponseEntity.ok(null);

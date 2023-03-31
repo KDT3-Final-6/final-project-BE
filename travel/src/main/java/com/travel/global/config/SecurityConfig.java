@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -37,9 +38,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/members", "/login", "/authority", "/reissue", "/members/logout", "/search/**").permitAll()
-                .antMatchers("/userTest").hasRole("USER")
-                .antMatchers("/adminTest", "/admins/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/members").permitAll()
+                .antMatchers("/login", "/reissue", "/members/logout", "/search/**", "/non-members/**", "/products/**").permitAll()
+                .antMatchers("/carts/**", "/members", "/orders/**", "/qna/**", "/wishlist/**").hasRole("USER")
+                .antMatchers("/admins/**","/authority/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, redisTemplate), UsernamePasswordAuthenticationFilter.class);
