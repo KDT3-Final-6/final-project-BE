@@ -3,6 +3,8 @@ package com.travel.global.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -26,7 +28,16 @@ public class CustomExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException e) {
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-        String errorMsg = "잘못된 값입니다.";
+        BindingResult bindingResult = e.getBindingResult();
+
+        StringBuilder builder = new StringBuilder();
+        for (FieldError fieldError : bindingResult.getFieldErrors()) {
+            builder.append(fieldError.getDefaultMessage());
+            builder.append(" 입력된 값: [");
+            builder.append(fieldError.getRejectedValue());
+            builder.append("]");
+        }
+        String errorMsg = builder.toString();
 
         log.error("--------------------------------");
         log.error("StackTrace = {} ", (Object) e.getStackTrace());
