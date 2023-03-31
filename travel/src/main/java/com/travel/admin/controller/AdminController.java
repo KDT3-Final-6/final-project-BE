@@ -127,8 +127,15 @@ public class AdminController {
     }
 
     @PostMapping("/qna/answers")
-    public ResponseEntity<Void> createAnswer(@RequestBody QnAAnswerRequestDTO qnAAnswerRequestDTO, Authentication authentication) {
+    public ResponseEntity<Void> createAnswer(@Valid @RequestBody QnAAnswerRequestDTO qnAAnswerRequestDTO, Authentication authentication) {
         qnAService.createAnswer(qnAAnswerRequestDTO, authentication.getName());
+
+        return ResponseEntity.ok(null);
+    }
+
+    @PatchMapping("/qna/answers")
+    public ResponseEntity<Void> updateAnswer(@Valid @RequestBody QnAAnswerRequestDTO qnAAnswerRequestDTO) {
+        qnAService.updateAnswer(qnAAnswerRequestDTO);
 
         return ResponseEntity.ok(null);
     }
