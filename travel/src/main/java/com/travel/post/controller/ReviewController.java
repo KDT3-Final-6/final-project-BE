@@ -51,6 +51,22 @@ public class ReviewController {
         return ResponseEntity.ok(pageResponseDTO);
     }
 
+    @GetMapping("/{productId}")
+    public ResponseEntity<PageResponseDTO> getReviewsByProduct(
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @PathVariable Long productId
+    ) {
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+
+        PageResponseDTO pageResponseDTO = reviewService.getReviewsByProduct(pageRequest, productId);
+
+        return ResponseEntity.ok(pageResponseDTO);
+    }
+
     @PatchMapping("/{postId}")
     public ResponseEntity<Void> updateReview(
             @PathVariable Long postId,
