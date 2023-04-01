@@ -5,6 +5,13 @@ import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
+import com.travel.post.dto.response.QnAAdminResponseDTO;
+import com.travel.post.entity.*;
+import com.travel.post.exception.PostException;
+import com.travel.post.exception.PostExceptionType;
+import com.travel.post.repository.AnswerRepository;
+import com.travel.post.repository.QnAProductRepository;
+import com.travel.post.repository.qnapost.QnARepository;
 import com.travel.product.entity.Category;
 import com.travel.product.entity.Product;
 import com.travel.product.entity.ProductCategory;
@@ -39,6 +46,9 @@ public class SearchServiceImpl implements SearchService {
     private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
     private final WishlistRepository wishlistRepository;
+    private final QnARepository qnARepository;
+    private final AnswerRepository answerRepository;
+    private final QnAProductRepository qnAProductRepository;
 
     @Override
     public PageResponseDTO displayProductsByCategory(Pageable pageable, String categoryName, String sortTarget, String memberEmail) {
@@ -88,6 +98,49 @@ public class SearchServiceImpl implements SearchService {
         return new PageResponseDTO(new PageImpl<>(searchResult, pageable, searchResult.size()));
     }
 
+    @Override
+    public PageResponseDTO searchQnAs(Pageable pageable, String qnAStatus, String inquiryType, String keyword) {
+        List<QnAPost> qnAStatusQnAs = findQnAStatusQnAs(qnAStatus);
+
+        List<QnAPost> inquiryTypeQnAs = findInquiryTypeQnAs(inquiryType);
+
+        List<QnAPost> keywordQnAs = qnARepository.findAll();
+        if (keyword != null) {
+            keywordQnAs = qnARepository.findQnAsByKeyword(keyword);
+        }
+
+        List<QnAPost> purchasedProductQnAs = qnAProductRepository.findByPurchasedProductPurchasedProductNameContaining(keyword);
+
+        List<QnAPost> qnAPostKeywordList = Stream.of(keywordQnAs, purchasedProductQnAs)
+                .flatMap(Collection::stream)
+                .distinct()
+                .filter(qnAPost -> !qnAPost.isCanceled())
+                .collect(Collectors.toList());
+
+        List<QnAPost> qnAPostsFiltering = qnAPostKeywordList.stream()
+                .filter(qnAPost -> (qnAStatusQnAs.isEmpty() || qnAStatusQnAs.contains(qnAPost)) &&
+                        (inquiryTypeQnAs.isEmpty() || inquiryTypeQnAs.contains(qnAPost)))
+                .collect(Collectors.toList());
+
+        List<QnAAdminResponseDTO> qnAPostDTOList = qnAPostsFiltering.stream()
+                .map(qnAPost -> {
+                    AnswerPost answerPost = answerRepository.findByQnAPost(qnAPost)
+                            .orElse(null);
+
+                    QnAProductPost qnAProductPost = qnAProductRepository.findById(qnAPost.getPostId())
+                            .orElse(null);
+
+                    if (qnAProductPost != null) {
+                        return qnAProductPost.toQnAAdminResponseDTO(answerPost);
+                    }
+
+                    return qnAPost.toQnAAdminResponseDTO(answerPost);
+                })
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO(new PageImpl<>(qnAPostDTOList, pageable, qnAPostDTOList.size()));
+    }
+
     private boolean isExistsByMemberAndProduct(String memberEmail, Product product) {
         boolean existsByMemberAndProduct = false;
         if (memberEmail != null) {
@@ -119,6 +172,44 @@ public class SearchServiceImpl implements SearchService {
         return productCategoryRepository.findAllByCategory(category).stream()
                 .map(ProductCategory::getProduct)
                 .collect(Collectors.toList());
+    }
+
+    private List<QnAPost> findQnAStatusQnAs(String qnAStatusKorean) {
+        if (qnAStatusKorean == null) {
+            return Collections.emptyList();
+        }
+
+        QnAStatus qnAStatus = Stream.of(QnAStatus.values())
+                .filter(status -> qnAStatusKorean.equals(status.getKorean()))
+                .findFirst()
+                .orElseThrow(() -> new PostException(PostExceptionType.INQUIRTY_TYPE_NOT_FOUND));
+
+        List<QnAPost> qnAPostList = qnARepository.findByQnAStatus(qnAStatus);
+
+        if (qnAPostList == null) {
+            return Collections.emptyList();
+        }
+
+        return qnAPostList;
+    }
+
+    private List<QnAPost> findInquiryTypeQnAs(String inquiryTypeKorean) {
+        if (inquiryTypeKorean == null) {
+            return Collections.emptyList();
+        }
+
+        InquiryType inquiryType = Stream.of(InquiryType.values())
+                .filter(type -> inquiryTypeKorean.equals(type.getKorean()))
+                .findFirst()
+                .orElseThrow(() -> new PostException(PostExceptionType.INQUIRTY_TYPE_NOT_FOUND));
+
+        List<QnAPost> qnAPostList = qnARepository.findByInquiryType(inquiryType);
+
+        if (qnAPostList == null) {
+            return Collections.emptyList();
+        }
+
+        return qnAPostList;
     }
 
     private List<Product> sortList(List<Product> products, String sortTarget) {

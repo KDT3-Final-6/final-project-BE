@@ -13,6 +13,7 @@ import com.travel.product.dto.request.ProductPostRequestDTO;
 import com.travel.product.dto.response.CategoryListGetResponseDTO;
 import com.travel.product.dto.response.ProductDetailGetResponseDTO;
 import com.travel.product.service.ProductService;
+import com.travel.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,7 @@ public class AdminController {
     private final ProductService productService;
     private final OrderService orderService;
     private final QnAService qnAService;
+    private final SearchService searchService;
 
     @PostMapping("/products")
     public ResponseEntity<String> postProduct(@RequestPart @Valid ProductPostRequestDTO productPostRequestDTO,
@@ -125,9 +127,34 @@ public class AdminController {
     }
 
     @PostMapping("/qna/answers")
-    public ResponseEntity<Void> createAnswer(@RequestBody QnAAnswerRequestDTO qnAAnswerRequestDTO, Authentication authentication) {
+    public ResponseEntity<Void> createAnswer(@Valid @RequestBody QnAAnswerRequestDTO qnAAnswerRequestDTO, Authentication authentication) {
         qnAService.createAnswer(qnAAnswerRequestDTO, authentication.getName());
 
         return ResponseEntity.ok(null);
+    }
+
+    @PatchMapping("/qna/answers")
+    public ResponseEntity<Void> updateAnswer(@Valid @RequestBody QnAAnswerRequestDTO qnAAnswerRequestDTO) {
+        qnAService.updateAnswer(qnAAnswerRequestDTO);
+
+        return ResponseEntity.ok(null);
+    }
+
+    @GetMapping("/qna/search")
+    public ResponseEntity<PageResponseDTO> searchQnAs(
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam(required = false) String qnAStatus,
+            @RequestParam(required = false) String inquiryType,
+            @RequestParam(required = false) String keyword
+    ) {
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+
+        PageResponseDTO pageResponseDTO = searchService.searchQnAs(pageRequest, qnAStatus, inquiryType, keyword);
+
+        return ResponseEntity.ok(pageResponseDTO);
     }
 }
