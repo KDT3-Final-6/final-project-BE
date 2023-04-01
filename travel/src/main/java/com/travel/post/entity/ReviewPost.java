@@ -1,5 +1,6 @@
 package com.travel.post.entity;
 
+import com.travel.member.entity.Member;
 import com.travel.product.entity.PurchasedProduct;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,6 +20,11 @@ public class ReviewPost extends Post {
     private PurchasedProduct purchasedProduct;
 
     @Column(name = "review_scope")
-    @Enumerated(EnumType.STRING)
-    private Scope scope;
+    private Integer scope;
+
+    public ReviewPost(String postTitle, String postContent, Member member, PurchasedProduct purchasedProduct, Integer scope) {
+        super(postTitle, postContent, member);
+        this.purchasedProduct = purchasedProduct;
+        this.scope = scope;
+    }
 }
