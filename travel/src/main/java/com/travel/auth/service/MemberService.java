@@ -27,8 +27,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -50,6 +53,7 @@ public class MemberService {
 
         MemberImage defaultImage = MemberImage.CreateDefaultMemberImage();
 
+
         Member member = Member.builder()
                 .memberEmail(signUp.getMemberEmail())
                 .memberPassword(passwordEncoder.encode(signUp.getMemberPassword()))
@@ -57,7 +61,7 @@ public class MemberService {
                 .memberNickname(signUp.getMemberNickname())
                 .memberPhone(signUp.getMemberPhone())
                 .memberBirthDate(signUp.getMemberBirthDate())
-                .memberHobby(Hobby.valueOf(signUp.getMemberHobby().toString()))
+                .memberHobby(signUp.getMemberHobby())
                 .memberGender(signUp.getMemberGender())
                 .roles(Collections.singletonList(Authority.ROLE_USER.name()))
                 .build();
@@ -141,8 +145,7 @@ public class MemberService {
         return new ResponseDto<>(HttpStatus.OK);
     }
 
-    public ResponseDto<?> authority() {
-        // SecurityContext에 담겨 있는 authentication userEamil 정보
+    public ResponseEntity<?> authority() {
         String memberEmail = SecurityUtil.getCurrentUserEmail();
 
         Member member = memberRepository.findByMemberEmail(memberEmail)
@@ -152,7 +155,7 @@ public class MemberService {
         member.getRoles().add(Authority.ROLE_ADMIN.name());
         memberRepository.save(member);
 
-        return new ResponseDto<>(ResponseDto.empty());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     public boolean checkToken(String token) {

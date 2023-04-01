@@ -5,6 +5,7 @@ import com.travel.auth.dto.request.MemberRequestDto;
 import com.travel.auth.jwt.JwtTokenProvider;
 import com.travel.member.dto.requestDTO.DeleteMemberDTO;
 import com.travel.member.dto.requestDTO.MemberModifyRequestDTO;
+import com.travel.member.dto.requestDTO.PasswordCheckDTO;
 import com.travel.member.dto.responseDTO.MemberResponseDTO;
 import com.travel.member.entity.Member;
 import com.travel.member.service.MemberService;
@@ -70,7 +71,7 @@ public class MemberController {
         return memberService.exampleOfUpdate(memberEmail,modifyMemberRequestDTO);
     }
 
-        @DeleteMapping("/members")
+    @DeleteMapping("/members")
     public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String authorizationHeader,
                                                        @RequestBody DeleteMemberDTO deleteMemberDTO) {
             String token = authorizationHeader.substring(7);
@@ -83,35 +84,24 @@ public class MemberController {
             return memberService.deleteMember(memberEmail, deleteMemberDTO);
         }
 
-//    @DeleteMapping("/members")
-//    public ResponseEntity<ResponseDto<?>> deleteMember(@RequestHeader("Authorization") String authorizationHeader,
-//                                                       @RequestBody DeleteMemberDTO deleteMemberDTO) {
-//        String token = authorizationHeader.substring(7);
-//        Claims claims = Jwts.parserBuilder()
-//                .setSigningKey(tokenProvider.getKey())
-//                .build()
-//                .parseClaimsJws(token)
-//                .getBody();
-//        String memberEmail = claims.getSubject();
-//
-//        DeleteMemberDTO delete = new DeleteMemberDTO();
-//        delete.setMemberEmail(memberEmail);
-//        delete.setMemberPassword(deleteMemberDTO.getMemberPassword());
-//
-//        boolean isDeleted = memberService.deleteMember(delete);
-//
-//        if (isDeleted) {
-//            ResponseDto<?> responseDto = new ResponseDto<>("success");
-//            return ResponseEntity.ok(responseDto);
-//        } else {
-//            ResponseDto<?> responseDto = new ResponseDto<>("회원 삭제에 실패하였습니다.");
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
-//        }
-//    }
+    @PostMapping("/members/password-check")
+    public Boolean passwordCheck(@RequestHeader("Authorization") String authorizationHeader,
+                                           @RequestBody PasswordCheckDTO passwordCheckDTO) {
+        String token = authorizationHeader.substring(7);
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(tokenProvider.getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        String memberEmail = claims.getSubject();
+        return memberService.passwordCheck(memberEmail, passwordCheckDTO);
+
+    }
+
 
     @PutMapping("/members/profile")
     public ResponseEntity<String> putProfile(@RequestHeader("Authorization") String authorizationHeader,
-                                             @RequestPart("profile") MultipartFile profile) throws IOException{
+                                             @RequestPart("profile") MultipartFile profile) throws IOException {
 
         String token = authorizationHeader.substring(7);
         Claims claims = Jwts.parserBuilder()

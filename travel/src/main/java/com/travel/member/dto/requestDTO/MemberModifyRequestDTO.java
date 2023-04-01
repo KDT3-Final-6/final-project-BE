@@ -9,6 +9,7 @@ import lombok.*;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 public class MemberModifyRequestDTO {
 
@@ -27,7 +28,7 @@ public class MemberModifyRequestDTO {
         private String memberName;
         @Size(min = 2, max = 10, message = "2글자 이상 10글자 이하로 입력해주세요")
         private String memberNickname;
-        private Hobby memberHobby;
+        private List<Hobby> memberHobby;
         @Pattern(regexp = "^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$", message = "-없이 작성해주세요")
         private String memberPhone;
         private Boolean memberSmsAgree;

@@ -46,24 +46,14 @@ public class AuthController {
         return memberService.reissue(reissue);
     }
 
-        @PostMapping("/logout")
-    public ResponseDto<? extends Object> logout(@Validated @RequestBody MemberRequestDto.Logout logout, Errors errors) {
-        // validation check
-        if (errors.hasErrors()) {
-            return new ResponseDto<>(Helper.refineErrors(errors));
-        }
-        return memberService.logout(logout);
+    @PostMapping("/members/logout")
+    public ResponseEntity<?> logout(@Validated @RequestHeader(name = "Authorization") String token,
+                                    @RequestHeader(name = "Refresh-Token")String refreshToken) {
+        // 토큰 폐기 등 로그아웃 처리 수행
+        return ResponseEntity.ok("로그아웃 성공");
     }
-//    @PostMapping("/logout")
-//    public ResponseEntity<?> logout(@Validated @RequestHeader(name = "Authorization") String token,
-//                                    @RequestBody MemberRequestDto.Logout logout) {
-//        // 토큰 폐기 등 로그아웃 처리 수행
-//        return memberService.logout(logout);
-//    }
-
-
     @GetMapping("/authority")
-    public ResponseDto<?> authority() {
+    public ResponseEntity<?> authority() {
         log.info("ADD ROLE_ADMIN");
         return memberService.authority();
     }

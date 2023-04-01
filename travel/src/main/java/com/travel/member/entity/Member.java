@@ -60,8 +60,10 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
     private Boolean memberDeleteCheck = false;
 
     @Column(name = "member_hobby")
+    @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
-    private Hobby memberHobby;
+    private List<Hobby> memberHobby;
+
     @Column(name = "member_gender")
     private String memberGender;
     @Column(name = "member_smsAgree", nullable = false)
@@ -77,7 +79,7 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
     private boolean isNonMembers = false;
 
     @Column
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
     @OneToMany(mappedBy = "member")
@@ -107,7 +109,7 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
 
     // 회원가입 입력
     @Builder
-    public Member(String memberEmail, String memberPassword, String memberName, String memberNickname, String memberPhone, String memberBirthDate, Hobby memberHobby, List<String> roles, String memberGender) {
+    public Member(String memberEmail, String memberPassword, String memberName, String memberNickname, String memberPhone, String memberBirthDate, List<Hobby> memberHobby, List<String> roles, String memberGender) {
         this.memberEmail = memberEmail;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
