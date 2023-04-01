@@ -11,6 +11,8 @@ public interface ReviewService {
 
     PageResponseDTO getReviewsByMember(Pageable pageable, String memberEmail);
 
+    PageResponseDTO getReviewsByProduct(Pageable pageable, Long productId);
+
     void updateReview(Long postId, ReviewUpdateRequestDTO reviewUpdateRequestDTO, String memberEmail);
 
     void deleteReview(Long postId, String memberEmail);
