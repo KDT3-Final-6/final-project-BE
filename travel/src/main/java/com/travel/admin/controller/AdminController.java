@@ -1,5 +1,8 @@
 package com.travel.admin.controller;
 
+import com.travel.admin.dto.responseDTO.MemberListDTO;
+import com.travel.admin.service.AdminService;
+import com.travel.auth.jwt.JwtTokenProvider;
 import com.travel.global.exception.GlobalException;
 import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
@@ -36,6 +39,8 @@ public class AdminController {
     private final OrderService orderService;
     private final QnAService qnAService;
     private final SearchService searchService;
+    private final AdminService adminService;
+    private final JwtTokenProvider tokenProvider;
 
     @PostMapping("/products")
     public ResponseEntity<String> postProduct(@RequestPart @Valid ProductPostRequestDTO productPostRequestDTO,
@@ -154,6 +159,19 @@ public class AdminController {
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
 
         PageResponseDTO pageResponseDTO = searchService.searchQnAs(pageRequest, qnAStatus, inquiryType, keyword);
+
+        return ResponseEntity.ok(pageResponseDTO);
+    }
+
+    @GetMapping("/members")
+    public ResponseEntity<PageResponseDTO>getAllMember(@RequestParam(required = false, defaultValue = "1") int page) {
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+
+        PageResponseDTO pageResponseDTO = adminService.getAllMembers(pageRequest);
 
         return ResponseEntity.ok(pageResponseDTO);
     }
