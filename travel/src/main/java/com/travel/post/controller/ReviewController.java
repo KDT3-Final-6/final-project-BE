@@ -1,9 +1,13 @@
 package com.travel.post.controller;
 
+import com.travel.global.exception.GlobalException;
+import com.travel.global.exception.GlobalExceptionType;
+import com.travel.global.response.PageResponseDTO;
 import com.travel.post.dto.request.ReviewCreateRequestDTO;
 import com.travel.post.dto.request.ReviewUpdateRequestDTO;
 import com.travel.post.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +18,8 @@ import javax.validation.Valid;
 @RequestMapping("/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
+
+    public static final int PAGE_SIZE = 5;
 
     private final ReviewService reviewService;
 
@@ -26,6 +32,23 @@ public class ReviewController {
         reviewService.createReview(reviewCreateRequestDTO, authentication.getName());
 
         return ResponseEntity.ok(null);
+    }
+
+    @GetMapping
+    public ResponseEntity<PageResponseDTO> getReviewsByMember(
+            @RequestParam(required = false, defaultValue = "1") int page,
+            Authentication authentication
+    ) {
+
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+
+        PageResponseDTO pageResponseDTO = reviewService.getReviewsByMember(pageRequest, authentication.getName());
+
+        return ResponseEntity.ok(pageResponseDTO);
     }
 
     @PatchMapping("/{postId}")
