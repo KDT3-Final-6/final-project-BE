@@ -1,6 +1,7 @@
 package com.travel.post.entity;
 
 import com.travel.member.entity.Member;
+import com.travel.post.dto.response.ReviewResponseDTO;
 import com.travel.product.entity.PurchasedProduct;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -28,5 +29,16 @@ public class ReviewPost extends Post {
         super(postTitle, postContent, member);
         this.purchasedProduct = purchasedProduct;
         this.scope = scope;
+    }
+
+    public ReviewResponseDTO toReviewResponseDTO() {
+        return ReviewResponseDTO.builder()
+                .postId(this.getPostId())
+                .productId(this.purchasedProduct.getProduct().getProductId())
+                .purchasedProductName(this.purchasedProduct.getPurchasedProductName())
+                .postContent(this.getPostContent())
+                .scope(this.scope)
+                .modifiedDate(this.getModifiedDate().toLocalDate())
+                .build();
     }
 }
