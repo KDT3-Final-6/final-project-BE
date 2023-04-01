@@ -5,6 +5,7 @@ import com.travel.product.entity.PurchasedProduct;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -19,6 +20,7 @@ public class ReviewPost extends Post {
     @JoinColumn(name = "purchased_product_id")
     private PurchasedProduct purchasedProduct;
 
+    @Setter
     @Column(name = "review_scope")
     private Integer scope;
 

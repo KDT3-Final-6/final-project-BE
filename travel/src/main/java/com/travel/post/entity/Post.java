@@ -22,6 +22,7 @@ public class Post extends BaseEntityWithMemberAndDates {
     @Column(name = "post_title")
     private String postTitle;
 
+    @Setter
     @Column(name = "post_content")
     private String postContent;
 
