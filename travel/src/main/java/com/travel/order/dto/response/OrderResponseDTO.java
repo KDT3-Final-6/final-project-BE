@@ -31,8 +31,14 @@ public class OrderResponseDTO {
 
     private String orderStatus;
 
+    private boolean hasReview;
+
     @Builder
-    public OrderResponseDTO(Long orderId, Long productId, Long purchasedProductId, String productName, String productThumbnail, Integer productPrice, LocalDateTime orderDate, String optionName, Integer productProductQuantity, OrderStatus orderStatus) {
+    public OrderResponseDTO(
+            Long orderId, Long productId, Long purchasedProductId, String productName,
+            String productThumbnail, Integer productPrice, LocalDateTime orderDate, String optionName,
+            Integer productProductQuantity, OrderStatus orderStatus, boolean hasReview
+    ) {
         this.orderId = orderId;
         this.productId = productId;
         this.purchasedProductId = purchasedProductId;
@@ -43,5 +49,6 @@ public class OrderResponseDTO {
         this.optionName = optionName;
         this.productProductQuantity = productProductQuantity;
         this.orderStatus = orderStatus.getKorean();
+        this.hasReview = hasReview;
     }
 }

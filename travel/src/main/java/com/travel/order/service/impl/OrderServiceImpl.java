@@ -20,6 +20,7 @@ import com.travel.order.exception.OrderException;
 import com.travel.order.exception.OrderExceptionType;
 import com.travel.order.repository.OrderRepository;
 import com.travel.order.service.OrderService;
+import com.travel.post.repository.ReviewRepository;
 import com.travel.product.entity.PeriodOption;
 import com.travel.product.entity.Product;
 import com.travel.product.entity.PurchasedProduct;
@@ -51,6 +52,7 @@ public class OrderServiceImpl implements OrderService {
     private final MemberRepository memberRepository;
     private final PurchasedProductRepository purchasedProductRepository;
     private final PeriodOptionRepository periodOptionRepository;
+    private final ReviewRepository reviewRepository;
 
     @Override
     public void createOrder(OrderCreateListDTO orderCreateListDTO, String userEmail) {
@@ -80,7 +82,11 @@ public class OrderServiceImpl implements OrderService {
         List<OrderListResponseDTO> orderListResponseDTOS = orderList.stream()
                 .map(order -> {
                     List<OrderResponseDTO> orderResponseDTOList = purchasedProductRepository.findByOrder(order).stream()
-                            .map(PurchasedProduct::toOrderResponseDTO)
+                            .map(purchasedProduct -> {
+                                boolean hasReview = reviewRepository.existsByPurchasedProduct(purchasedProduct);
+
+                                return purchasedProduct.toOrderResponseDTO(hasReview);
+                            })
                             .collect(Collectors.toList());
 
                     return OrderListResponseDTO.builder()
