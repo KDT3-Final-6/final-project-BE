@@ -40,8 +40,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/members").permitAll()
                 .antMatchers("/login", "/reissue", "/members/logout", "/search/**", "/non-members/**", "/products/**", "/reviews/{productId}").permitAll()
-                .antMatchers("/carts/**", "/members", "/orders/**", "/qna/**", "/wishlist/**","/members/password-check", "/reviews/**").hasRole("USER")
-                .antMatchers("/admins/**","/authority/**").hasRole("ADMIN")
+                .antMatchers("/carts/**", "/members", "/orders/**", "/qna/**", "/wishlist/**", "/members/password-check", "/reviews/**").hasRole("USER")
+                .antMatchers("/admins/**", "/authority/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, redisTemplate), UsernamePasswordAuthenticationFilter.class);
