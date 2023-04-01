@@ -1,14 +1,12 @@
 package com.travel.post.controller;
 
 import com.travel.post.dto.request.ReviewCreateRequestDTO;
+import com.travel.post.dto.request.ReviewUpdateRequestDTO;
 import com.travel.post.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -26,6 +24,18 @@ public class ReviewController {
     ) {
 
         reviewService.createReview(reviewCreateRequestDTO, authentication.getName());
+
+        return ResponseEntity.ok(null);
+    }
+
+    @PatchMapping("/{postId}")
+    public ResponseEntity<Void> updateReview(
+            @PathVariable Long postId,
+            @Valid @RequestBody ReviewUpdateRequestDTO reviewUpdateRequestDTO,
+            Authentication authentication
+    ) {
+
+        reviewService.updateReview(postId, reviewUpdateRequestDTO, authentication.getName());
 
         return ResponseEntity.ok(null);
     }
