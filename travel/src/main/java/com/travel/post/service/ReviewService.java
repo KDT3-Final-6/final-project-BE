@@ -8,4 +8,6 @@ public interface ReviewService {
     void createReview(ReviewCreateRequestDTO reviewCreateRequestDTO, String memberEmail);
 
     void updateReview(Long postId, ReviewUpdateRequestDTO reviewUpdateRequestDTO, String memberEmail);
+
+    void deleteReview(Long postId, String memberEmail);
 }

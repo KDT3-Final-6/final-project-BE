@@ -54,4 +54,17 @@ public class ReviewServiceImpl implements ReviewService {
 
         reviewRepository.save(reviewPost);
     }
+
+    @Override
+    public void deleteReview(Long postId, String memberEmail) {
+        Member member = memberRepository.findByMemberEmail(memberEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        ReviewPost reviewPost = reviewRepository.findByPostIdAndMember(postId, member)
+                .orElseThrow(() -> new PostException(PostExceptionType.POST_NOT_FOUND));
+
+        reviewPost.setCanceled(true);
+
+        reviewRepository.save(reviewPost);
+    }
 }
