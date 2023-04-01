@@ -67,7 +67,7 @@ public class PurchasedProduct {
         this.productProductQuantity = quantity;
     }
 
-    public OrderResponseDTO toOrderResponseDTO() {
+    public OrderResponseDTO toOrderResponseDTO(boolean hasReview) {
         return OrderResponseDTO.builder()
                 .orderId(this.order.getOrderId())
                 .productId(this.product.getProductId())
@@ -79,6 +79,7 @@ public class PurchasedProduct {
                 .productProductQuantity(this.productProductQuantity)
                 .orderDate(this.order.getCreatedDate())
                 .orderStatus(this.order.getOrderStatus())
+                .hasReview(hasReview)
                 .build();
     }
 
