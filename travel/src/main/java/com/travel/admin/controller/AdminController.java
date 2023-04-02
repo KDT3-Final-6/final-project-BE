@@ -175,4 +175,16 @@ public class AdminController {
 
         return ResponseEntity.ok(pageResponseDTO);
     }
+
+    @PostMapping("/upMember/{memberId}")
+    public ResponseEntity<?> changeMemberToAdmin(@PathVariable Long memberId) {
+        adminService.changeMemberToAdmin(memberId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/downMember/{memberId}")
+    public ResponseEntity<?> changeAdminToUser(@PathVariable Long memberId) {
+        adminService.changeAdminToMember(memberId);
+        return ResponseEntity.ok().build();
+    }
 }
