@@ -3,13 +3,11 @@ package com.travel.survey.dto;
 import com.travel.survey.entity.*;
 import lombok.Getter;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 public class SurveyDTO {
 
     @Getter
-    @Valid
     public static class PostSurvey {
 
         @NotBlank
