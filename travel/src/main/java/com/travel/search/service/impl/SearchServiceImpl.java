@@ -130,6 +130,33 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
+    public PageResponseDTO getRelatedProducts(Pageable pageable, Long productId, String memberEmail) {
+        Product productFound = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
+
+        List<ProductCategory> productCategoryList = productFound.getProductCategories();
+
+        List<Category> categoryList = productCategoryList.stream()
+                .map(ProductCategory::getCategory)
+                .collect(toList());
+
+        List<Product> productList = categoryList.stream()
+                .map(productCategoryRepository::findAllByCategory)
+                .flatMap(Collection::stream)
+                .map(ProductCategory::getProduct)
+                .filter(product -> product.getProductStatus() == Status.FORSALE)
+                .filter(product -> product.getProductId() != productId)
+                .distinct()
+                .collect(toList());
+
+        List<SearchResultResponseDTO> searchResult = productList.stream()
+                .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO(new PageImpl<>(searchResult, pageable, searchResult.size()));
+    }
+
+    @Override
     public PageResponseDTO searchQnAs(Pageable pageable, String qnAStatus, String inquiryType, String keyword) {
         List<QnAPost> qnAStatusQnAs = findQnAStatusQnAs(qnAStatus);
 
