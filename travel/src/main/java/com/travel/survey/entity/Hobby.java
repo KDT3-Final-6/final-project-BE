@@ -1,6 +1,6 @@
 package com.travel.survey.entity;
 
-public enum Theme {
+public enum Hobby {
     FISHING("낚시"),
     SHOPPING("쇼핑"),
     GOLF("골프"),
