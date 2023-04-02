@@ -71,7 +71,7 @@ public class SearchServiceImpl implements SearchService {
                 .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(searchResult));
+        return new PageResponseDTO(new PageImpl<>(searchResult, pageable, searchResult.size()));
     }
 
     @Override
