@@ -53,9 +53,6 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Grade memberGrade = Grade.NORMAL;
 
-//    @Column(name = "member_authority", nullable = false)
-//    private Boolean memberAuthority = false;
-
     @Column(name = "member_deleteCheck", nullable = false)
     private Boolean memberDeleteCheck = false;
 
@@ -67,9 +64,10 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
     @Column(name = "member_gender")
     private String memberGender;
     @Column(name = "member_smsAgree", nullable = false)
-    private Boolean memberSmsAgree = false;
+    private Boolean memberSmsAgree;
+
     @Column(name = "member_emailAgree", nullable = false)
-    private Boolean memberEmailAgree = false;
+    private Boolean memberEmailAgree;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "member")
     private MemberImage memberImage;
@@ -100,16 +98,9 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
         return this.memberImage;
     }
 
-//    public Boolean isAdmin() {
-//        if (this.memberAuthority) {
-//            return true;
-//        }
-//        return false;
-//    }
-
     // 회원가입 입력
     @Builder
-    public Member(String memberEmail, String memberPassword, String memberName, String memberNickname, String memberPhone, String memberBirthDate, List<Hobby> memberHobby, List<String> roles, String memberGender) {
+    public Member(String memberEmail, String memberPassword, String memberName, String memberNickname, String memberPhone, String memberBirthDate, List<Hobby> memberHobby, List<String> roles, String memberGender, Boolean memberSmsAgree, Boolean memberEmailAgree) {
         this.memberEmail = memberEmail;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
@@ -119,14 +110,28 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
         this.memberHobby = memberHobby;
         this.roles = roles;
         this.memberGender = memberGender;
+        this.memberSmsAgree = memberSmsAgree;
+        this.memberEmailAgree = memberEmailAgree;
     }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
+
+    public void upgradeAuthority() {
+        if (!this.roles.contains("ROLE_ADMIN")) {
+            this.roles.add("ROLE_ADMIN");
+        }
+    }
+
+    public void downgradeAuthority() {
+        if (this.roles.contains("ROLE_ADMIN")) {
+            this.roles.remove("ROLE_ADMIN");
+        }
+    }
+
 
     @Override
     public String getPassword() {
