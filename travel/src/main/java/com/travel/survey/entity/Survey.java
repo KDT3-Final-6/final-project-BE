@@ -23,21 +23,21 @@ public class Survey {
 
     @Column(name = "survey_group")
     @Enumerated(EnumType.STRING)
-    private Gender surveyGroup;
+    private Group surveyGroup;
 
-    @Column(name = "survey_partner")
+    @Column(name = "survey_companion")
     @Enumerated(EnumType.STRING)
-    private Gender surveyPartner;
+    private Companion surveyCompanion;
 
     @Column(name = "survey_religion")
     @Enumerated(EnumType.STRING)
-    private Gender surveyReligion;
+    private Religion surveyReligion;
 
     @Column(name = "survey_season")
     @Enumerated(EnumType.STRING)
-    private Gender surveySeason;
+    private Season surveySeason;
 
-    @Column(name = "survey_theme")
+    @Column(name = "survey_hobby")
     @Enumerated(EnumType.STRING)
-    private Gender surveyTheme;
+    private Gender surveyHobby;
 }
