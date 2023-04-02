@@ -8,20 +8,20 @@ import java.util.List;
 @Getter
 public class CategoriesInProduct {
     private String categoryName;
-    private CategoriesInProduct child;
+    private CategoriesInProduct children;
 
     public static CategoriesInProduct of(Category category, List<Long> categoryIds) {
         return new CategoriesInProduct(
                 category.getCategoryName(),
-                category.getChild()
+                category.getChildren()
                         .stream()
                         .filter(child -> categoryIds.contains(child.getCategoryId()))
                         .map(child -> CategoriesInProduct.of(child, categoryIds))
                         .findFirst().orElse(null));
     }
 
-    public CategoriesInProduct(String categoryName, CategoriesInProduct child) {
+    public CategoriesInProduct(String categoryName, CategoriesInProduct children) {
         this.categoryName = categoryName;
-        this.child = child;
+        this.children = children;
     }
 }

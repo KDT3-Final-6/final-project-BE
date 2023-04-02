@@ -11,13 +11,13 @@ import java.util.stream.Collectors;
 public class CategoryListGetResponseDTO {
     private Long categoryId;
     private String categoryName;
-    private List<CategoryListGetResponseDTO> child = new ArrayList<>();
+    private List<CategoryListGetResponseDTO> children = new ArrayList<>();
 
     public static CategoryListGetResponseDTO of(Category category) {
         return new CategoryListGetResponseDTO(
                 category.getCategoryId(),
                 category.getCategoryName(),
-                category.getChild().stream().map(CategoryListGetResponseDTO::of).collect(Collectors.toList())
+                category.getChildren().stream().map(CategoryListGetResponseDTO::of).collect(Collectors.toList())
         );
     }
 
@@ -25,6 +25,6 @@ public class CategoryListGetResponseDTO {
     public CategoryListGetResponseDTO(Long categoryId, String categoryName, List<CategoryListGetResponseDTO> children) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
-        this.child = children;
+        this.children = children;
     }
 }
