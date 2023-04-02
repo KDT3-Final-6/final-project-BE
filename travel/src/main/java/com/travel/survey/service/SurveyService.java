@@ -25,6 +25,15 @@ public class SurveyService {
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
         member.saveSurvey(postSurvey.toEntity());
+    }
 
+    public SurveyDTO.GetSurvey displaySurvey(String memberEmail) {
+        Member member = memberRepository.findByMemberEmail(memberEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        if (member.getSurvey() == null)
+            throw new MemberException(MemberExceptionType.NO_SURVEY_EXISTS);
+
+        return new SurveyDTO.GetSurvey(member.getSurvey());
     }
 }
