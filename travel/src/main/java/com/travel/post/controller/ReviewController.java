@@ -19,7 +19,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class ReviewController {
 
-    public static final int PAGE_SIZE = 5;
+    public static final int PAGE_SIZE = 10;
 
     private final ReviewService reviewService;
 

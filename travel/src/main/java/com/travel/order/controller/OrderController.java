@@ -18,7 +18,7 @@ import javax.validation.Valid;
 @RequestMapping("/orders")
 public class OrderController {
 
-    public static final int PAGE_SIZE = 3;
+    public static final int PAGE_SIZE = 10;
 
     private final OrderService orderService;
 
