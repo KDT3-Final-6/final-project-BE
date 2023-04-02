@@ -1,6 +1,7 @@
 package com.travel.survey.entity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -40,4 +41,14 @@ public class Survey {
     @Column(name = "survey_hobby")
     @Enumerated(EnumType.STRING)
     private Gender surveyHobby;
+
+    @Builder
+    public Survey(Gender surveyGender, Group surveyGroup, Companion surveyCompanion, Religion surveyReligion, Season surveySeason, Gender surveyHobby) {
+        this.surveyGender = surveyGender;
+        this.surveyGroup = surveyGroup;
+        this.surveyCompanion = surveyCompanion;
+        this.surveyReligion = surveyReligion;
+        this.surveySeason = surveySeason;
+        this.surveyHobby = surveyHobby;
+    }
 }
