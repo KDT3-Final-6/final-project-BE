@@ -31,20 +31,8 @@ public class AdminServiceImpl implements AdminService {
 
     // 관리자에서 회원 정보 조회
     @Override
-    @Transactional
-    public ResponseEntity<MemberListDTO> getMemberByMemberEmail(String email) {
-        try {
-            Member member = memberRepository.findByMemberEmail(email).orElseThrow(NoSuchElementException::new);
-            return new ResponseEntity<>(new MemberListDTO(member), HttpStatus.OK);
-
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @Override
     public PageResponseDTO getAllMembers(Pageable pageable) {
-        List<Member> members = memberRepository.findAll();
+        List<Member> members = memberRepository.findAllByMemberDeleteCheckFalse();
         List<MemberListDTO> memberListDTOs = new ArrayList<>();
 
         for (Member member : members) {
@@ -68,6 +56,15 @@ public class AdminServiceImpl implements AdminService {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException("Member not found"));
         if (member.getRoles().contains("ROLE_ADMIN")) {
             member.getRoles().remove("ROLE_ADMIN");
+            memberRepository.save(member);
+        }
+    }
+
+    @Override
+    public void deleteMember(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException("Member not found"));
+        if (member.getMemberDeleteCheck() == false) {
+            member.setMemberDeleteCheck(true);
             memberRepository.save(member);
         }
     }
