@@ -1,6 +1,7 @@
 package com.travel.search.service.impl;
 
 import com.travel.global.response.PageResponseDTO;
+import com.travel.member.entity.Hobby;
 import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
@@ -16,6 +17,8 @@ import com.travel.product.entity.Category;
 import com.travel.product.entity.Product;
 import com.travel.product.entity.ProductCategory;
 import com.travel.product.entity.Status;
+import com.travel.product.exception.ProductException;
+import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.CategoryRepository;
 import com.travel.product.repository.ProductCategoryRepository;
 import com.travel.product.repository.product.ProductRepository;
@@ -35,6 +38,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -57,16 +62,16 @@ public class SearchServiceImpl implements SearchService {
                 .collect(Collectors.toList());
 
         if (sortTarget != null && (sortTarget.equals("인기순"))) {
-                productList = productList.stream()
-                        .sorted(Comparator.comparing(Product::getWishlistCount).reversed())
-                        .collect(Collectors.toList());
+            productList = productList.stream()
+                    .sorted(Comparator.comparing(Product::getWishlistCount).reversed())
+                    .collect(Collectors.toList());
         }
 
         List<SearchResultResponseDTO> searchResult = productList.stream()
                 .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(searchResult));
+        return new PageResponseDTO(new PageImpl<>(searchResult, pageable, searchResult.size()));
     }
 
     @Override
@@ -90,6 +95,32 @@ public class SearchServiceImpl implements SearchService {
         if (sortTarget != null) {
             productList = sortList(productList, sortTarget);
         }
+
+        List<SearchResultResponseDTO> searchResult = productList.stream()
+                .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO(new PageImpl<>(searchResult, pageable, searchResult.size()));
+    }
+
+    public PageResponseDTO getRecommend(Pageable pageable, String memberEmail) {
+        Member member = memberRepository.findByMemberEmail(memberEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        List<Hobby> hobbyList = member.getMemberHobby();
+
+        List<Category> categoryList = hobbyList.stream()
+                .map(hobby -> categoryRepository.findByCategoryName(changeHobbyName(hobby.getKorean()))
+                        .orElseThrow(() -> new ProductException(ProductExceptionType.CATEGORY_NOT_FOUND)))
+                .collect(toList());
+
+        List<Product> productList = categoryList.stream()
+                .map(productCategoryRepository::findAllByCategory)
+                .flatMap(Collection::stream)
+                .map(ProductCategory::getProduct)
+                .filter(product -> product.getProductStatus() == Status.FORSALE)
+                .distinct()
+                .collect(toList());
 
         List<SearchResultResponseDTO> searchResult = productList.stream()
                 .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
@@ -139,6 +170,16 @@ public class SearchServiceImpl implements SearchService {
                 .collect(Collectors.toList());
 
         return new PageResponseDTO(new PageImpl<>(qnAPostDTOList, pageable, qnAPostDTOList.size()));
+    }
+
+    public String changeHobbyName(String hobbyKorean) {
+        if (hobbyKorean.equals("봉사활동")) {
+            return "볼론투어";
+        } else if (hobbyKorean.equals("골프")) {
+            return "골프여행";
+        }
+
+        return hobbyKorean;
     }
 
     private boolean isExistsByMemberAndProduct(String memberEmail, Product product) {

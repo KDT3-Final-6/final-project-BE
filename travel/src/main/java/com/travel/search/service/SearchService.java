@@ -9,5 +9,7 @@ public interface SearchService {
 
     PageResponseDTO searchProducts(Pageable pageable, String keyword, String sortTarget, String memberEmail);
 
+    PageResponseDTO getRecommend(Pageable pageable, String memberEmail);
+
     PageResponseDTO searchQnAs(Pageable pageable, String qnAStatus, String inquiryType, String keyword);
 }
