@@ -7,6 +7,10 @@ public enum Gender {
 
     String korean;
 
+    public String getKorean() {
+        return korean;
+    }
+
     Gender(String korean) {
         this.korean = korean;
     }

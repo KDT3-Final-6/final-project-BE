@@ -1,6 +1,7 @@
 package com.travel.survey.entity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -23,21 +24,31 @@ public class Survey {
 
     @Column(name = "survey_group")
     @Enumerated(EnumType.STRING)
-    private Gender surveyGroup;
+    private Group surveyGroup;
 
-    @Column(name = "survey_partner")
+    @Column(name = "survey_companion")
     @Enumerated(EnumType.STRING)
-    private Gender surveyPartner;
+    private Companion surveyCompanion;
 
     @Column(name = "survey_religion")
     @Enumerated(EnumType.STRING)
-    private Gender surveyReligion;
+    private Religion surveyReligion;
 
     @Column(name = "survey_season")
     @Enumerated(EnumType.STRING)
-    private Gender surveySeason;
+    private Season surveySeason;
 
-    @Column(name = "survey_theme")
+    @Column(name = "survey_hobby")
     @Enumerated(EnumType.STRING)
-    private Gender surveyTheme;
+    private Hobby surveyHobby;
+
+    @Builder
+    public Survey(Gender surveyGender, Group surveyGroup, Companion surveyCompanion, Religion surveyReligion, Season surveySeason, Hobby surveyHobby) {
+        this.surveyGender = surveyGender;
+        this.surveyGroup = surveyGroup;
+        this.surveyCompanion = surveyCompanion;
+        this.surveyReligion = surveyReligion;
+        this.surveySeason = surveySeason;
+        this.surveyHobby = surveyHobby;
+    }
 }

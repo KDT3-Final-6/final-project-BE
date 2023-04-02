@@ -1,16 +1,18 @@
 package com.travel.survey.entity;
 
 public enum Group {
-    Teen("10대"),
-    TWENTY("20대"),
-    THIRTY("30대"),
-    FOURTY("40대"),
-    FIFTY("50대"),
-    SIXTY("60대"),
-    SEVENTY("70대");
+
+    TWENTHIRTY("2030"),
+    FOURFIFTY("4050"),
+    SIXSEVNTY("6070"),
+    ETC("그 외");
 
 
     String korean;
+
+    public String getKorean() {
+        return korean;
+    }
 
     Group(String korean) {
         this.korean = korean;

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/wishlist")
 public class WishlistController {
 
-    public static final int PAGE_SIZE = 3;
+    public static final int PAGE_SIZE = 10;
 
     private final WishlistService wishlistService;
 

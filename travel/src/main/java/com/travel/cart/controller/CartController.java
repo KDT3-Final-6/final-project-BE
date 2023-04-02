@@ -21,7 +21,7 @@ import javax.validation.Valid;
 @RequestMapping("/carts")
 public class CartController {
 
-    public static final int PAGE_SIZE = 3;
+    public static final int PAGE_SIZE = 10;
     private final CartService cartService;
 
     @PostMapping

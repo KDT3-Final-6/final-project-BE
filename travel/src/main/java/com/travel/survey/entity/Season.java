@@ -8,6 +8,10 @@ public enum Season {
 
     String korean;
 
+    public String getKorean() {
+        return korean;
+    }
+
     Season(String korean) {
         this.korean = korean;
     }

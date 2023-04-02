@@ -1,11 +1,11 @@
 package com.travel.member.entity;
 
-import com.travel.global.entity.BaseEntity;
 import com.travel.global.entity.BaseEntityWithModifiedDate;
 import com.travel.image.entity.Image;
 import com.travel.image.entity.MemberImage;
 import com.travel.member.dto.requestDTO.MemberModifyRequestDTO;
 import com.travel.order.entity.Order;
+import com.travel.survey.entity.Survey;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -80,8 +80,14 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
     private List<String> roles = new ArrayList<>();
+
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "survey_id")
+    private Survey survey;
+
 
     public Member() {
     }
@@ -168,12 +174,16 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
         this.memberDeleteCheck = true;
     }
 
-    public void update(MemberModifyRequestDTO.ModifyMemberRequestDTO dto){
-        this.memberPassword=dto.getMemberRenewPassword();
+    public void update(MemberModifyRequestDTO.ModifyMemberRequestDTO dto) {
+        this.memberPassword = dto.getMemberRenewPassword();
         this.memberNickname = dto.getMemberNickname();
         this.memberPhone = dto.getMemberPhone();
         this.memberHobby = dto.getMemberHobby();
         this.memberSmsAgree = dto.getMemberSmsAgree();
         this.memberEmailAgree = dto.getMemberEmailAgree();
+    }
+
+    public void saveSurvey(Survey survey) {
+        this.survey = survey;
     }
 }
