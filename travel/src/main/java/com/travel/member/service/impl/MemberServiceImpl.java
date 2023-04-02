@@ -70,7 +70,7 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new ResourceAccessException(Long.toString(id)));
     }
 
-    // optional을 안쓸꺼면 orElse 를 써서 예외처리를 해주거나
+    // 회원 조회
     @Override
     public ResponseEntity<MemberResponseDTO.MemberInfoResponseDTO> getMemberByMemberEmail(String email) {
         try {
