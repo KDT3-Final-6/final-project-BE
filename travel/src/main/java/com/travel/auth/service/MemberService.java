@@ -63,8 +63,11 @@ public class MemberService {
                 .memberBirthDate(signUp.getMemberBirthDate())
                 .memberHobby(signUp.getMemberHobby())
                 .memberGender(signUp.getMemberGender())
+                .memberEmailAgree(signUp.getMemberEmailAgree())
+                .memberSmsAgree(signUp.getMemberSmsAgree())
                 .roles(Collections.singletonList(Authority.ROLE_USER.name()))
                 .build();
+
         MemberImage memberImage = member.addImage(defaultImage);
         memberRepository.save(member);
         memberImageRepository.save(memberImage);
