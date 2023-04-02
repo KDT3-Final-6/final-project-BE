@@ -9,7 +9,8 @@ import java.util.List;
 
 public interface AdminService {
     ResponseEntity<MemberListDTO> getMemberByMemberEmail(String email);
-
     PageResponseDTO getAllMembers(Pageable pageable);
+    void changeMemberToAdmin(Long memberId);
+    void changeAdminToMember(Long adminId);
 
 }

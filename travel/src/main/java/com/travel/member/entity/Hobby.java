@@ -7,6 +7,7 @@ public enum Hobby {
     VOLUNTEER("봉사활동"),
     TREKKING("트레킹"),
     CULTURE("문화탐방"),
+    VACATION("휴식, 힐링"),
     PILGRIMAGE("성지순례");
 
     String korean;

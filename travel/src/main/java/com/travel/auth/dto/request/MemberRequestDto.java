@@ -40,6 +40,8 @@ public class MemberRequestDto {
         private String memberBirthDate;
         private List<Hobby> memberHobby;
         private String memberGender;
+        private Boolean memberSmsAgree;
+        private Boolean memberEmailAgree;
 
     }
 

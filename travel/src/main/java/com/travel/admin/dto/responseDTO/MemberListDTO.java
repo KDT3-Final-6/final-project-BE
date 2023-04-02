@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class MemberListDTO {
+    private String memberId;
     private String memberName;
     private String memberNickname;
     private String memberEmail;

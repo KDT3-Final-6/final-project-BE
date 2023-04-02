@@ -1,5 +1,6 @@
 package com.travel.admin.service.impl;
 
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.travel.admin.dto.responseDTO.MemberListDTO;
 import com.travel.admin.service.AdminService;
 import com.travel.global.response.PageResponseDTO;
@@ -53,6 +54,22 @@ public class AdminServiceImpl implements AdminService {
         }
 
         return new PageResponseDTO(new PageImpl<>(memberListDTOs, pageable, memberListDTOs.size()));
+    }
+
+    @Override
+    public void changeMemberToAdmin(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException("Member not found"));
+        member.getRoles().add("ROLE_ADMIN");
+        memberRepository.save(member);
+    }
+
+    @Override
+    public void changeAdminToMember(Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException("Member not found"));
+        if (member.getRoles().contains("ROLE_ADMIN")) {
+            member.getRoles().remove("ROLE_ADMIN");
+            memberRepository.save(member);
+        }
     }
 }
 
