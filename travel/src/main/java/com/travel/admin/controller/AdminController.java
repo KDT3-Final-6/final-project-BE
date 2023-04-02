@@ -187,4 +187,9 @@ public class AdminController {
         adminService.changeAdminToMember(memberId);
         return ResponseEntity.ok().build();
     }
+    @PostMapping("/deleteMember/{memberId}")
+    public ResponseEntity<?> deleteMember(@PathVariable Long memberId) {
+        adminService.deleteMember(memberId);
+        return ResponseEntity.ok().build();
+    }
 }
