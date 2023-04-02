@@ -41,28 +41,25 @@ public class SurveyDTO {
                         return (T) enumValue;
                     }
                 }
-            }
-            else if (enumClass.equals(Group.class)) {
+            } else if (enumClass.equals(Group.class)) {
                 for (Group enumValue : Group.values()) {
                     if (enumValue.getKorean().equals(value)) {
                         return (T) enumValue;
                     }
                 }
-            }
-            else if (enumClass.equals(Hobby.class)) {
+            } else if (enumClass.equals(Hobby.class)) {
                 for (Hobby enumValue : Hobby.values()) {
                     if (enumValue.getKorean().equals(value)) {
                         return (T) enumValue;
                     }
                 }
-            }else if (enumClass.equals(Religion.class)) {
+            } else if (enumClass.equals(Religion.class)) {
                 for (Religion enumValue : Religion.values()) {
                     if (enumValue.getKorean().equals(value)) {
                         return (T) enumValue;
                     }
                 }
-            }
-            else if (enumClass.equals(Season.class)) {
+            } else if (enumClass.equals(Season.class)) {
                 for (Season enumValue : Season.values()) {
                     if (enumValue.getKorean().equals(value)) {
                         return (T) enumValue;
@@ -83,6 +80,26 @@ public class SurveyDTO {
                     .surveySeason(convertStringToEnum(surveySeason, Season.class))
                     .build();
             return survey;
+        }
+    }
+
+
+    @Getter
+    public static class GetSurvey {
+        private String surveyGender;
+        private String surveyGroup;
+        private String surveyCompanion;
+        private String surveyReligion;
+        private String surveySeason;
+        private String surveyHobby;
+
+        public GetSurvey(Survey survey) {
+            this.surveyGender = survey.getSurveyGender().getKorean();
+            this.surveyGroup = survey.getSurveyGroup().getKorean();
+            this.surveyCompanion = survey.getSurveyCompanion().getKorean();
+            this.surveyReligion = survey.getSurveyReligion().getKorean();
+            this.surveySeason = survey.getSurveySeason().getKorean();
+            this.surveyHobby = survey.getSurveyHobby().getKorean();
         }
     }
 }
