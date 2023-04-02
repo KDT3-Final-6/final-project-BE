@@ -1,10 +1,9 @@
 package com.travel.survey.entity;
 
 public enum Hobby {
-    FISHING("낚시"),
     SHOPPING("쇼핑"),
     GOLF("골프"),
-    HOTEL("호캉스"),
+    VACATION("힐링"),
     WINE("와인"),
     CULTURAL("문화탐방"),
     PILGRIMAGE("성지순례"),
@@ -13,7 +12,7 @@ public enum Hobby {
 
     String korean;
 
-    Theme(String korean) {
+    Hobby(String korean) {
         this.korean = korean;
     }
 }
