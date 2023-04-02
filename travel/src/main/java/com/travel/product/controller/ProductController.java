@@ -58,4 +58,28 @@ public class ProductController {
 
         return ResponseEntity.ok(pageResponseDTO);
     }
+
+    @GetMapping("/relation/{productId}")
+    public ResponseEntity<PageResponseDTO> getRelatedProducts(
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @PathVariable Long productId,
+            Authentication authentication
+    ) {
+
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
+        }
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+
+        PageResponseDTO pageResponseDTO;
+        if (authentication == null) {
+            // 로그인되지 않은 사용자용 정보를 반환
+            pageResponseDTO = searchService.getRelatedProducts(pageRequest, productId, null);
+        } else {
+            // 로그인된 사용자용 정보를 반환
+            pageResponseDTO = searchService.getRelatedProducts(pageRequest, productId, authentication.getName());
+        }
+
+        return ResponseEntity.ok(pageResponseDTO);
+    }
 }
