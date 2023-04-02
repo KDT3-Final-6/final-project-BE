@@ -12,6 +12,10 @@ public enum Hobby {
 
     String korean;
 
+    public String getKorean() {
+        return korean;
+    }
+
     Hobby(String korean) {
         this.korean = korean;
     }

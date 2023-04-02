@@ -11,6 +11,10 @@ public enum Companion {
 
     String korean;
 
+    public String getKorean() {
+        return korean;
+    }
+
     Companion(String korean) {
         this.korean = korean;
     }

@@ -10,6 +10,10 @@ public enum Group {
 
     String korean;
 
+    public String getKorean() {
+        return korean;
+    }
+
     Group(String korean) {
         this.korean = korean;
     }

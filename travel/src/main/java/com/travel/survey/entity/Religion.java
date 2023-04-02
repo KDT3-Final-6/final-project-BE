@@ -8,6 +8,10 @@ public enum Religion {
 
     String korean;
 
+    public String getKorean() {
+        return korean;
+    }
+
     Religion(String korean) {
         this.korean = korean;
     }
