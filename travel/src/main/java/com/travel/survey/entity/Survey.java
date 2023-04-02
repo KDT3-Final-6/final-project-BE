@@ -40,10 +40,10 @@ public class Survey {
 
     @Column(name = "survey_hobby")
     @Enumerated(EnumType.STRING)
-    private Gender surveyHobby;
+    private Hobby surveyHobby;
 
     @Builder
-    public Survey(Gender surveyGender, Group surveyGroup, Companion surveyCompanion, Religion surveyReligion, Season surveySeason, Gender surveyHobby) {
+    public Survey(Gender surveyGender, Group surveyGroup, Companion surveyCompanion, Religion surveyReligion, Season surveySeason, Hobby surveyHobby) {
         this.surveyGender = surveyGender;
         this.surveyGroup = surveyGroup;
         this.surveyCompanion = surveyCompanion;
