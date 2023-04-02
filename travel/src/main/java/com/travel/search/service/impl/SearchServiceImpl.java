@@ -56,10 +56,10 @@ public class SearchServiceImpl implements SearchService {
                 .filter(product -> product.getProductStatus() == Status.FORSALE)
                 .collect(Collectors.toList());
 
-        if (sortTarget.equals("인기순")) {
-            productList = productList.stream()
-                    .sorted(Comparator.comparing(Product::getWishlistCount).reversed())
-                    .collect(Collectors.toList());
+        if (sortTarget != null && (sortTarget.equals("인기순"))) {
+                productList = productList.stream()
+                        .sorted(Comparator.comparing(Product::getWishlistCount).reversed())
+                        .collect(Collectors.toList());
         }
 
         List<SearchResultResponseDTO> searchResult = productList.stream()
