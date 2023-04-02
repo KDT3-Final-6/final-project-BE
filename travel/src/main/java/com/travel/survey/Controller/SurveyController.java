@@ -5,10 +5,7 @@ import com.travel.survey.service.SurveyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -24,5 +21,10 @@ public class SurveyController {
                                              Authentication authentication) {
         surveyService.saveSurvey(postSurvey, authentication.getName());
         return ResponseEntity.ok(null);
+    }
+
+    @GetMapping
+    public ResponseEntity<SurveyDTO.GetSurvey> getSurvey(Authentication authentication) {
+        return ResponseEntity.ok(surveyService.displaySurvey(authentication.getName()));
     }
 }
