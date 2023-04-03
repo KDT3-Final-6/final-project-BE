@@ -1,5 +1,6 @@
 package com.travel.post.entity;
 
+import com.travel.global.entity.BaseEntityWithModifiedDate;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "answer_post")
-public class AnswerPost {
+public class AnswerPost extends BaseEntityWithModifiedDate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

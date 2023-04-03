@@ -17,6 +17,8 @@ public class ReviewListDTO {
 
     private String purchasedProductThumbnail;
 
+    private String memberNickname;
+
     private String postContent;
 
     private int scope;
