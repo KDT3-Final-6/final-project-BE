@@ -39,6 +39,7 @@ public class ReviewPost extends Post {
                 .productId(this.purchasedProduct.getProduct().getProductId())
                 .purchasedProductName(this.purchasedProduct.getPurchasedProductName())
                 .purchasedProductThumbnail(this.purchasedProduct.getPurchasedProductThumbnail())
+                .memberNickname(this.getMember().getMemberNickname())
                 .postContent(this.getPostContent())
                 .scope(this.scope)
                 .modifiedDate(this.getModifiedDate().toLocalDate())
