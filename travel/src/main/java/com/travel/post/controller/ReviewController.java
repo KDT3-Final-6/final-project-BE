@@ -34,6 +34,22 @@ public class ReviewController {
         return ResponseEntity.ok(null);
     }
 
+    @GetMapping("/posts")
+    public ResponseEntity<PageResponseDTO> getReviews(
+            @RequestParam(required = false, defaultValue = "1") int page
+    ) {
+
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+
+        PageResponseDTO pageResponseDTO = reviewService.getReviews(pageRequest);
+
+        return ResponseEntity.ok(pageResponseDTO);
+    }
+
     @GetMapping
     public ResponseEntity<PageResponseDTO> getReviewsByMember(
             @RequestParam(required = false, defaultValue = "1") int page,

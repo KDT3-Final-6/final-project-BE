@@ -7,6 +7,7 @@ import com.travel.wishlist.service.WishlistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,28 +20,28 @@ public class WishlistController {
     private final WishlistService wishlistService;
 
     @PostMapping("/{productId}") //url에만 값을 넣으면 되는데 굳이 포스트를 써야할까?
-    public ResponseEntity<Void> addWishlist(@PathVariable Long productId, String userEmail) {
-        wishlistService.addWishlist(productId, userEmail);
+    public ResponseEntity<Void> addWishlist(@PathVariable Long productId, Authentication authentication) {
+        wishlistService.addWishlist(productId, authentication.getName());
 
         return ResponseEntity.ok(null);
     }
 
     @GetMapping
-    public ResponseEntity<PageResponseDTO> getWishlists(@RequestParam(required = false, defaultValue = "1") int page, String userEmail) {
+    public ResponseEntity<PageResponseDTO> getWishlists(@RequestParam(required = false, defaultValue = "1") int page, Authentication authentication) {
         if (page < 1) {
             throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
 
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
 
-        PageResponseDTO wishlists = wishlistService.getWishlists(pageRequest, userEmail);
+        PageResponseDTO wishlists = wishlistService.getWishlists(pageRequest, authentication.getName());
 
         return ResponseEntity.ok(wishlists);
     }
 
     @DeleteMapping("/{wishlistId}")
-    public ResponseEntity<Void> deleteWishlist(@PathVariable Long wishlistId, String userEmail) {
-        wishlistService.deleteWishlist(wishlistId, userEmail);
+    public ResponseEntity<Void> deleteWishlist(@PathVariable Long wishlistId, Authentication authentication) {
+        wishlistService.deleteWishlist(wishlistId, authentication.getName());
 
         return ResponseEntity.ok(null);
     }
