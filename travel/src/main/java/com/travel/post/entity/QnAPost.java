@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,8 +34,10 @@ public class QnAPost extends Post {
 
     public QnAResponseDTO toQnAResponseDTO(AnswerPost answerPost) {
         String answerContent = null;
+        LocalDateTime answerModifiedDate = null;
         if (answerPost != null) {
             answerContent = answerPost.getAnswerContent();
+            answerModifiedDate = answerPost.getModifiedDate();
         }
 
         return QnAResponseDTO.builder()
@@ -44,6 +47,7 @@ public class QnAPost extends Post {
                 .inquiryType(this.getInquiryType().getKorean())
                 .qnAStatus(this.getQnAStatus().getKorean())
                 .answer(answerContent)
+                .replyDate(answerModifiedDate)
                 .createdDate(this.getCreatedDate())
                 .build();
     }
