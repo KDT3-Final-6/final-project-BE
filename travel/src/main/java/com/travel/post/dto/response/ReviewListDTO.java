@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @Builder
-public class ReviewListMemberDTO {
+public class ReviewListDTO {
 
     private Long postId;
 
@@ -22,4 +22,5 @@ public class ReviewListMemberDTO {
     private int scope;
 
     private LocalDate modifiedDate;
+
 }
