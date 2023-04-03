@@ -52,8 +52,10 @@ public class QnAProductPost extends QnAPost {
     @Override
     public QnAAdminResponseDTO toQnAAdminResponseDTO(AnswerPost answerPost) {
         String answerContent = null;
+        LocalDateTime answerModifiedDate = null;
         if (answerPost != null) {
             answerContent = answerPost.getAnswerContent();
+            answerModifiedDate = answerPost.getModifiedDate();
         }
 
         return QnAAdminResponseDTO.builder()
@@ -63,6 +65,7 @@ public class QnAProductPost extends QnAPost {
                 .inquiryType(this.getInquiryType().getKorean())
                 .qnAStatus(this.getQnAStatus().getKorean())
                 .answer(answerContent)
+                .replyDate(answerModifiedDate)
                 .purchasedProductName(this.getPurchasedProduct().getPurchasedProductName())
                 .createdDate(this.getCreatedDate())
                 .memberName(this.getMember().getMemberName())
