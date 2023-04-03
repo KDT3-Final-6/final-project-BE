@@ -1,6 +1,7 @@
 package com.travel.admin.service.impl;
 
 import com.amazonaws.services.kms.model.NotFoundException;
+import com.travel.admin.dto.responseDTO.MemberDetailInfoDTO;
 import com.travel.admin.dto.responseDTO.MemberListDTO;
 import com.travel.admin.service.AdminService;
 import com.travel.global.response.PageResponseDTO;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -68,5 +70,16 @@ public class AdminServiceImpl implements AdminService {
             memberRepository.save(member);
         }
     }
+
+    @Override
+    public MemberDetailInfoDTO getMemberDetailInfo(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("Cannot find member with id: " + memberId));
+        return MemberDetailInfoDTO.builder()
+                .member(member)
+                .build();
+    }
+
+
 }
 
