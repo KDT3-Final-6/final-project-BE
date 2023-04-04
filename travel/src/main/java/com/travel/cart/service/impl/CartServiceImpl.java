@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
-    private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
     private final PeriodOptionRepository periodOptionRepository;
 
@@ -47,9 +46,7 @@ public class CartServiceImpl implements CartService {
 
         List<Cart> cartList = cartAddListDTO.getProductIds().stream()
                 .map(addDTO -> {
-                    Product product = productRepository.findById(addDTO.getProductId())
-                            .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
-                    PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, addDTO.getPeriodOptionId())
+                    PeriodOption periodOption = periodOptionRepository.findById(addDTO.getPeriodOptionId())
                             .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
                     Cart cart = cartRepository.findByMemberAndPeriodOption(member, periodOption).orElse(null);
@@ -91,10 +88,7 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartRepository.findByMemberAndCartId(member, cartId)
                 .orElseThrow(() -> new CartException(CartExceptionType.CART_NOT_FOUND));
 
-        Product product = productRepository.findById(cartUpdateDTO.getProductId())
-                .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
-
-        PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, cartUpdateDTO.getPeriodOptionId())
+        PeriodOption periodOption = periodOptionRepository.findById(cartUpdateDTO.getPeriodOptionId())
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
         cart.setPeriodOption(periodOption);

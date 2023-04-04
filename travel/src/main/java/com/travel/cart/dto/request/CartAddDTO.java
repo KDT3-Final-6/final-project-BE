@@ -10,9 +10,6 @@ import javax.validation.constraints.NotNull;
 public class CartAddDTO {
 
     @NotNull
-    private Long productId;
-
-    @NotNull
     private Long periodOptionId;
 
     @NotNull
