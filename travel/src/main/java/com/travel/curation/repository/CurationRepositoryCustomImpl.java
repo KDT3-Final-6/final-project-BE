@@ -39,6 +39,7 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
                         .groupBy(product.productId)
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
+                        .orderBy(product.wishlistCount.desc())
                         .fetch();
 
         long total =
@@ -61,6 +62,7 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
                         .groupBy(product.productId)
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
+                        .orderBy(product.wishlistCount.desc())
                         .fetch();
 
         long total =
