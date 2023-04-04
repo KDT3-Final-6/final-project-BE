@@ -192,7 +192,7 @@ public class AdminController {
         adminService.deleteMember(memberId);
         return ResponseEntity.ok().build();
     }
-    @GetMapping("/memberInfo/{memberId}")
+    @GetMapping("/members/{memberId}")
     public ResponseEntity<MemberDetailInfoDTO> getMemberDetailInfo(@PathVariable Long memberId) {
         MemberDetailInfoDTO memberDetailInfoDTO = adminService.getMemberDetailInfo(memberId);
         return ResponseEntity.ok(memberDetailInfoDTO);
