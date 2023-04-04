@@ -99,8 +99,8 @@ public class MemberServiceImpl implements MemberService {
             member.setMemberNickname(modifyMemberRequestDTO.getMemberNickname());
             member.setMemberHobby(modifyMemberRequestDTO.getMemberHobby());
             member.setMemberPhone(modifyMemberRequestDTO.getMemberPhone());
-            member.setMemberSmsAgree(modifyMemberRequestDTO.getMemberSmsAgree());
-            member.setMemberEmailAgree(modifyMemberRequestDTO.getMemberEmailAgree());
+            member.setMemberSmsAgree(modifyMemberRequestDTO.isMemberSmsAgree());
+            member.setMemberEmailAgree(modifyMemberRequestDTO.isMemberEmailAgree());
             member.setMemberImage(modifyMemberRequestDTO.getMemberImage());
 
             memberRepository.save(member);
@@ -151,16 +151,6 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-//    @Override
-//    public Boolean passwordCheck(String email, PasswordCheckDTO passwordCheckDTO) {
-//        try {
-//            memberRepository.findByMemberEmail(email).orElseThrow(NoSuchElementException::new);
-//            passwordCheckDTO.setMemberPassword(encodingPassword(passwordCheckDTO.getMemberPassword()));
-//            return true;
-//        } catch (NoSuchElementException e) {
-//            return false;
-//        }
-//    }
 
     @Override
     public Boolean passwordCheck(String email, PasswordCheckDTO passwordCheckDTO) {

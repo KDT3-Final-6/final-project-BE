@@ -7,6 +7,7 @@ import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
 import com.travel.post.dto.request.ReviewCreateRequestDTO;
 import com.travel.post.dto.request.ReviewUpdateRequestDTO;
+import com.travel.post.dto.response.ReviewListDTO;
 import com.travel.post.dto.response.ReviewListMemberDTO;
 import com.travel.post.dto.response.ReviewListProductDTO;
 import com.travel.post.entity.ReviewPost;
@@ -50,6 +51,17 @@ public class ReviewServiceImpl implements ReviewService {
         ReviewPost reviewPost = new ReviewPost(purchasedProduct.getPurchasedProductName(), reviewCreateRequestDTO.getContent(), member, purchasedProduct, reviewCreateRequestDTO.getScope());
 
         reviewRepository.save(reviewPost);
+    }
+
+    @Override
+    public PageResponseDTO getReviews(Pageable pageable) {
+        List<ReviewPost> reviewPostList = reviewRepository.findAll();
+
+        List<ReviewListDTO> reviewListMemberDTOList = reviewPostList.stream()
+                .map(ReviewPost::toReviewListDTO)
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO(new PageImpl<>(reviewListMemberDTOList, pageable, reviewListMemberDTOList.size()));
     }
 
     @Override

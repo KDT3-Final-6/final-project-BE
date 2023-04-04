@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @Builder
-public class ReviewListMemberDTO {
+public class ReviewListDTO {
 
     private Long postId;
 
@@ -17,9 +17,12 @@ public class ReviewListMemberDTO {
 
     private String purchasedProductThumbnail;
 
+    private String memberNickname;
+
     private String postContent;
 
     private int scope;
 
     private LocalDate modifiedDate;
+
 }

@@ -1,6 +1,7 @@
 package com.travel.post.entity;
 
 import com.travel.member.entity.Member;
+import com.travel.post.dto.response.ReviewListDTO;
 import com.travel.post.dto.response.ReviewListMemberDTO;
 import com.travel.post.dto.response.ReviewListProductDTO;
 import com.travel.product.entity.PurchasedProduct;
@@ -32,11 +33,25 @@ public class ReviewPost extends Post {
         this.scope = scope;
     }
 
+    public ReviewListDTO toReviewListDTO() {
+        return ReviewListDTO.builder()
+                .postId(this.getPostId())
+                .productId(this.purchasedProduct.getProduct().getProductId())
+                .purchasedProductName(this.purchasedProduct.getPurchasedProductName())
+                .purchasedProductThumbnail(this.purchasedProduct.getPurchasedProductThumbnail())
+                .memberNickname(this.getMember().getMemberNickname())
+                .postContent(this.getPostContent())
+                .scope(this.scope)
+                .modifiedDate(this.getModifiedDate().toLocalDate())
+                .build();
+    }
+
     public ReviewListMemberDTO toReviewListMemberDTO() {
         return ReviewListMemberDTO.builder()
                 .postId(this.getPostId())
                 .productId(this.purchasedProduct.getProduct().getProductId())
                 .purchasedProductName(this.purchasedProduct.getPurchasedProductName())
+                .purchasedProductThumbnail(this.purchasedProduct.getPurchasedProductThumbnail())
                 .postContent(this.getPostContent())
                 .scope(this.scope)
                 .modifiedDate(this.getModifiedDate().toLocalDate())

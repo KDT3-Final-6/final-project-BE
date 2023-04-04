@@ -9,18 +9,24 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 public class MemberListDTO {
-    private String memberId;
+    private Long memberId;
     private String memberName;
     private String memberNickname;
     private String memberEmail;
     private LocalDateTime createdDate;
+    private Long totalQnAs;
+    private Long totalReviews;
+    private Long total;
 
     @Builder
-    public MemberListDTO(Member member) {
-
+    public MemberListDTO(Member member, Long totalQnAs, Long totalReviews, Long total) {
+        this.memberId = member.getMemberId();
         this.memberName = member.getMemberName();
         this.memberNickname = member.getMemberNickname();
         this.memberEmail = member.getMemberEmail();
         this.createdDate = member.getCreatedDate();
+        this.totalQnAs = totalQnAs;
+        this.totalReviews = totalReviews;
+        this.total = total;
     }
 }

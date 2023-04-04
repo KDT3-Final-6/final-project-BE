@@ -21,6 +21,8 @@ public class QnAResponseDTO {
 
     private String answer;
 
+    private LocalDateTime replyDate;
+
     private String purchasedProductName;
 
     private LocalDateTime createdDate;

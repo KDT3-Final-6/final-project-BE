@@ -1,5 +1,6 @@
 package com.travel.admin.controller;
 
+import com.travel.admin.dto.responseDTO.MemberDetailInfoDTO;
 import com.travel.admin.service.AdminService;
 import com.travel.auth.jwt.JwtTokenProvider;
 import com.travel.global.exception.GlobalException;
@@ -186,4 +187,27 @@ public class AdminController {
         adminService.changeAdminToMember(memberId);
         return ResponseEntity.ok().build();
     }
+    @PostMapping("/deleteMember/{memberId}")
+    public ResponseEntity<?> deleteMember(@PathVariable Long memberId) {
+        adminService.deleteMember(memberId);
+        return ResponseEntity.ok().build();
+    }
+    @GetMapping("/members/{memberId}")
+    public ResponseEntity<MemberDetailInfoDTO> getMemberDetailInfo(@PathVariable Long memberId) {
+        MemberDetailInfoDTO memberDetailInfoDTO = adminService.getMemberDetailInfo(memberId);
+        return ResponseEntity.ok(memberDetailInfoDTO);
+    }
+
+    @GetMapping("/countActiveMember")
+    public ResponseEntity<Long> countActiveMembers() {
+        long count = adminService.countActiveMembers();
+        return ResponseEntity.ok(count);
+    }
+    @GetMapping("/countDeleteMember")
+    public ResponseEntity<Long> countDeleteMembers() {
+        long count = adminService.countDeleteMembers();
+        return ResponseEntity.ok(count);
+    }
+
+
 }

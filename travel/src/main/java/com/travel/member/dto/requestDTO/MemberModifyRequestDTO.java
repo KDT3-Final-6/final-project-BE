@@ -31,8 +31,8 @@ public class MemberModifyRequestDTO {
         private List<Hobby> memberHobby;
         @Pattern(regexp = "^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$", message = "-없이 작성해주세요")
         private String memberPhone;
-        private Boolean memberSmsAgree;
-        private Boolean memberEmailAgree;
+        private boolean memberSmsAgree;
+        private boolean memberEmailAgree;
         private String memberGender;
         private Grade memberGrade;
         private MemberImage memberImage;

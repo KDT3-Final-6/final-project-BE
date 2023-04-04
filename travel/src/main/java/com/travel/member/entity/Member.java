@@ -64,10 +64,10 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
     @Column(name = "member_gender")
     private String memberGender;
     @Column(name = "member_smsAgree", nullable = false)
-    private Boolean memberSmsAgree;
+    private boolean memberSmsAgree;
 
     @Column(name = "member_emailAgree", nullable = false)
-    private Boolean memberEmailAgree;
+    private boolean memberEmailAgree;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "member")
     private MemberImage memberImage;
@@ -106,7 +106,7 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
 
     // 회원가입 입력
     @Builder
-    public Member(String memberEmail, String memberPassword, String memberName, String memberNickname, String memberPhone, String memberBirthDate, List<Hobby> memberHobby, List<String> roles, String memberGender, Boolean memberSmsAgree, Boolean memberEmailAgree) {
+    public Member(String memberEmail, String memberPassword, String memberName, String memberNickname, String memberPhone, String memberBirthDate, List<Hobby> memberHobby, List<String> roles, String memberGender, boolean memberSmsAgree, boolean memberEmailAgree) {
         this.memberEmail = memberEmail;
         this.memberPassword = memberPassword;
         this.memberName = memberName;
@@ -179,8 +179,8 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
         this.memberNickname = dto.getMemberNickname();
         this.memberPhone = dto.getMemberPhone();
         this.memberHobby = dto.getMemberHobby();
-        this.memberSmsAgree = dto.getMemberSmsAgree();
-        this.memberEmailAgree = dto.getMemberEmailAgree();
+        this.memberSmsAgree = dto.isMemberSmsAgree();
+        this.memberEmailAgree = dto.isMemberEmailAgree();
     }
 
     public void saveSurvey(Survey survey) {

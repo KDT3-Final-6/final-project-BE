@@ -9,6 +9,8 @@ public interface ReviewService {
 
     void createReview(ReviewCreateRequestDTO reviewCreateRequestDTO, String memberEmail);
 
+    PageResponseDTO getReviews(Pageable pageable);
+
     PageResponseDTO getReviewsByMember(Pageable pageable, String memberEmail);
 
     PageResponseDTO getReviewsByProduct(Pageable pageable, Long productId);
