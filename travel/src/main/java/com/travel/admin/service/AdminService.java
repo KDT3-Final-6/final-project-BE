@@ -16,5 +16,6 @@ public interface AdminService {
     MemberDetailInfoDTO getMemberDetailInfo(Long memberId);
     long countActiveMembers();
     long countDeleteMembers();
-
+    long countQnaMembers(Long memberId);
+    long countReviewMembers(Long memberId);
 }
