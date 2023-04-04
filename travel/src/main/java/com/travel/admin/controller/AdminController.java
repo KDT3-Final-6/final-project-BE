@@ -197,4 +197,17 @@ public class AdminController {
         MemberDetailInfoDTO memberDetailInfoDTO = adminService.getMemberDetailInfo(memberId);
         return ResponseEntity.ok(memberDetailInfoDTO);
     }
+
+    @GetMapping("/countActiveMember")
+    public ResponseEntity<Long> countActiveMembers() {
+        long count = adminService.countActiveMembers();
+        return ResponseEntity.ok(count);
+    }
+    @GetMapping("/countDeleteMember")
+    public ResponseEntity<Long> countDeleteMembers() {
+        long count = adminService.countDeleteMembers();
+        return ResponseEntity.ok(count);
+    }
+
+
 }
