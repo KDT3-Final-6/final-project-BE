@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/curation")
@@ -85,5 +88,23 @@ public class CurationController {
 
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
         return ResponseEntity.ok(curationService.detailCurationByTarget(authentication.getName(), pageRequest, "season"));
+    }
+
+    @GetMapping("/group")
+    public ResponseEntity<PageResponseDTO> CurationByGroupAndThemes(
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam String group,
+            @RequestParam(required = false, defaultValue = "") String concept1,
+            @RequestParam(required = false, defaultValue = "") String concept2,
+            @RequestParam(required = false, defaultValue = "") String concept3) {
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
+        }
+        List<String> conceptList = new ArrayList<>();
+        conceptList.add(concept1);
+        conceptList.add(concept2);
+        conceptList.add(concept3);
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+        return ResponseEntity.ok(curationService.CurationByGroupAndThemes(pageRequest, group, conceptList));
     }
 }
