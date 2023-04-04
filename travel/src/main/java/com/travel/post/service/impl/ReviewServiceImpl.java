@@ -1,5 +1,7 @@
 package com.travel.post.service.impl;
 
+import com.travel.global.exception.GlobalException;
+import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
@@ -61,7 +63,13 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(ReviewPost::toReviewListDTO)
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(reviewListMemberDTOList, pageable, reviewListMemberDTOList.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), reviewListMemberDTOList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(reviewListMemberDTOList.subList(start, end), pageable, reviewListMemberDTOList.size()));
     }
 
     @Override
@@ -75,7 +83,13 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(ReviewPost::toReviewListMemberDTO)
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(reviewListMemberDTOList, pageable, reviewListMemberDTOList.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), reviewListMemberDTOList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(reviewListMemberDTOList.subList(start, end), pageable, reviewListMemberDTOList.size()));
     }
 
     @Override
@@ -89,7 +103,13 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(ReviewPost::toReviewListProductDTO)
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(reviewListProductDTOList, pageable, reviewListProductDTOList.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), reviewListProductDTOList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(reviewListProductDTOList.subList(start, end), pageable, reviewListProductDTOList.size()));
     }
 
     @Override
