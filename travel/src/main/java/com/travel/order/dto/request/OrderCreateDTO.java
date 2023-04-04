@@ -10,9 +10,6 @@ import javax.validation.constraints.NotNull;
 public class OrderCreateDTO {
 
     @NotNull
-    private Long productId;
-
-    @NotNull
     private Long periodOptionId;
 
     @NotNull

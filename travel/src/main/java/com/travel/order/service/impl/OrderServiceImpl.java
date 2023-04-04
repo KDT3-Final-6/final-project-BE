@@ -196,14 +196,15 @@ public class OrderServiceImpl implements OrderService {
                 .map(createDTO -> {
                     Integer quantity = createDTO.getQuantity();
 
-                    Product product = productRepository.findById(createDTO.getProductId())
-                            .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
-                    PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, createDTO.getPeriodOptionId())
+                    PeriodOption periodOption = periodOptionRepository.findById(createDTO.getPeriodOptionId())
                             .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
                     if (periodOption.getPeriodOptionStatus() != Status.FORSALE) {
                         throw new OrderException(OrderExceptionType.PRODUCTS_CANNOT_BE_ORDERED);
                     }
+
+                    Product product = productRepository.findById(periodOption.getProduct().getProductId())
+                            .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
                     return updateQuantity(quantity, product, periodOption);
                 })
