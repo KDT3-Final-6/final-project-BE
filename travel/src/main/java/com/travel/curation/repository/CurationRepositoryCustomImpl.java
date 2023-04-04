@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.travel.product.entity.Product;
+import com.travel.product.entity.Status;
 import com.travel.survey.entity.Survey;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -46,7 +47,7 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
                         .join(product.periodOptions, periodOption)
                         .join(product.productCategories, productCategory)
                         .join(productCategory.category, category)
-                        .where(curationBySeason(season, now), category.categoryName.in(district, theme))
+                        .where(curationBySeason(season, now), category.categoryName.in(district, theme), product.productStatus.eq(Status.FORSALE))
                         .groupBy(product.productId)
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
@@ -59,7 +60,7 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
                         .join(product.periodOptions, periodOption)
                         .join(product.productCategories, productCategory)
                         .join(productCategory.category, category)
-                        .where(curationBySeason(season, now), category.categoryName.in(district, theme))
+                        .where(curationBySeason(season, now), category.categoryName.in(district, theme), product.productStatus.eq(Status.FORSALE))
                         .groupBy(product.productId)
                         .fetch().size();
 
@@ -72,7 +73,7 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
                 queryFactory.selectFrom(product)
                         .join(product.productCategories, productCategory)
                         .join(productCategory.category, category)
-                        .where(curationByTarget(target, survey))
+                        .where(curationByTarget(target, survey), product.productStatus.eq(Status.FORSALE))
                         .groupBy(product.productId)
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
@@ -84,7 +85,7 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
                         .from(product)
                         .join(product.productCategories, productCategory)
                         .join(productCategory.category, category)
-                        .where(curationByTarget(target, survey))
+                        .where(curationByTarget(target, survey), product.productStatus.eq(Status.FORSALE))
                         .groupBy(product.productId)
                         .fetch().size();
 
@@ -96,7 +97,7 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
         List<Product> content =
                 queryFactory.selectFrom(product)
                         .join(product.periodOptions, periodOption)
-                        .where(curationBySeason(survey))
+                        .where(curationBySeason(survey), product.productStatus.eq(Status.FORSALE))
                         .groupBy(product.productId)
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
@@ -107,7 +108,7 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
                 queryFactory.select(Wildcard.count)
                         .from(product)
                         .join(product.periodOptions, periodOption)
-                        .where(curationBySeason(survey))
+                        .where(curationBySeason(survey), product.productStatus.eq(Status.FORSALE))
                         .groupBy(product.productId)
                         .fetch().size();
 
@@ -120,7 +121,7 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
                 queryFactory.selectFrom(product)
                         .join(product.productCategories, productCategory)
                         .join(productCategory.category, category)
-                        .where(curationByThemes(conceptList), product.in(
+                        .where(curationByThemes(conceptList), product.productStatus.eq(Status.FORSALE), product.in(
                                 JPAExpressions.selectFrom(product)
                                         .join(product.productCategories, productCategory)
                                         .join(productCategory.category, category)
@@ -137,7 +138,7 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
                         .from(product)
                         .join(product.productCategories, productCategory)
                         .join(productCategory.category, category)
-                        .where(curationByThemes(conceptList), product.in(
+                        .where(curationByThemes(conceptList), product.productStatus.eq(Status.FORSALE), product.in(
                                 JPAExpressions.selectFrom(product)
                                         .join(product.productCategories, productCategory)
                                         .join(productCategory.category, category)
