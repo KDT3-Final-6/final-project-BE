@@ -24,6 +24,18 @@ public class CurationController {
 
     private final CurationService curationService;
 
+    @GetMapping
+    public ResponseEntity<PageResponseDTO> defaultCuration(
+            @RequestParam(required = false, defaultValue = "1") int page,
+            @RequestParam String season, @RequestParam String district, @RequestParam String theme) {
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+        return ResponseEntity.ok(curationService.defaultCuration(pageRequest, season, district, theme));
+    }
+
     @GetMapping("/detail/companion")
     public ResponseEntity<PageResponseDTO> detailCurationByCompanion(
             @RequestParam(required = false, defaultValue = "1") int page, Authentication authentication) {
