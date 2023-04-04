@@ -164,7 +164,7 @@ public class AdminController {
     }
 
     @GetMapping("/members")
-    public ResponseEntity<PageResponseDTO> getAllMember(@RequestParam(required = false, defaultValue = "1") int page) {
+    public ResponseEntity<PageResponseDTO>getAllMember(@RequestParam(required = false, defaultValue = "1") int page) {
         if (page < 1) {
             throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
@@ -187,13 +187,11 @@ public class AdminController {
         adminService.changeAdminToMember(memberId);
         return ResponseEntity.ok().build();
     }
-
     @PostMapping("/deleteMember/{memberId}")
     public ResponseEntity<?> deleteMember(@PathVariable Long memberId) {
         adminService.deleteMember(memberId);
         return ResponseEntity.ok().build();
     }
-
     @GetMapping("/members/{memberId}")
     public ResponseEntity<MemberDetailInfoDTO> getMemberDetailInfo(@PathVariable Long memberId) {
         MemberDetailInfoDTO memberDetailInfoDTO = adminService.getMemberDetailInfo(memberId);
@@ -205,11 +203,11 @@ public class AdminController {
         long count = adminService.countActiveMembers();
         return ResponseEntity.ok(count);
     }
-
     @GetMapping("/countDeleteMember")
     public ResponseEntity<Long> countDeleteMembers() {
         long count = adminService.countDeleteMembers();
         return ResponseEntity.ok(count);
     }
+
 
 }
