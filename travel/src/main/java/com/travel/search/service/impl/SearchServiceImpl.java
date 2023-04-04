@@ -1,5 +1,7 @@
 package com.travel.search.service.impl;
 
+import com.travel.global.exception.GlobalException;
+import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.member.entity.Hobby;
 import com.travel.member.entity.Member;
@@ -71,7 +73,7 @@ public class SearchServiceImpl implements SearchService {
                 .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(searchResult, pageable, searchResult.size()));
+        return new PageResponseDTO(getPageImpl(pageable, searchResult));
     }
 
     @Override
@@ -100,7 +102,7 @@ public class SearchServiceImpl implements SearchService {
                 .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(searchResult, pageable, searchResult.size()));
+        return new PageResponseDTO(getPageImpl(pageable, searchResult));
     }
 
     public PageResponseDTO getRecommend(Pageable pageable, String memberEmail) {
@@ -126,7 +128,7 @@ public class SearchServiceImpl implements SearchService {
                 .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(searchResult, pageable, searchResult.size()));
+        return new PageResponseDTO(getPageImpl(pageable, searchResult));
     }
 
     @Override
@@ -153,7 +155,7 @@ public class SearchServiceImpl implements SearchService {
                 .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(searchResult, pageable, searchResult.size()));
+        return new PageResponseDTO(getPageImpl(pageable, searchResult));
     }
 
     @Override
@@ -196,7 +198,24 @@ public class SearchServiceImpl implements SearchService {
                 })
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(qnAPostDTOList, pageable, qnAPostDTOList.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), qnAPostDTOList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(qnAPostDTOList.subList(start, end), pageable, qnAPostDTOList.size()));
+    }
+
+    private PageImpl<SearchResultResponseDTO> getPageImpl(Pageable pageable, List<SearchResultResponseDTO> searchResult) {
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), searchResult.size());
+
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageImpl<>(searchResult.subList(start, end), pageable, searchResult.size());
     }
 
     public String changeHobbyName(String hobbyKorean) {
