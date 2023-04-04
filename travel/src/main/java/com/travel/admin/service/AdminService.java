@@ -13,4 +13,8 @@ public interface AdminService {
     void changeMemberToAdmin(Long memberId);
     void changeAdminToMember(Long memberId);
     void deleteMember(Long memberId);
-    MemberDetailInfoDTO getMemberDetailInfo(Long memberId);    }
+    MemberDetailInfoDTO getMemberDetailInfo(Long memberId);
+    long countActiveMembers();
+    long countDeleteMembers();
+
+}
