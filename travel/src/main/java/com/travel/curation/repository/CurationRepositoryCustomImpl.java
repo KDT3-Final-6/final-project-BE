@@ -38,6 +38,7 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
         List<Product> content =
                 queryFactory.selectFrom(product)
                         .join(product.productCategories, productCategory)
+                        .join(productCategory.category, category)
                         .where(curationByTarget(target, survey))
                         .groupBy(product.productId)
                         .offset(pageable.getOffset())
@@ -49,6 +50,7 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
                 queryFactory.select(Wildcard.count)
                         .from(product)
                         .join(product.productCategories, productCategory)
+                        .join(productCategory.category, category)
                         .where(curationByTarget(target, survey))
                         .groupBy(product.productId)
                         .fetch().size();
