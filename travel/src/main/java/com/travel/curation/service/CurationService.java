@@ -22,6 +22,12 @@ public class CurationService {
     private final MemberRepository memberRepository;
     private final CurationRepository curationRepository;
 
+    public PageResponseDTO defaultCuration(Pageable pageable, String season, String district, String theme) {
+
+        return new PageResponseDTO(curationRepository.findAllWithThreeCategories(pageable, season, district, theme)
+                .map(ProductListGetResponseDTO::new));
+    }
+
     public PageResponseDTO detailCurationByTarget(String userEmail, Pageable pageable, String target) {
         Member member = memberRepository.findByMemberEmail(userEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
