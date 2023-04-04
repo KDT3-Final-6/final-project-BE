@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -26,11 +28,19 @@ public class CurationService {
         if (member.getSurvey() == null)
             throw new MemberException(MemberExceptionType.SURVEY_NOT_EXISTS);
 
-        if(target.equals("season")){
+        if (target.equals("season")) {
             return new PageResponseDTO(curationRepository.findAllWithSeason(pageable, member.getSurvey())
                     .map(ProductListGetResponseDTO::new));
         }
         return new PageResponseDTO(curationRepository.findAllWithTarget(pageable, member.getSurvey(), target)
+                .map(ProductListGetResponseDTO::new));
+    }
+
+    public PageResponseDTO CurationByGroupAndThemes(Pageable pageable, String group, List<String> conceptList) {
+
+        conceptList.removeIf(String::isBlank);
+
+        return new PageResponseDTO(curationRepository.findAllWithGroupAndThemes(pageable, group, conceptList)
                 .map(ProductListGetResponseDTO::new));
     }
 }
