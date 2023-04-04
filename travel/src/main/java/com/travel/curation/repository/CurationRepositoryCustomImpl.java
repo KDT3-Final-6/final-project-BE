@@ -1,7 +1,9 @@
 package com.travel.curation.repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.travel.product.entity.Product;
 import com.travel.survey.entity.Survey;
@@ -13,6 +15,7 @@ import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.travel.product.entity.QCategory.category;
 import static com.travel.product.entity.QPeriodOption.periodOption;
 import static com.travel.product.entity.QProduct.product;
 import static com.travel.product.entity.QProductCategory.productCategory;
@@ -70,6 +73,41 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
                         .from(product)
                         .join(product.periodOptions, periodOption)
                         .where(curationBySeason(survey))
+                        .groupBy(product.productId)
+                        .fetch().size();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public Page<Product> findAllWithGroupAndThemes(Pageable pageable, String group, List<String> conceptList) {
+        List<Product> content =
+                queryFactory.selectFrom(product)
+                        .join(product.productCategories, productCategory)
+                        .join(productCategory.category, category)
+                        .where(curationByThemes(conceptList), product.in(
+                                JPAExpressions.selectFrom(product)
+                                        .join(product.productCategories, productCategory)
+                                        .join(productCategory.category, category)
+                                        .where(curationByGroup(group)))
+                        )
+                        .groupBy(product.productId)
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .orderBy(product.wishlistCount.desc())
+                        .fetch();
+
+        long total =
+                queryFactory.select(Wildcard.count)
+                        .from(product)
+                        .join(product.productCategories, productCategory)
+                        .join(productCategory.category, category)
+                        .where(curationByThemes(conceptList), product.in(
+                                JPAExpressions.selectFrom(product)
+                                        .join(product.productCategories, productCategory)
+                                        .join(productCategory.category, category)
+                                        .where(curationByGroup(group)))
+                        )
                         .groupBy(product.productId)
                         .fetch().size();
 
@@ -183,7 +221,7 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
                 return productCategory.category.categoryName.eq("볼론투어");
 
             case "TREKKING":
-                return productCategory.category.categoryName.eq("여자끼리");
+                return productCategory.category.categoryName.eq("트레킹");
         }
         return null;
     }
@@ -201,6 +239,65 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
 
             case "WINTER":
                 return periodOption.startDate.between(winter, spring.minusDays(1));
+        }
+        return null;
+    }
+
+    private BooleanBuilder curationByThemes(List<String> conceptList) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        conceptList.stream()
+                .map(this::curationByTheme)
+                .forEach(booleanBuilder::or);
+
+        return booleanBuilder;
+    }
+
+    private BooleanExpression curationByGroup(String group) {
+        switch (group) {
+            case "남자끼리":
+                return productCategory.category.categoryName.eq("남자끼리");
+
+            case "여자끼리":
+                return productCategory.category.categoryName.eq("여자끼리");
+
+            case "가족끼리":
+                return productCategory.category.categoryName.eq("가족끼리");
+
+            case "5070끼리":
+                return productCategory.category.categoryName.eq("5070끼리");
+
+            case "누구든지":
+                return productCategory.category.categoryName.eq("누구든지");
+        }
+        return null;
+    }
+
+    private BooleanExpression curationByTheme(String theme) {
+        switch (theme) {
+            case "쇼핑":
+                return productCategory.category.categoryName.eq("쇼핑");
+
+            case "골프":
+                return productCategory.category.categoryName.eq("골프여행");
+
+            case "힐링":
+                return productCategory.category.categoryName.eq("휴양지");
+
+            case "와인":
+                return productCategory.category.categoryName.eq("와인");
+
+            case "문화탐방":
+                return productCategory.category.categoryName.eq("문화탐방");
+
+            case "성지순례":
+                return productCategory.category.categoryName.eq("성지순례");
+
+            case "봉사활동":
+                return productCategory.category.categoryName.eq("볼론투어");
+
+            case "트레킹":
+                return productCategory.category.categoryName.eq("트레킹");
         }
         return null;
     }
