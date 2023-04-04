@@ -80,6 +80,15 @@ public class AdminServiceImpl implements AdminService {
                 .build();
     }
 
+    @Override
+    public long countActiveMembers() {
+        return memberRepository.countActiveMembers();
+    }
+    @Override
+    public long countDeleteMembers() {
+        return memberRepository.countDeleteMembers();
+    }
+
 
 }
 
