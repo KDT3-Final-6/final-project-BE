@@ -50,7 +50,12 @@ public class FileUploadService {
         if (multipartFile.isEmpty()) {
             return null;
         }
-        String s3FileName = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename(); // s3에 저장되는 파일이름 중복안되게 하기
+
+        int end = Math.min(multipartFile.getOriginalFilename().length(), 20);
+        String originName = multipartFile.getOriginalFilename().substring(0, end);
+        String s3FileName = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();
+        // s3에 저장되는 파일이름 중복안되게 하기
+
         String ext = extractExt(s3FileName);
         String contentType = "";
 
