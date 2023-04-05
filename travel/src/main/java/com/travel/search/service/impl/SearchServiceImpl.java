@@ -15,6 +15,7 @@ import com.travel.post.exception.PostExceptionType;
 import com.travel.post.repository.AnswerRepository;
 import com.travel.post.repository.QnAProductRepository;
 import com.travel.post.repository.qnapost.QnARepository;
+import com.travel.product.dto.response.ProductListGetResponseDTO;
 import com.travel.product.entity.Category;
 import com.travel.product.entity.Product;
 import com.travel.product.entity.ProductCategory;
@@ -69,8 +70,8 @@ public class SearchServiceImpl implements SearchService {
                     .collect(Collectors.toList());
         }
 
-        List<SearchResultResponseDTO> searchResult = productList.stream()
-                .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
+        List<ProductListGetResponseDTO> searchResult = productList.stream()
+                .map(product -> new ProductListGetResponseDTO(product, isExistsByMemberAndProduct(memberEmail, product)))
                 .collect(Collectors.toList());
 
         return new PageResponseDTO(getPageImpl(pageable, searchResult));
@@ -98,8 +99,8 @@ public class SearchServiceImpl implements SearchService {
             productList = sortList(productList, sortTarget);
         }
 
-        List<SearchResultResponseDTO> searchResult = productList.stream()
-                .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
+        List<ProductListGetResponseDTO> searchResult = productList.stream()
+                .map(product -> new ProductListGetResponseDTO(product, isExistsByMemberAndProduct(memberEmail, product)))
                 .collect(Collectors.toList());
 
         return new PageResponseDTO(getPageImpl(pageable, searchResult));
@@ -124,8 +125,8 @@ public class SearchServiceImpl implements SearchService {
                 .distinct()
                 .collect(toList());
 
-        List<SearchResultResponseDTO> searchResult = productList.stream()
-                .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
+        List<ProductListGetResponseDTO> searchResult = productList.stream()
+                .map(product -> new ProductListGetResponseDTO(product, isExistsByMemberAndProduct(memberEmail, product)))
                 .collect(Collectors.toList());
 
         return new PageResponseDTO(getPageImpl(pageable, searchResult));
@@ -151,8 +152,8 @@ public class SearchServiceImpl implements SearchService {
                 .distinct()
                 .collect(toList());
 
-        List<SearchResultResponseDTO> searchResult = productList.stream()
-                .map(product -> product.toSearchResultResponseDTO(isExistsByMemberAndProduct(memberEmail, product)))
+        List<ProductListGetResponseDTO> searchResult = productList.stream()
+                .map(product -> new ProductListGetResponseDTO(product, isExistsByMemberAndProduct(memberEmail, product)))
                 .collect(Collectors.toList());
 
         return new PageResponseDTO(getPageImpl(pageable, searchResult));
@@ -207,7 +208,7 @@ public class SearchServiceImpl implements SearchService {
         return new PageResponseDTO(new PageImpl<>(qnAPostDTOList.subList(start, end), pageable, qnAPostDTOList.size()));
     }
 
-    private PageImpl<SearchResultResponseDTO> getPageImpl(Pageable pageable, List<SearchResultResponseDTO> searchResult) {
+    private PageImpl<ProductListGetResponseDTO> getPageImpl(Pageable pageable, List<ProductListGetResponseDTO> searchResult) {
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), searchResult.size());
 

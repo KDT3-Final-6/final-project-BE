@@ -13,8 +13,9 @@ public class ProductListGetResponseDTO {
     private String productStatus;
     private String productContent;
     private String contentDetail;
+    private Boolean isWished;
 
-    public ProductListGetResponseDTO(Product product) {
+    public ProductListGetResponseDTO(Product product, Boolean isWished) {
         this.productId = product.getProductId();
         this.productName = product.getProductName();
         this.productThumbnail = product.getProductImages().get(0).getImagePath();
@@ -22,5 +23,6 @@ public class ProductListGetResponseDTO {
         this.productStatus = product.getProductStatus().getKorean();
         this.productContent = product.getProductContent();
         this.contentDetail = product.getContentDetail();
+        this.isWished = isWished;
     }
 }
