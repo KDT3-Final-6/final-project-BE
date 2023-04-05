@@ -1,5 +1,6 @@
 package com.travel.auth.service;
 
+import com.travel.auth.TokenType;
 import com.travel.auth.dto.ResponseDto;
 import com.travel.auth.dto.request.MemberRequestDto;
 import com.travel.auth.dto.response.MemberResponseDto;
@@ -13,6 +14,7 @@ import com.travel.member.repository.MemberRepository;
 import com.travel.global.config.SecurityUtil;
 import com.travel.member.entity.Hobby;
 import com.travel.member.entity.Member;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -75,7 +77,7 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseDto<?> login(MemberRequestDto.Login login) {
+    public MemberResponseDto.TokenInfo login(MemberRequestDto.Login login) {
         Member member = memberRepository.findByMemberEmail(login.getMemberEmail())
                 .orElseThrow(() -> new AuthException(AuthExceptionType.INVALID_EMAIL_OR_PASSWORD));
         // 회원 삭제 여부
@@ -89,63 +91,99 @@ public class MemberService {
         UsernamePasswordAuthenticationToken authenticationToken = login.toAuthentication();
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        System.out.println("authenticationManagerBuilder = " + authenticationManagerBuilder);
-        System.out.println(login.getMemberPassword());
 
         MemberResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
-        redisTemplate.opsForValue()
-                .set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
-
-        return new ResponseDto<>(tokenInfo);
+        redisTemplate.opsForValue().set("AT:" + authentication.getName(), tokenInfo.getAccessToken());
+        redisTemplate.opsForValue().set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
+        System.out.println(tokenInfo.getAccessToken());
+        System.out.println(tokenInfo.getRefreshToken());
+        return tokenInfo;
     }
 
-    public ResponseDto<?> reissue(MemberRequestDto.Reissue reissue) {
-        // 1. Refresh Token 검증
-        if (!jwtTokenProvider.validateToken(reissue.getRefreshToken())) {
-            return new ResponseDto<>("Refresh Token 정보가 유효하지 않습니다.");
-        }
-        // 2. Access Token 에서 User email 을 가져옵니다.
-        Authentication authentication = jwtTokenProvider.getAuthentication(reissue.getAccessToken());
-
-        // 3. Redis 에서 User email 을 기반으로 저장된 Refresh Token 값을 가져옵니다.
-        String refreshToken = (String)redisTemplate.opsForValue().get("회원:" + authentication.getName());
-        // (추가) 로그아웃되어 Redis 에 RefreshToken 이 존재하지 않는 경우 처리
-        if(ObjectUtils.isEmpty(refreshToken)) {
-            return new ResponseDto<>("잘못된 요청입니다.");
-        }
-        if(!refreshToken.equals(reissue.getRefreshToken())) {
-            return new ResponseDto<>("Refresh Token 정보가 일치하지 않습니다.");
-        }
-
-        // 4. 새로운 토큰 생성
-        MemberResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
-
-        // 5. RefreshToken Redis 업데이트
-        redisTemplate.opsForValue()
-                .set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
-
-//        return response.success(tokenInfo, "Token 정보가 갱신되었습니다.", HttpStatus.OK);
-        return new ResponseDto<>(tokenInfo);
-
-    }
     @Transactional
-    public ResponseDto<?> logout(MemberRequestDto.Logout logout) {
-        // 로그아웃 하고 싶은 토큰이 유효한지 검증
+    public ResponseDto<MemberResponseDto.TokenInfo> reissue(String refreshToken) {
+        // 1. 클라이언트로부터 refresh token을 전달
+
+        // 2. 전달받은 refresh token이 유효한지 확인
+        Claims claims = jwtTokenProvider.getClaimsFromToken(refreshToken, TokenType.REFRESH);
+        String email = claims.getSubject();
+//
+        String storedRefreshToken = (String) redisTemplate.opsForValue().get("RT:" + email);
+
+        if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
+            throw new AuthException(AuthExceptionType.INVALID_TOKEN);
+        }
+        // 3. refresh token이 유효하다면, 해당 refresh token에 대응되는 access token을 redis에서 삭제
+        String storedAccessToken = (String) redisTemplate.opsForValue().get("AT:" + email);
+        if (storedAccessToken != null) {
+            redisTemplate.delete("AT:" + email);
+        }
+        // 4. 새로운 access token과 refresh token을 생성
+        Authentication authentication = new UsernamePasswordAuthenticationToken(email, null);
+        MemberResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+        // 5. 새로 생성된 refresh token을 redis에 저장합니다.
+        redisTemplate.opsForValue()
+                .set("RT:" + email, tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
+
+        // 6. 생성된 access token과 refresh token을 반환
+        return new ResponseDto<>(tokenInfo);
+    }
+//    @Transactional
+//    public ResponseDto<?> logout(MemberRequestDto.Logout logout) {
+//        // 로그아웃 하고 싶은 토큰이 유효한지 검증
+//        if (!jwtTokenProvider.validateToken(logout.getAccessToken())) {
+//            throw new IllegalArgumentException("로그아웃: 유효하지 않은 토큰입니다.");
+//        }
+//        // access token에서 mail 가져온다.
+//        Authentication authentication = jwtTokenProvider.getAuthentication(logout.getAccessToken());
+//
+//        // redis에서 해당 mail 로 저장된 refresh token이 있는지 여부를 확인 후에 있을 경우 삭제
+//        if (redisTemplate.opsForValue().get("RT:" + authentication.getName()) != null) {
+//            redisTemplate.delete("RT:" + authentication.getName());
+//        }
+//
+//        Long expireToken = jwtTokenProvider.getExpiration(logout.getAccessToken());
+//        redisTemplate.opsForValue().set(logout.getAccessToken(), "logout", expireToken, TimeUnit.MILLISECONDS);
+//
+//        return new ResponseDto<>(HttpStatus.OK);
+//    }
+//    @Transactional
+//    public ResponseDto<Boolean> logout(MemberRequestDto.Logout logout) {
+//        // 로그아웃 하고 싶은 토큰이 유효한지 검증
+//        if (!jwtTokenProvider.validateToken(logout.getAccessToken())) {
+//            throw new IllegalArgumentException("로그아웃: 유효하지 않은 토큰입니다.");
+//        }
+//        // access token에서 mail 가져온다.
+//        Authentication authentication = jwtTokenProvider.getAuthentication(logout.getAccessToken());
+//
+//        // Redis에서 해당 mail로 저장된 refresh token이 있는지 여부를 확인 후에 있을 경우 삭제
+//        String refreshTokenKey = "RT:" + authentication.getName();
+//        if (redisTemplate.hasKey(refreshTokenKey)) {
+//            redisTemplate.delete(refreshTokenKey);
+//        }
+//
+//        // Redis에 저장된 access token의 만료시간을 조정하여 유효하지 않은 토큰으로 만듦
+//        Long remainingExpireTime = jwtTokenProvider.getRemainingExpireTime(logout.getAccessToken());
+//        redisTemplate.expire(logout.getAccessToken(), remainingExpireTime, TimeUnit.MILLISECONDS);
+//
+//        return new ResponseDto<>(true);
+//    }
+
+    @Transactional
+    public void logout(MemberRequestDto.Logout logout) {
         if (!jwtTokenProvider.validateToken(logout.getAccessToken())) {
             throw new IllegalArgumentException("로그아웃: 유효하지 않은 토큰입니다.");
         }
-        // access token에서 mail 가져온다.
+        // Access Token에서 User email을 가져온다
         Authentication authentication = jwtTokenProvider.getAuthentication(logout.getAccessToken());
-
-        // redis에서 해당 mail 로 저장된 refresh token이 있는지 여부를 확인 후에 있을 경우 삭제
-        if (redisTemplate.opsForValue().get("RT:" + authentication.getName()) != null) {
-            redisTemplate.delete("RT:" + authentication.getName());
+        // Redis에서 해당 User email로 저장된 Refresh Token 이 있는지 여부를 확인 후에 있을 경우 삭제를 한다.
+        if (redisTemplate.opsForValue().get("RT:"+authentication.getName())!=null){
+            // Refresh Token을 삭제
+            redisTemplate.delete("RT:"+authentication.getName());
         }
-
-        Long expireToken = jwtTokenProvider.getExpiration(logout.getAccessToken());
-        redisTemplate.opsForValue().set(logout.getAccessToken(), "logout", expireToken, TimeUnit.MILLISECONDS);
-
-        return new ResponseDto<>(HttpStatus.OK);
+        // 해당 Access Token 유효시간을 가지고 와서 BlackList에 저장하기
+        Long expiration = jwtTokenProvider.getExpiration(logout.getAccessToken());
+        redisTemplate.opsForValue().set(logout.getAccessToken(),"logout",expiration,TimeUnit.MILLISECONDS);
     }
 
     public ResponseEntity<?> authority() {
@@ -163,5 +201,13 @@ public class MemberService {
 
     public boolean checkToken(String token) {
         return redisTemplate.hasKey("token");
+    }
+
+    public String getRefreshTokenFromCache(String userEmail) {
+        return (String) redisTemplate.opsForValue().get("RT:" + userEmail);
+    }
+
+    public void updateRefreshTokenCache(String userEmail, String refreshToken, long expirationTime) {
+        redisTemplate.opsForValue().set("RT:" + userEmail, refreshToken, expirationTime, TimeUnit.MILLISECONDS);
     }
 }

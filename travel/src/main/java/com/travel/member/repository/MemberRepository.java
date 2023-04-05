@@ -20,4 +20,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     long countActiveMembers();
     @Query("SELECT COUNT(m) FROM Member m WHERE m.memberDeleteCheck = true")
     long countDeleteMembers();
+
+
 }
