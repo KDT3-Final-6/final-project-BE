@@ -5,6 +5,10 @@ import com.travel.image.entity.Image;
 import com.travel.image.entity.ProductImage;
 import com.travel.image.repository.ProductImageRepository;
 import com.travel.image.service.FileUploadService;
+import com.travel.member.entity.Member;
+import com.travel.member.exception.MemberException;
+import com.travel.member.exception.MemberExceptionType;
+import com.travel.member.repository.MemberRepository;
 import com.travel.product.dto.request.PeriodPostRequestDTO;
 import com.travel.product.dto.request.ProductPatchRequestDTO;
 import com.travel.product.dto.request.ProductPostRequestDTO;
@@ -18,8 +22,11 @@ import com.travel.product.repository.CategoryRepository;
 import com.travel.product.repository.PeriodOptionRepository;
 import com.travel.product.repository.ProductCategoryRepository;
 import com.travel.product.repository.product.ProductRepository;
+import com.travel.wishlist.repository.WishlistRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +50,8 @@ public class ProductService {
     private final ProductCategoryRepository productCategoryRepository;
     private final CategoryRepository categoryRepository;
     private final ProductImageRepository productImageRepository;
+    private final MemberRepository memberRepository;
+    private final WishlistRepository wishlistRepository;
     private final FileUploadService fileUploadService;
 
 
@@ -91,16 +100,22 @@ public class ProductService {
     }
 
 
-    public PageResponseDTO displayProductsByAdmin(Pageable pageable) {
+    public PageResponseDTO displayProductsByAdmin(String userEmail, Pageable pageable) {
 
-        return new PageResponseDTO(productRepository.findAll(pageable)
-                .map(ProductListGetResponseDTO::new));
+        Page<Product> products = productRepository.findAll(pageable);
+
+        Page<ProductListGetResponseDTO> page = productsToDTO(products, pageable, userEmail);
+
+        return new PageResponseDTO(page);
     }
 
-    public PageResponseDTO displayProductsByMember(Pageable pageable, Boolean includeSoldOut) {
+    public PageResponseDTO displayProductsByMember(String userEmail, Pageable pageable, Boolean includeSoldOut) {
 
-        return new PageResponseDTO(productRepository.findAllWithCheckBox(pageable, includeSoldOut)
-                .map(ProductListGetResponseDTO::new));
+        Page<Product> products = productRepository.findAllWithCheckBox(pageable, includeSoldOut);
+
+        Page<ProductListGetResponseDTO> page = productsToDTO(products, pageable, userEmail);
+
+        return new PageResponseDTO(page);
     }
 
     public ProductDetailGetResponseDTO displayProductDetail(Long id) {
@@ -152,5 +167,23 @@ public class ProductService {
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
         periodOption.setPeriodOptionStatus(Status.HIDDEN);
+    }
+
+    private boolean isExistsByMemberAndProduct(String memberEmail, Product product) {
+        boolean existsByMemberAndProduct = false;
+        if (memberEmail != null) {
+            Member member = memberRepository.findByMemberEmail(memberEmail)
+                    .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+            existsByMemberAndProduct = wishlistRepository.existsByMemberAndProduct(member, product);
+        }
+        return existsByMemberAndProduct;
+    }
+
+    private Page<ProductListGetResponseDTO> productsToDTO(Page<Product> products, Pageable pageable, String userEmail) {
+
+        return new PageImpl<>(
+                products.getContent().stream()
+                        .map(product -> new ProductListGetResponseDTO(product, isExistsByMemberAndProduct(userEmail, product)))
+                        .collect(toList()), pageable, products.getTotalElements());
     }
 }

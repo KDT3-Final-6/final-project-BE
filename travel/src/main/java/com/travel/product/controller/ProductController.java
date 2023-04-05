@@ -23,19 +23,26 @@ public class ProductController {
     private final SearchService searchService;
 
     @GetMapping
-    public ResponseEntity<PageResponseDTO> getProducts(@RequestParam(required = false, defaultValue = "1") String page,
-                                                       @RequestParam(required = false, defaultValue = "false") Boolean includeSoldOut) {
-        PageRequest pageRequest = null;
-
-        try {
-            int intPage = Integer.parseInt(page);
-            pageRequest = PageRequest.of(intPage - 1, PAGE_SIZE);
-            //정상적인 범위 내의 페이지 번호면 해당 페이지로
-        } catch (IllegalArgumentException e) {
-            pageRequest = PageRequest.of(0, PAGE_SIZE);
-            //음수나 오버플로 발생시키는 페이지 번호면 0번페이지로
+    public ResponseEntity<PageResponseDTO> getProducts(@RequestParam(required = false, defaultValue = "1") int page,
+                                                       @RequestParam(required = false, defaultValue = "false") Boolean includeSoldOut,
+                                                       Authentication authentication) {
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
-        return ResponseEntity.ok(productService.displayProductsByMember(pageRequest, includeSoldOut));
+
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+        PageResponseDTO pageResponseDTO = null;
+
+        if (authentication == null) {
+            // 로그인되지 않은 사용자용 정보를 반환
+            pageResponseDTO = productService.displayProductsByMember(null, pageRequest, includeSoldOut);
+        } else {
+            // 로그인된 사용자용 정보를 반환
+            String memberEmail = authentication.getName();
+            pageResponseDTO = productService.displayProductsByMember(memberEmail, pageRequest, includeSoldOut);
+        }
+
+        return ResponseEntity.ok(pageResponseDTO);
     }
 
     @GetMapping("/{productId}")

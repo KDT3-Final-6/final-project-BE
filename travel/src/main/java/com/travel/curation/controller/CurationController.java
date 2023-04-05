@@ -27,13 +27,25 @@ public class CurationController {
     @GetMapping
     public ResponseEntity<PageResponseDTO> defaultCuration(
             @RequestParam(required = false, defaultValue = "1") int page,
-            @RequestParam String season, @RequestParam String district, @RequestParam String theme) {
+            @RequestParam String season, @RequestParam String district, @RequestParam String theme,
+            Authentication authentication) {
         if (page < 1) {
             throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
 
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
-        return ResponseEntity.ok(curationService.defaultCuration(pageRequest, season, district, theme));
+        PageResponseDTO pageResponseDTO = null;
+
+        if (authentication == null) {
+            // 로그인되지 않은 사용자용 정보를 반환
+            pageResponseDTO = curationService.defaultCuration(null, pageRequest, season, district, theme);
+        } else {
+            // 로그인된 사용자용 정보를 반환
+            String memberEmail = authentication.getName();
+            pageResponseDTO = curationService.defaultCuration(authentication.getName(), pageRequest, season, district, theme);
+        }
+
+        return ResponseEntity.ok(pageResponseDTO);
     }
 
     @GetMapping("/detail/companion")
@@ -108,15 +120,29 @@ public class CurationController {
             @RequestParam String group,
             @RequestParam(required = false, defaultValue = "") String concept1,
             @RequestParam(required = false, defaultValue = "") String concept2,
-            @RequestParam(required = false, defaultValue = "") String concept3) {
+            @RequestParam(required = false, defaultValue = "") String concept3,
+            Authentication authentication) {
         if (page < 1) {
             throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
+
         List<String> conceptList = new ArrayList<>();
         conceptList.add(concept1);
         conceptList.add(concept2);
         conceptList.add(concept3);
+
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
-        return ResponseEntity.ok(curationService.CurationByGroupAndThemes(pageRequest, group, conceptList));
+        PageResponseDTO pageResponseDTO = null;
+
+        if (authentication == null) {
+            // 로그인되지 않은 사용자용 정보를 반환
+            pageResponseDTO = curationService.CurationByGroupAndThemes(null, pageRequest, group, conceptList);
+        } else {
+            // 로그인된 사용자용 정보를 반환
+            String memberEmail = authentication.getName();
+            pageResponseDTO = curationService.CurationByGroupAndThemes(memberEmail, pageRequest, group, conceptList);
+        }
+
+        return ResponseEntity.ok(pageResponseDTO);
     }
 }

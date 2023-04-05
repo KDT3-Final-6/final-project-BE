@@ -51,15 +51,26 @@ public class AdminController {
     }
 
     @GetMapping("/products")
-    public ResponseEntity<PageResponseDTO> getProducts(@RequestParam(required = false, defaultValue = "1") int page) {
+    public ResponseEntity<PageResponseDTO> getProducts(@RequestParam(required = false, defaultValue = "1") int page,
+                                                       Authentication authentication) {
 
         if (page < 1) {
             throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
 
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+        PageResponseDTO pageResponseDTO = null;
 
-        return ResponseEntity.ok(productService.displayProductsByAdmin(pageRequest));
+        if (authentication == null) {
+            // 로그인되지 않은 사용자용 정보를 반환
+            pageResponseDTO = productService.displayProductsByAdmin(null, pageRequest);
+        } else {
+            // 로그인된 사용자용 정보를 반환
+            String memberEmail = authentication.getName();
+            pageResponseDTO = productService.displayProductsByAdmin(memberEmail, pageRequest);
+        }
+
+        return ResponseEntity.ok(pageResponseDTO);
     }
 
     @GetMapping("/products/{productId}")
