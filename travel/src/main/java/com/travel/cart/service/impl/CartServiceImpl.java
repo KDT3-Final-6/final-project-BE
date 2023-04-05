@@ -17,9 +17,12 @@ import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
 import com.travel.product.entity.PeriodOption;
+import com.travel.product.entity.Product;
+import com.travel.product.entity.Status;
 import com.travel.product.exception.ProductException;
 import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.PeriodOptionRepository;
+import com.travel.product.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +40,7 @@ public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
     private final MemberRepository memberRepository;
     private final PeriodOptionRepository periodOptionRepository;
+    private final ProductRepository productRepository;
 
 
     @Override
@@ -48,6 +52,13 @@ public class CartServiceImpl implements CartService {
                 .map(addDTO -> {
                     PeriodOption periodOption = periodOptionRepository.findById(addDTO.getPeriodOptionId())
                             .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
+
+                    Product product = productRepository.findById(periodOption.getProduct().getProductId())
+                            .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
+
+                    if (product.getProductStatus() != Status.FORSALE || periodOption.getPeriodOptionStatus() != Status.FORSALE) {
+                        throw new CartException(CartExceptionType.PRODUCTS_CANNOT_BE_ADDED);
+                    }
 
                     Cart cart = cartRepository.findByMemberAndPeriodOption(member, periodOption).orElse(null);
                     if (cart != null) {
