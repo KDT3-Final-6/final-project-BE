@@ -22,11 +22,12 @@ public class ProductDetailGetResponseDTO {
     private String productContent;
     private String contentDetail;
     private Long wishlistCount;
+    private Boolean isWished;
 
     private List<PeriodOptionsInProduct> periodOptions = new ArrayList<>();
     private List<CategoriesInProduct> productCategories = new ArrayList<>();
 
-    public ProductDetailGetResponseDTO(Product product) {
+    public ProductDetailGetResponseDTO(Product product, Boolean isWished) {
         this.productName = product.getProductName();
         this.productThumbnail = product.getProductImages().get(0).getImagePath();
         this.productImages = product.getProductImages().stream()
@@ -40,6 +41,7 @@ public class ProductDetailGetResponseDTO {
                 .map(PeriodOptionsInProduct::new)
                 .collect(toList()));
         this.wishlistCount = product.getWishlistCount();
+        this.isWished = isWished;
 
         List<Long> categoryIds = new ArrayList<>();
         for (ProductCategory productCategory : product.getProductCategories()) {
