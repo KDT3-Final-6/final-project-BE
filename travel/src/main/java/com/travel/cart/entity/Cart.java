@@ -51,6 +51,8 @@ public class Cart extends BaseEntity {
                 .productThumbnail(this.periodOption.getProduct().getProductImages().get(0).getImagePath())
                 .productContent(this.periodOption.getProduct().getProductContent())
                 .cartQuantity(this.cartQuantity)
+                .productStatus(this.periodOption.getProduct().getProductStatus().getKorean())
+                .periodOptionStatus(this.periodOption.getPeriodOptionStatus().getKorean())
                 .build();
     }
 }

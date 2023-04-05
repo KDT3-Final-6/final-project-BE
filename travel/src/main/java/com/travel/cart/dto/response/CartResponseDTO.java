@@ -26,4 +26,8 @@ public class CartResponseDTO {
     private String productContent;
 
     private Integer cartQuantity;
+
+    private String productStatus;
+
+    private String periodOptionStatus;
 }
