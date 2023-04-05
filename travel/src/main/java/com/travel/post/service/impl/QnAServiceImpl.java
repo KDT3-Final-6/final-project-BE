@@ -1,5 +1,7 @@
 package com.travel.post.service.impl;
 
+import com.travel.global.exception.GlobalException;
+import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
@@ -22,6 +24,7 @@ import com.travel.product.exception.ProductException;
 import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.PurchasedProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -91,7 +94,13 @@ public class QnAServiceImpl implements QnAService {
                 })
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(qnAPostDTOList, pageable, qnAPostDTOList.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), qnAPostDTOList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(qnAPostDTOList.subList(start, end), pageable, qnAPostDTOList.size()));
     }
 
     @Override
@@ -136,7 +145,13 @@ public class QnAServiceImpl implements QnAService {
                 })
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(qnAPostDTOList, pageable, qnAPostDTOList.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), qnAPostDTOList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(qnAPostDTOList.subList(start, end), pageable, qnAPostDTOList.size()));
     }
 
     @Override

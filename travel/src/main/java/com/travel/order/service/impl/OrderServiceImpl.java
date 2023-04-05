@@ -1,5 +1,7 @@
 package com.travel.order.service.impl;
 
+import com.travel.global.exception.GlobalException;
+import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
@@ -96,7 +98,13 @@ public class OrderServiceImpl implements OrderService {
                 })
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS, pageable, orderListResponseDTOS.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), orderListResponseDTOS.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS.subList(start, end), pageable, orderListResponseDTOS.size()));
     }
 
     @Override
@@ -137,7 +145,13 @@ public class OrderServiceImpl implements OrderService {
                 })
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS, pageable, orderListResponseDTOS.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), orderListResponseDTOS.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS.subList(start, end), pageable, orderListResponseDTOS.size()));
     }
 
     @Override
@@ -196,14 +210,15 @@ public class OrderServiceImpl implements OrderService {
                 .map(createDTO -> {
                     Integer quantity = createDTO.getQuantity();
 
-                    Product product = productRepository.findById(createDTO.getProductId())
-                            .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
-                    PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, createDTO.getPeriodOptionId())
+                    PeriodOption periodOption = periodOptionRepository.findById(createDTO.getPeriodOptionId())
                             .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
                     if (periodOption.getPeriodOptionStatus() != Status.FORSALE) {
                         throw new OrderException(OrderExceptionType.PRODUCTS_CANNOT_BE_ORDERED);
                     }
+
+                    Product product = productRepository.findById(periodOption.getProduct().getProductId())
+                            .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
                     return updateQuantity(quantity, product, periodOption);
                 })

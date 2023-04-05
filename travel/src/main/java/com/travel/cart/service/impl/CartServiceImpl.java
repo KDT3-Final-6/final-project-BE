@@ -9,17 +9,17 @@ import com.travel.cart.exception.CartException;
 import com.travel.cart.exception.CartExceptionType;
 import com.travel.cart.repository.CartRepository;
 import com.travel.cart.service.CartService;
+import com.travel.global.exception.GlobalException;
+import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
 import com.travel.product.entity.PeriodOption;
-import com.travel.product.entity.Product;
 import com.travel.product.exception.ProductException;
 import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.PeriodOptionRepository;
-import com.travel.product.repository.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
-    private final ProductRepository productRepository;
     private final MemberRepository memberRepository;
     private final PeriodOptionRepository periodOptionRepository;
 
@@ -47,9 +46,7 @@ public class CartServiceImpl implements CartService {
 
         List<Cart> cartList = cartAddListDTO.getProductIds().stream()
                 .map(addDTO -> {
-                    Product product = productRepository.findById(addDTO.getProductId())
-                            .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
-                    PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, addDTO.getPeriodOptionId())
+                    PeriodOption periodOption = periodOptionRepository.findById(addDTO.getPeriodOptionId())
                             .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
                     Cart cart = cartRepository.findByMemberAndPeriodOption(member, periodOption).orElse(null);
@@ -80,7 +77,13 @@ public class CartServiceImpl implements CartService {
                 .map(Cart::toCartResponseDTO)
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(cartResponseDTOList, pageable, cartResponseDTOList.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), cartResponseDTOList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(cartResponseDTOList.subList(start, end), pageable, cartResponseDTOList.size()));
     }
 
     @Override
@@ -91,10 +94,7 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartRepository.findByMemberAndCartId(member, cartId)
                 .orElseThrow(() -> new CartException(CartExceptionType.CART_NOT_FOUND));
 
-        Product product = productRepository.findById(cartUpdateDTO.getProductId())
-                .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
-
-        PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, cartUpdateDTO.getPeriodOptionId())
+        PeriodOption periodOption = periodOptionRepository.findById(cartUpdateDTO.getPeriodOptionId())
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
         cart.setPeriodOption(periodOption);

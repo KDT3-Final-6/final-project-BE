@@ -1,5 +1,7 @@
 package com.travel.wishlist.service.impl;
 
+import com.travel.global.exception.GlobalException;
+import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
@@ -65,7 +67,13 @@ public class WishlistServiceImpl implements WishlistService {
                 .map(Wishlist::toResponseDTO)
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(wishlistResponseDTOList, pageable, wishlistResponseDTOList.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), wishlistResponseDTOList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(wishlistResponseDTOList.subList(start, end), pageable, wishlistResponseDTOList.size()));
     }
 
     @Override
