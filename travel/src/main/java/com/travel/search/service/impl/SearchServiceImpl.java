@@ -141,6 +141,7 @@ public class SearchServiceImpl implements SearchService {
 
         List<Category> categoryList = productCategoryList.stream()
                 .map(ProductCategory::getCategory)
+                .filter(category -> category.getChildren().isEmpty())
                 .collect(toList());
 
         List<Product> productList = categoryList.stream()
