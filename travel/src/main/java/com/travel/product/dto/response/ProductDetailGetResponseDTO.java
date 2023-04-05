@@ -21,6 +21,7 @@ public class ProductDetailGetResponseDTO {
     private String productStatus;
     private String productContent;
     private String contentDetail;
+    private Long wishlistCount;
 
     private List<PeriodOptionsInProduct> periodOptions = new ArrayList<>();
     private List<CategoriesInProduct> productCategories = new ArrayList<>();
@@ -38,6 +39,7 @@ public class ProductDetailGetResponseDTO {
                 .filter(periodOption -> !periodOption.getPeriodOptionStatus().equals(Status.HIDDEN))
                 .map(PeriodOptionsInProduct::new)
                 .collect(toList()));
+        this.wishlistCount = product.getWishlistCount();
 
         List<Long> categoryIds = new ArrayList<>();
         for (ProductCategory productCategory : product.getProductCategories()) {
