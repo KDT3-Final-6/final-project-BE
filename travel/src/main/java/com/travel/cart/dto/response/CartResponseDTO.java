@@ -15,7 +15,7 @@ public class CartResponseDTO {
 
     private Long periodOptionId;
 
-    private Integer cartPrice;
+    private Integer productPrice;
 
     private String productName;
 

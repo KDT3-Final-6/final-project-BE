@@ -29,14 +29,14 @@ public class OrderAdminResponseDTO {
 
     private LocalDateTime orderDate;
 
-    private String optionName;
+    private String periodOptionName;
 
-    private Integer productProductQuantity;
+    private Integer purchasedProductQuantity;
 
     private String orderStatus;
 
     @Builder
-    public OrderAdminResponseDTO(Long orderId, Long productId, Long memberId, String memberName, String memberEmail, String productName, String productThumbnail, Integer productPrice, LocalDateTime orderDate, String optionName, Integer productProductQuantity, OrderStatus orderStatus) {
+    public OrderAdminResponseDTO(Long orderId, Long productId, Long memberId, String memberName, String memberEmail, String productName, String productThumbnail, Integer productPrice, LocalDateTime orderDate, String periodOptionName, Integer purchasedProductQuantity, OrderStatus orderStatus) {
         this.orderId = orderId;
         this.productId = productId;
         this.memberId = memberId;
@@ -46,8 +46,8 @@ public class OrderAdminResponseDTO {
         this.productThumbnail = productThumbnail;
         this.productPrice = productPrice;
         this.orderDate = orderDate;
-        this.optionName = optionName;
-        this.productProductQuantity = productProductQuantity;
+        this.periodOptionName = periodOptionName;
+        this.purchasedProductQuantity = purchasedProductQuantity;
         this.orderStatus = orderStatus.getKorean();
     }
 }
