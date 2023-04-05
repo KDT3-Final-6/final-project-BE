@@ -27,7 +27,7 @@ public class OrderResponseDTO {
 
     private String optionName;
 
-    private Integer productProductQuantity;
+    private Integer purchasedProductQuantity;
 
     private String orderStatus;
 
@@ -37,7 +37,7 @@ public class OrderResponseDTO {
     public OrderResponseDTO(
             Long orderId, Long productId, Long purchasedProductId, String productName,
             String productThumbnail, Integer productPrice, LocalDateTime orderDate, String optionName,
-            Integer productProductQuantity, OrderStatus orderStatus, boolean hasReview
+            Integer purchasedProductQuantity, OrderStatus orderStatus, boolean hasReview
     ) {
         this.orderId = orderId;
         this.productId = productId;
@@ -47,7 +47,7 @@ public class OrderResponseDTO {
         this.productPrice = productPrice;
         this.orderDate = orderDate;
         this.optionName = optionName;
-        this.productProductQuantity = productProductQuantity;
+        this.purchasedProductQuantity = purchasedProductQuantity;
         this.orderStatus = orderStatus.getKorean();
         this.hasReview = hasReview;
     }

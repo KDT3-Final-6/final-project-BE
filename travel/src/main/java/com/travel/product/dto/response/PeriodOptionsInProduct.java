@@ -10,7 +10,7 @@ public class PeriodOptionsInProduct {
 
     private Long periodOptionId;
 
-    private String optionName;
+    private String periodOptionName;
 
     private LocalDate startDate;
 
@@ -39,7 +39,7 @@ public class PeriodOptionsInProduct {
 
     public PeriodOptionsInProduct(PeriodOption periodOption) {
         this.periodOptionId = periodOption.getPeriodOptionId();
-        this.optionName = periodOption.getOptionName();
+        this.periodOptionName = periodOption.getOptionName();
         this.startDate = periodOption.getStartDate();
         this.endDate = periodOption.getEndDate();
         this.startDetail = periodOption.getStartDetail();

@@ -43,11 +43,11 @@ public class PurchasedProduct {
     private Integer period;
 
     @Column(name = "option_name")
-    private String optionName;
+    private String periodOptionName;
 
     @Setter
     @Column(name = "purchased_product_quantity")
-    private Integer productProductQuantity;
+    private Integer purchasedProductQuantity;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -63,8 +63,8 @@ public class PurchasedProduct {
         this.startDate = periodOption.getStartDate();
         this.endDate = periodOption.getEndDate();
         this.period = periodOption.getPeriod();
-        this.optionName = periodOption.getOptionName();
-        this.productProductQuantity = quantity;
+        this.periodOptionName = periodOption.getOptionName();
+        this.purchasedProductQuantity = quantity;
     }
 
     public OrderResponseDTO toOrderResponseDTO(boolean hasReview) {
@@ -75,8 +75,8 @@ public class PurchasedProduct {
                 .productName(this.purchasedProductName)
                 .productThumbnail(this.purchasedProductThumbnail)
                 .productPrice(this.purchasedProductPrice)
-                .optionName(this.optionName)
-                .productProductQuantity(this.productProductQuantity)
+                .optionName(this.periodOptionName)
+                .purchasedProductQuantity(this.purchasedProductQuantity)
                 .orderDate(this.order.getCreatedDate())
                 .orderStatus(this.order.getOrderStatus())
                 .hasReview(hasReview)
@@ -93,8 +93,8 @@ public class PurchasedProduct {
                 .productName(this.purchasedProductName)
                 .productThumbnail(this.purchasedProductThumbnail)
                 .productPrice(this.purchasedProductPrice)
-                .optionName(this.optionName)
-                .productProductQuantity(this.productProductQuantity)
+                .periodOptionName(this.periodOptionName)
+                .purchasedProductQuantity(this.purchasedProductQuantity)
                 .orderDate(this.order.getCreatedDate())
                 .orderStatus(this.order.getOrderStatus())
                 .build();
