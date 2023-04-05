@@ -46,8 +46,21 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<ProductDetailGetResponseDTO> getProductDetail(@PathVariable Long productId) {
-        return ResponseEntity.ok(productService.displayProductDetail(productId));
+    public ResponseEntity<ProductDetailGetResponseDTO> getProductDetail(@PathVariable Long productId,
+                                                                        Authentication authentication) {
+
+        ProductDetailGetResponseDTO productDetail = null;
+
+        if (authentication == null) {
+            // 로그인되지 않은 사용자용 정보를 반환
+            productDetail = productService.displayProductDetail(productId, null);
+        } else {
+            // 로그인된 사용자용 정보를 반환
+            String memberEmail = authentication.getName();
+            productDetail = productService.displayProductDetail(productId, memberEmail);
+        }
+
+        return ResponseEntity.ok(productDetail);
     }
 
     @GetMapping("/recommend")

@@ -118,11 +118,11 @@ public class ProductService {
         return new PageResponseDTO(page);
     }
 
-    public ProductDetailGetResponseDTO displayProductDetail(Long id) {
+    public ProductDetailGetResponseDTO displayProductDetail(Long id, String memberEmail) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
-        return new ProductDetailGetResponseDTO(product);
+        return new ProductDetailGetResponseDTO(product, isExistsByMemberAndProduct(memberEmail, product));
     }
 
     @Transactional
