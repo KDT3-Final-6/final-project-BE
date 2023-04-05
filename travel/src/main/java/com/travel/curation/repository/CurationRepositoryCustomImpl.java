@@ -45,9 +45,14 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
         List<Product> content =
                 queryFactory.selectFrom(product)
                         .join(product.periodOptions, periodOption)
-                        .join(product.productCategories, productCategory)
-                        .join(productCategory.category, category)
-                        .where(curationBySeason(season, now), category.categoryName.in(district, theme), product.productStatus.eq(Status.FORSALE))
+                        .where(curationBySeason(season, now), product.productStatus.eq(Status.FORSALE), product.in(
+                                JPAExpressions.selectFrom(product)
+                                        .join(product.productCategories, productCategory)
+                                        .join(productCategory.category, category)
+                                        .where(category.categoryName.in(district, theme))
+                                        .groupBy(product.productId)
+                                        .having(productCategory.category.categoryId.countDistinct().eq((long) 2))
+                        ))
                         .groupBy(product.productId)
                         .offset(pageable.getOffset())
                         .limit(pageable.getPageSize())
@@ -58,9 +63,14 @@ public class CurationRepositoryCustomImpl implements CurationRepositoryCustom {
                 queryFactory.select(Wildcard.count)
                         .from(product)
                         .join(product.periodOptions, periodOption)
-                        .join(product.productCategories, productCategory)
-                        .join(productCategory.category, category)
-                        .where(curationBySeason(season, now), category.categoryName.in(district, theme), product.productStatus.eq(Status.FORSALE))
+                        .where(curationBySeason(season, now), product.productStatus.eq(Status.FORSALE), product.in(
+                                JPAExpressions.selectFrom(product)
+                                        .join(product.productCategories, productCategory)
+                                        .join(productCategory.category, category)
+                                        .where(category.categoryName.in(district, theme))
+                                        .groupBy(product.productId)
+                                        .having(productCategory.category.categoryId.countDistinct().eq((long) 2))
+                        ))
                         .groupBy(product.productId)
                         .fetch().size();
 
