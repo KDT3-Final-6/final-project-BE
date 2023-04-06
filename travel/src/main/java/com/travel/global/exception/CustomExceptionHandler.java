@@ -33,6 +33,8 @@ public class CustomExceptionHandler {
 
         StringBuilder builder = new StringBuilder();
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
+            builder.append(fieldError.getField());
+            builder.append("은/는 ");
             builder.append(fieldError.getDefaultMessage());
             builder.append(" 입력된 값: [");
             builder.append(fieldError.getRejectedValue());
