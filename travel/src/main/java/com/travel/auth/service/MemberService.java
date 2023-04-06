@@ -91,6 +91,7 @@ public class MemberService {
 
         return MemberResponseDto.LoginInfo.builder()
                 .memberName(member.getMemberName())
+                .roles(member.getRoles())
                 .grantType(tokenInfo.getGrantType())
                 .accessToken(tokenInfo.getAccessToken())
                 .refreshToken(tokenInfo.getRefreshToken())
