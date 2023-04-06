@@ -26,6 +26,7 @@ public class MemberResponseDTO {
         private boolean memberEmailAgree;
         private Grade memberGrade;
         private String memberImage;
+        private List<String> roles;
 
         public MemberInfoResponseDTO(Member member) {
             this.memberEmail = member.getMemberEmail();
@@ -38,6 +39,7 @@ public class MemberResponseDTO {
             this.memberEmailAgree = member.isMemberEmailAgree();
             this.memberGrade = member.getMemberGrade();
             this.memberImage = member.getMemberImage().getImagePath();
+            this.roles = member.getRoles();
         }
 
 
