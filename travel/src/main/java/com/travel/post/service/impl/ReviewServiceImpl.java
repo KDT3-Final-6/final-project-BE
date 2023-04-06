@@ -29,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,7 +58,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public PageResponseDTO getReviews(Pageable pageable) {
-        List<ReviewPost> reviewPostList = reviewRepository.findAll();
+        List<ReviewPost> reviewPostList = reviewRepository.findAll().stream()
+                .sorted(Comparator.comparing(ReviewPost::getPostId).reversed())
+                .collect(Collectors.toList());
 
         List<ReviewListDTO> reviewListMemberDTOList = reviewPostList.stream()
                 .map(ReviewPost::toReviewListDTO)
@@ -77,7 +80,9 @@ public class ReviewServiceImpl implements ReviewService {
         Member member = memberRepository.findByMemberEmail(memberEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        List<ReviewPost> reviewPostList = reviewRepository.findByMember(member);
+        List<ReviewPost> reviewPostList = reviewRepository.findByMember(member).stream()
+                .sorted(Comparator.comparing(ReviewPost::getPostId).reversed())
+                .collect(Collectors.toList());
 
         List<ReviewListMemberDTO> reviewListMemberDTOList = reviewPostList.stream()
                 .map(ReviewPost::toReviewListMemberDTO)
@@ -97,7 +102,9 @@ public class ReviewServiceImpl implements ReviewService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
-        List<ReviewPost> reviewPostList = reviewRepository.findByPurchasedProductProduct(product);
+        List<ReviewPost> reviewPostList = reviewRepository.findByPurchasedProductProduct(product).stream()
+                .sorted(Comparator.comparing(ReviewPost::getPostId).reversed())
+                .collect(Collectors.toList());
 
         List<ReviewListProductDTO> reviewListProductDTOList = reviewPostList.stream()
                 .map(ReviewPost::toReviewListProductDTO)
