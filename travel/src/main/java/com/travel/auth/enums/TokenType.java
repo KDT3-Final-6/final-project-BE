@@ -1,4 +1,4 @@
-package com.travel.auth;
+package com.travel.auth.enums;
 
 public enum TokenType {
     ACCESS("access"),
