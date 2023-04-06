@@ -118,18 +118,11 @@ public class CurationController {
     public ResponseEntity<PageResponseDTO> CurationByGroupAndThemes(
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam String group,
-            @RequestParam(required = false, defaultValue = "") String concept1,
-            @RequestParam(required = false, defaultValue = "") String concept2,
-            @RequestParam(required = false, defaultValue = "") String concept3,
+            @RequestParam(required = false, defaultValue = "") List<String> conceptList,
             Authentication authentication) {
         if (page < 1) {
             throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
-
-        List<String> conceptList = new ArrayList<>();
-        conceptList.add(concept1);
-        conceptList.add(concept2);
-        conceptList.add(concept3);
 
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
         PageResponseDTO pageResponseDTO = null;

@@ -102,7 +102,7 @@ public class ProductService {
 
     public PageResponseDTO displayProductsByAdmin(String userEmail, Pageable pageable) {
 
-        Page<Product> products = productRepository.findAll(pageable);
+        Page<Product> products = productRepository.findAllByOrderByProductIdDesc(pageable);
 
         Page<ProductListGetResponseDTO> page = productsToDTO(products, pageable, userEmail);
 

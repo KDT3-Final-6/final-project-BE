@@ -10,9 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom{
+public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
 
-    Page<Product> findAll(Pageable pageable);
+    Page<Product> findAllByOrderByProductIdDesc(Pageable pageable);
 
     List<Product> findByProductNameContaining(String title);
 
