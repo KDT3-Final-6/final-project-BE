@@ -1,8 +1,9 @@
 package com.travel.cart.controller;
 
 import com.travel.cart.dto.request.CartAddListDTO;
-import com.travel.cart.dto.request.CartDeleteListDTO;
 import com.travel.cart.dto.request.CartUpdateDTO;
+import com.travel.cart.exception.CartException;
+import com.travel.cart.exception.CartExceptionType;
 import com.travel.cart.service.CartService;
 import com.travel.global.exception.GlobalException;
 import com.travel.global.exception.GlobalExceptionType;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -51,8 +53,12 @@ public class CartController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteCarts(@Valid @RequestBody CartDeleteListDTO cartDeleteListDTO, Authentication authentication) {
-        cartService.deleteCarts(cartDeleteListDTO, authentication.getName());
+    public ResponseEntity<Void> deleteCarts(@RequestParam List<Long> cartIds, Authentication authentication) {
+        if (cartIds.isEmpty()) {
+            throw new CartException(CartExceptionType.DELETE_LIST_IS_AN_EMPTY_LIST);
+        }
+
+        cartService.deleteCarts(cartIds, authentication.getName());
 
         return ResponseEntity.ok(null);
     }

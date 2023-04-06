@@ -1,7 +1,6 @@
 package com.travel.cart.service.impl;
 
 import com.travel.cart.dto.request.CartAddListDTO;
-import com.travel.cart.dto.request.CartDeleteListDTO;
 import com.travel.cart.dto.request.CartUpdateDTO;
 import com.travel.cart.dto.response.CartResponseDTO;
 import com.travel.cart.entity.Cart;
@@ -115,12 +114,12 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void deleteCarts(CartDeleteListDTO cartDeleteListDTO, String userEmail) {
+    public void deleteCarts(List<Long> cartIds, String userEmail) {
         Member member = memberRepository.findByMemberEmail(userEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        List<Cart> cartList = cartDeleteListDTO.getCartIds().stream()
-                .map(cartDeleteDTO -> cartRepository.findByMemberAndCartId(member, cartDeleteDTO.getCartId())
+        List<Cart> cartList = cartIds.stream()
+                .map(cartId -> cartRepository.findByMemberAndCartId(member, cartId)
                         .orElseThrow(() -> new CartException(CartExceptionType.CART_NOT_FOUND)))
                 .collect(Collectors.toList());
 
