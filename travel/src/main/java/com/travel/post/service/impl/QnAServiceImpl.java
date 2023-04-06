@@ -24,12 +24,12 @@ import com.travel.product.exception.ProductException;
 import com.travel.product.exception.ProductExceptionType;
 import com.travel.product.repository.PurchasedProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -76,6 +76,7 @@ public class QnAServiceImpl implements QnAService {
 
         List<QnAPost> qnAPostList = qnARepository.findByMember(member).stream()
                 .filter(qnAPost -> !qnAPost.isCanceled())
+                .sorted(Comparator.comparing(QnAPost::getPostId).reversed())
                 .collect(Collectors.toList());
 
         List<QnAResponseDTO> qnAPostDTOList = qnAPostList.stream()
@@ -127,6 +128,7 @@ public class QnAServiceImpl implements QnAService {
 
         List<QnAPost> qnAPostList = qnARepository.findAll().stream()
                 .filter(qnAPost -> !qnAPost.isCanceled())
+                .sorted(Comparator.comparing(QnAPost::getPostId).reversed())
                 .collect(Collectors.toList());
 
         List<QnAAdminResponseDTO> qnAPostDTOList = qnAPostList.stream()
