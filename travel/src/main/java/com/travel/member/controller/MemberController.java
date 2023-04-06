@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 
 @Slf4j
@@ -61,28 +62,23 @@ public class MemberController {
                 .getBody();
         String memberEmail = (claims.getSubject());
 
-
-        // 회원 정보 수정 요청 처리
-//        MemberRequestDto.Login login = new MemberRequestDto.Login();
-//        login.setMemberEmail(memberEmail);
-//        ResponseDto<?> responseDto = memberService.modifyMember(login, modifyMemberRequestDTO);
-
-
         return memberService.exampleOfUpdate(memberEmail,modifyMemberRequestDTO);
     }
 
     @DeleteMapping("/members")
     public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String authorizationHeader,
-                                                       @RequestBody DeleteMemberDTO deleteMemberDTO) {
-            String token = authorizationHeader.substring(7);
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(tokenProvider.getKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-            String memberEmail = claims.getSubject();
-            return memberService.deleteMember(memberEmail, deleteMemberDTO);
+                                          @RequestBody DeleteMemberDTO deleteMemberDTO) {
+        String token = authorizationHeader.substring(7);
+        deleteMemberDTO.setAccessToken(token);
+        try {
+            memberService.deleteMember(deleteMemberDTO);
+            return ResponseEntity.ok(HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
 
     @PostMapping("/members/password-check")
     public Boolean passwordCheck(@RequestHeader("Authorization") String authorizationHeader,
