@@ -28,6 +28,7 @@ public class ProductRepositoryCustomImpl implements ProductRepositoryCustom {
                 .where(productStatusRange(includeSoldOut))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(product.productId.desc())
                 .fetchResults();
 
         List<Product> content = results.getResults();
