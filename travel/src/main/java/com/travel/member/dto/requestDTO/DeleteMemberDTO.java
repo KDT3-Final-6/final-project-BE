@@ -9,13 +9,5 @@ import lombok.ToString;
 @ToString
 public class DeleteMemberDTO {
     private String memberPassword;
-
-
-    public String getMemberPassword() {
-        return memberPassword;
-    }
-
-    public void setMemberPassword(String memberPassword) {
-        this.memberPassword = memberPassword;
-    }
+    private String accessToken;
 }
