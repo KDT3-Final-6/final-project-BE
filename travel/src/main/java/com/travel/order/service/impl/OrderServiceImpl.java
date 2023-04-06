@@ -39,6 +39,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -79,7 +80,9 @@ public class OrderServiceImpl implements OrderService {
         Member member = memberRepository.findByMemberEmail(userEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        List<Order> orderList = orderRepository.findByMember(member);
+        List<Order> orderList = orderRepository.findByMember(member).stream()
+                .sorted(Comparator.comparing(Order::getOrderId).reversed())
+                .collect(Collectors.toList());
 
         List<OrderListResponseDTO> orderListResponseDTOS = orderList.stream()
                 .map(order -> {
@@ -129,7 +132,9 @@ public class OrderServiceImpl implements OrderService {
             throw new MemberException(MemberExceptionType.MEMBER_IS_NOT_ADMIN);
         }
 
-        List<Order> orderList = orderRepository.findAll();
+        List<Order> orderList = orderRepository.findAll().stream()
+                .sorted(Comparator.comparing(Order::getOrderId).reversed())
+                .collect(Collectors.toList());
 
         List<OrderListAdminResponseDTO> orderListResponseDTOS = orderList.stream()
                 .map(order -> {
