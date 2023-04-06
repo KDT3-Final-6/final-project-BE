@@ -149,9 +149,7 @@ public class MemberServiceImpl implements MemberService {
         String email = tokenProvider.getEmailFromToken(deleteMemberDTO.getAccessToken());
         Member member = memberRepository.findByMemberEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 회원이 존재하지 않습니다."));
-        if (!passwordEncoder.matches(deleteMemberDTO.getMemberPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
+
         member.setMemberDeleteCheck(true);
         memberRepository.save(member);
 

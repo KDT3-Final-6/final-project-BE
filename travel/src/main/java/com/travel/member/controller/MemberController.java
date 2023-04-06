@@ -66,18 +66,14 @@ public class MemberController {
     }
 
     @DeleteMapping("/members")
-    public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String authorizationHeader,
-                                          @RequestBody DeleteMemberDTO deleteMemberDTO) {
+    public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.substring(7);
+        DeleteMemberDTO deleteMemberDTO = new DeleteMemberDTO();
         deleteMemberDTO.setAccessToken(token);
-        try {
-            memberService.deleteMember(deleteMemberDTO);
-            return ResponseEntity.ok(HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.notFound().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+
+        memberService.deleteMember(deleteMemberDTO);
+
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/members/password-check")
