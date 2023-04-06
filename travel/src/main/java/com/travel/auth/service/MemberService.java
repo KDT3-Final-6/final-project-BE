@@ -72,7 +72,7 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberResponseDto.TokenInfo login(MemberRequestDto.Login login) {
+    public MemberResponseDto.LoginInfo login(MemberRequestDto.Login login) {
         Member member = memberRepository.findByMemberEmail(login.getMemberEmail())
                 .orElseThrow(() -> new AuthException(AuthExceptionType.INVALID_EMAIL_OR_PASSWORD));
         // 회원 삭제 여부
@@ -88,11 +88,14 @@ public class MemberService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         MemberResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
-        redisTemplate.opsForValue().set("AT:" + authentication.getName(), tokenInfo.getAccessToken());
-        redisTemplate.opsForValue().set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
-        System.out.println(tokenInfo.getAccessToken());
-        System.out.println(tokenInfo.getRefreshToken());
-        return tokenInfo;
+
+        return MemberResponseDto.LoginInfo.builder()
+                .memberName(member.getMemberName())
+                .grantType(tokenInfo.getGrantType())
+                .accessToken(tokenInfo.getAccessToken())
+                .refreshToken(tokenInfo.getRefreshToken())
+                .refreshTokenExpirationTime(tokenInfo.getRefreshTokenExpirationTime())
+                .build();
     }
 
     @Transactional
