@@ -1,6 +1,6 @@
 package com.travel.auth.service;
 
-import com.travel.auth.TokenType;
+import com.travel.auth.enums.TokenType;
 import com.travel.auth.dto.ResponseDto;
 import com.travel.auth.dto.request.MemberRequestDto;
 import com.travel.auth.dto.response.MemberResponseDto;
@@ -12,7 +12,6 @@ import com.travel.image.entity.MemberImage;
 import com.travel.image.repository.MemberImageRepository;
 import com.travel.member.repository.MemberRepository;
 import com.travel.global.config.SecurityUtil;
-import com.travel.member.entity.Hobby;
 import com.travel.member.entity.Member;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -27,13 +26,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -128,46 +123,6 @@ public class MemberService {
         // 6. 생성된 access token과 refresh token을 반환
         return new ResponseDto<>(tokenInfo);
     }
-//    @Transactional
-//    public ResponseDto<?> logout(MemberRequestDto.Logout logout) {
-//        // 로그아웃 하고 싶은 토큰이 유효한지 검증
-//        if (!jwtTokenProvider.validateToken(logout.getAccessToken())) {
-//            throw new IllegalArgumentException("로그아웃: 유효하지 않은 토큰입니다.");
-//        }
-//        // access token에서 mail 가져온다.
-//        Authentication authentication = jwtTokenProvider.getAuthentication(logout.getAccessToken());
-//
-//        // redis에서 해당 mail 로 저장된 refresh token이 있는지 여부를 확인 후에 있을 경우 삭제
-//        if (redisTemplate.opsForValue().get("RT:" + authentication.getName()) != null) {
-//            redisTemplate.delete("RT:" + authentication.getName());
-//        }
-//
-//        Long expireToken = jwtTokenProvider.getExpiration(logout.getAccessToken());
-//        redisTemplate.opsForValue().set(logout.getAccessToken(), "logout", expireToken, TimeUnit.MILLISECONDS);
-//
-//        return new ResponseDto<>(HttpStatus.OK);
-//    }
-//    @Transactional
-//    public ResponseDto<Boolean> logout(MemberRequestDto.Logout logout) {
-//        // 로그아웃 하고 싶은 토큰이 유효한지 검증
-//        if (!jwtTokenProvider.validateToken(logout.getAccessToken())) {
-//            throw new IllegalArgumentException("로그아웃: 유효하지 않은 토큰입니다.");
-//        }
-//        // access token에서 mail 가져온다.
-//        Authentication authentication = jwtTokenProvider.getAuthentication(logout.getAccessToken());
-//
-//        // Redis에서 해당 mail로 저장된 refresh token이 있는지 여부를 확인 후에 있을 경우 삭제
-//        String refreshTokenKey = "RT:" + authentication.getName();
-//        if (redisTemplate.hasKey(refreshTokenKey)) {
-//            redisTemplate.delete(refreshTokenKey);
-//        }
-//
-//        // Redis에 저장된 access token의 만료시간을 조정하여 유효하지 않은 토큰으로 만듦
-//        Long remainingExpireTime = jwtTokenProvider.getRemainingExpireTime(logout.getAccessToken());
-//        redisTemplate.expire(logout.getAccessToken(), remainingExpireTime, TimeUnit.MILLISECONDS);
-//
-//        return new ResponseDto<>(true);
-//    }
 
     @Transactional
     public void logout(MemberRequestDto.Logout logout) {
@@ -199,15 +154,4 @@ public class MemberService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public boolean checkToken(String token) {
-        return redisTemplate.hasKey("token");
-    }
-
-    public String getRefreshTokenFromCache(String userEmail) {
-        return (String) redisTemplate.opsForValue().get("RT:" + userEmail);
-    }
-
-    public void updateRefreshTokenCache(String userEmail, String refreshToken, long expirationTime) {
-        redisTemplate.opsForValue().set("RT:" + userEmail, refreshToken, expirationTime, TimeUnit.MILLISECONDS);
-    }
 }
