@@ -3,7 +3,7 @@ package com.travel.post.entity;
 public enum InquiryType {
 
     ORDER_PAYMENT("주문/결제"),
-    REFUND("환불"),
+    REFUND("환불문의"),
     PRODUCT("상품문의"),
     PROFILE("회원정보");
 
