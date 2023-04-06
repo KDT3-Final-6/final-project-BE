@@ -1,7 +1,7 @@
 package com.travel.auth.jwt;
 
 
-import com.travel.auth.TokenType;
+import com.travel.auth.enums.TokenType;
 import com.travel.auth.dto.response.MemberResponseDto;
 import com.travel.auth.exception.AuthException;
 import com.travel.auth.exception.AuthExceptionType;
@@ -37,7 +37,6 @@ public class JwtTokenProvider {
     private final Key key;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
-//        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
@@ -126,8 +125,8 @@ public class JwtTokenProvider {
     }
 
     // 토큰에서 사용자 아이드를 추출하는 메서드
-    public String getMemberIdFromToken(String accessToken) {
-        Claims claims = parseClaims(accessToken);
+    public String getEmailFromToken(String token) {
+        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
         return claims.getSubject();
     }
     public Claims getClaimsFromToken(String token, TokenType tokenType) {
