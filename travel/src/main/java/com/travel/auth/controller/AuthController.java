@@ -49,12 +49,12 @@ public class    AuthController {
         return memberService.signUp(signUp);
     }
 
-@PostMapping("/login")
-public ResponseEntity<ResponseDto<MemberResponseDto.TokenInfo>> login(@Validated @RequestBody MemberRequestDto.Login login) {
-    MemberResponseDto.TokenInfo tokenInfo = memberService.login(login);
-    ResponseDto<MemberResponseDto.TokenInfo> responseDto = new ResponseDto<>(tokenInfo);
-    return ResponseEntity.ok(responseDto);
-}
+    @PostMapping("/login")
+    public ResponseEntity<ResponseDto<MemberResponseDto.LoginInfo>> login(@Validated @RequestBody MemberRequestDto.Login login) {
+        MemberResponseDto.LoginInfo loginInfo = memberService.login(login);
+        ResponseDto<MemberResponseDto.LoginInfo> responseDto = new ResponseDto<>(loginInfo);
+        return ResponseEntity.ok(responseDto);
+    }
 
     @PostMapping("/reissue")
     public ResponseEntity<ResponseDto<MemberResponseDto.TokenInfo>> reissue(

@@ -15,4 +15,15 @@ public class MemberResponseDto {
         private String refreshToken;
         private Long refreshTokenExpirationTime;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class LoginInfo {
+        private String memberName;
+        private String grantType;
+        private String accessToken;
+        private String refreshToken;
+        private Long refreshTokenExpirationTime;
+    }
 }

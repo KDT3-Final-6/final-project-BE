@@ -56,7 +56,6 @@ public class MemberRequestDto {
         @NotEmpty(message = "비밀번호는 필수 입력값입니다.")
         private String memberPassword;
         public UsernamePasswordAuthenticationToken toAuthentication() {
-            System.out.println("memberPassword = " + memberPassword);
             return new UsernamePasswordAuthenticationToken(memberEmail, memberPassword);
         }
     }
