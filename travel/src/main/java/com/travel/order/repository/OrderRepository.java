@@ -2,6 +2,7 @@ package com.travel.order.repository;
 
 import com.travel.member.entity.Member;
 import com.travel.order.entity.Order;
+import com.travel.product.entity.PurchasedProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

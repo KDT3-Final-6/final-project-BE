@@ -180,16 +180,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void createOrderNonMember(OrderNonMemberCreateDTO orderNonMemberCreateDTO) {
-        String memberEmail = null;
-        if (orderNonMemberCreateDTO.getMemberEmail() != null) {
-            memberEmail = orderNonMemberCreateDTO.getMemberEmail();
-        }
-
+    public Order createOrderNonMember(OrderNonMemberCreateDTO orderNonMemberCreateDTO) {
         Member member = Member.builder()
                 .memberName(orderNonMemberCreateDTO.getMemberName())
-                .memberPhone(orderNonMemberCreateDTO.getMemberPhone())
-                .memberEmail(memberEmail)
+                .memberEmail(orderNonMemberCreateDTO.getMemberEmail())
                 .build();
 
         member.setNonMembers(true);
@@ -207,7 +201,7 @@ public class OrderServiceImpl implements OrderService {
 
         purchasedProductList.forEach(purchasedProduct -> purchasedProduct.setOrder(order));
 
-        orderRepository.save(order);
+        return orderRepository.save(order);
     }
 
     private List<PurchasedProduct> getPurchasedProducts(List<OrderCreateDTO> orderCreateDTOList) {
