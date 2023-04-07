@@ -77,18 +77,22 @@ public class MemberController {
     }
 
     @PostMapping("/members/password-check")
-    public Boolean passwordCheck(@RequestHeader("Authorization") String authorizationHeader,
-                                           @RequestBody PasswordCheckDTO passwordCheckDTO) {
+    public ResponseEntity<?> passwordCheck(@RequestHeader("Authorization") String authorizationHeader, @RequestBody PasswordCheckDTO passwordCheckDTO) {
         String token = authorizationHeader.substring(7);
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(tokenProvider.getKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        String memberEmail = claims.getSubject();
-        return memberService.passwordCheck(memberEmail, passwordCheckDTO);
-
+        String email = claims.getSubject(); // 토큰에서 회원 이메일 정보 추출
+        boolean isMatched = memberService.passwordCheck(email, passwordCheckDTO);
+        if (isMatched) {
+            return ResponseEntity.ok("비밀번호가 일치합니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 일치하지 않습니다.");
+        }
     }
+
 
 
     @PutMapping("/members/profile")
