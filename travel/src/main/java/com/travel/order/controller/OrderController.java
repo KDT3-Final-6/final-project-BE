@@ -42,6 +42,19 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
+    @GetMapping("/qna")
+    public ResponseEntity<PageResponseDTO> getOrdersByQnA(@RequestParam(required = false, defaultValue = "1") int page, Authentication authentication) {
+        if (page < 1) {
+            throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+
+        PageResponseDTO orders = orderService.getOrdersByQnA(pageRequest, authentication.getName());
+
+        return ResponseEntity.ok(orders);
+    }
+
     @DeleteMapping("/{orderId}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId, Authentication authentication) {
         orderService.deleteOrder(orderId, authentication.getName());
