@@ -14,4 +14,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByMember(Member member);
 
     Optional<Order> findByOrderIdAndMember(Long orderId, Member member);
+
+    boolean existsByPurchasedProductsContainsAndMember(PurchasedProduct purchasedProducts, Member member);
 }
