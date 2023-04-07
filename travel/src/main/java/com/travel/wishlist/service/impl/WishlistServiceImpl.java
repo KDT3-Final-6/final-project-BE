@@ -7,6 +7,7 @@ import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
+import com.travel.order.dto.response.OrderByQnAResponseDTO;
 import com.travel.product.entity.Product;
 import com.travel.product.exception.ProductException;
 import com.travel.product.exception.ProductExceptionType;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,6 +67,7 @@ public class WishlistServiceImpl implements WishlistService {
 
         List<WishlistResponseDTO> wishlistResponseDTOList = wishlists.stream()
                 .map(Wishlist::toResponseDTO)
+                .sorted(Comparator.comparing(WishlistResponseDTO::getWishilistId).reversed())
                 .collect(Collectors.toList());
 
         int start = (int) pageable.getOffset();

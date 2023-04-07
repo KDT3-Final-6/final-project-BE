@@ -11,10 +11,7 @@ import com.travel.order.dto.request.OrderApproveDTO;
 import com.travel.order.dto.request.OrderCreateDTO;
 import com.travel.order.dto.request.OrderCreateListDTO;
 import com.travel.order.dto.request.OrderNonMemberCreateDTO;
-import com.travel.order.dto.response.OrderAdminResponseDTO;
-import com.travel.order.dto.response.OrderListAdminResponseDTO;
-import com.travel.order.dto.response.OrderListResponseDTO;
-import com.travel.order.dto.response.OrderResponseDTO;
+import com.travel.order.dto.response.*;
 import com.travel.order.entity.Order;
 import com.travel.order.entity.OrderStatus;
 import com.travel.order.entity.PaymentMethod;
@@ -92,6 +89,7 @@ public class OrderServiceImpl implements OrderService {
 
                                 return purchasedProduct.toOrderResponseDTO(hasReview);
                             })
+                             .sorted(Comparator.comparing(OrderResponseDTO::getPurchasedProductId).reversed())
                             .collect(Collectors.toList());
 
                     return OrderListResponseDTO.builder()
@@ -108,6 +106,33 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS.subList(start, end), pageable, orderListResponseDTOS.size()));
+    }
+
+    @Override
+    public PageResponseDTO getOrdersByQnA(Pageable pageable, String userEmail) {
+        Member member = memberRepository.findByMemberEmail(userEmail)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        List<Order> orderList = orderRepository.findByMember(member);
+
+        List<OrderByQnAResponseDTO> orderByQnAList = orderList.stream()
+                .flatMap(order -> purchasedProductRepository.findByOrder(order).stream()
+                        .map(purchasedProduct -> OrderByQnAResponseDTO.builder()
+                                .orderId(order.getOrderId())
+                                .purchasedProductId(purchasedProduct.getPurchasedProductId())
+                                .productName(purchasedProduct.getPurchasedProductName())
+                                .build())
+                )
+                .sorted(Comparator.comparing(OrderByQnAResponseDTO::getPurchasedProductId).reversed())
+                .collect(Collectors.toList());
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), orderByQnAList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(orderByQnAList.subList(start, end), pageable, orderByQnAList.size()));
     }
 
     @Override
