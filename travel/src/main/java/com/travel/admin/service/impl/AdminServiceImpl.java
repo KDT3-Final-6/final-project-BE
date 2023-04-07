@@ -4,6 +4,8 @@ import com.amazonaws.services.kms.model.NotFoundException;
 import com.travel.admin.dto.responseDTO.MemberDetailInfoDTO;
 import com.travel.admin.dto.responseDTO.MemberListDTO;
 import com.travel.admin.service.AdminService;
+import com.travel.global.exception.GlobalException;
+import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.image.repository.MemberImageRepository;
 import com.travel.member.entity.Member;
@@ -11,6 +13,7 @@ import com.travel.member.repository.MemberRepository;
 import com.travel.post.repository.PostRepository;
 import com.travel.post.repository.qnapost.QnARepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,7 +53,13 @@ public class AdminServiceImpl implements AdminService {
                     .build());
         }
 
-        return new PageResponseDTO(new PageImpl<>(memberListDTOs, pageable, memberListDTOs.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), memberListDTOs.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(memberListDTOs.subList(start, end), pageable, memberListDTOs.size()));
     }
 
     @Override
