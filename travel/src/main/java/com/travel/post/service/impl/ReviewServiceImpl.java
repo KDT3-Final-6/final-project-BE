@@ -7,6 +7,7 @@ import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
+import com.travel.order.repository.OrderRepository;
 import com.travel.post.dto.request.ReviewCreateRequestDTO;
 import com.travel.post.dto.request.ReviewUpdateRequestDTO;
 import com.travel.post.dto.response.ReviewListDTO;
@@ -42,6 +43,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final MemberRepository memberRepository;
     private final PurchasedProductRepository purchasedProductRepository;
     private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
 
     @Override
     public void createReview(ReviewCreateRequestDTO reviewCreateRequestDTO, String memberEmail) {
@@ -50,6 +52,10 @@ public class ReviewServiceImpl implements ReviewService {
 
         PurchasedProduct purchasedProduct = purchasedProductRepository.findById(reviewCreateRequestDTO.getPurchasedProductId())
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
+
+        if (!orderRepository.existsByPurchasedProductsContainsAndMember(purchasedProduct, member)) {
+            throw new PostException(PostExceptionType.NOT_THE_PRODUCT_ORDERED);
+        }
 
         ReviewPost reviewPost = new ReviewPost(purchasedProduct.getPurchasedProductName(), reviewCreateRequestDTO.getContent(), member, purchasedProduct, reviewCreateRequestDTO.getScope());
 
