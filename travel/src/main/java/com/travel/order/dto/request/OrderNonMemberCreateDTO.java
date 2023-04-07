@@ -3,9 +3,9 @@ package com.travel.order.dto.request;
 import lombok.Getter;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Getter
@@ -22,8 +22,6 @@ public class OrderNonMemberCreateDTO {
     private String memberName;
 
     @NotEmpty
-    @Pattern(regexp = "^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$", message = "-없이 작성해주세요")
-    private String memberPhone;
-
+    @Email
     private String memberEmail;
 }

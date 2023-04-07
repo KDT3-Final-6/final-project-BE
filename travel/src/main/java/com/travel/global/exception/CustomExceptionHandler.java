@@ -10,6 +10,8 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.mail.MessagingException;
+
 @RestControllerAdvice
 @Slf4j
 public class CustomExceptionHandler {
@@ -53,7 +55,7 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<String> methodArgumentNotValidExceptionHandler(MissingServletRequestParameterException e) {
+    public ResponseEntity<String> missingServletRequestParameterExceptionHandler(MissingServletRequestParameterException e) {
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 
         String errorMsg = e.getParameterName() + "의 값을 넣어주세요.";
@@ -66,5 +68,21 @@ public class CustomExceptionHandler {
 
         return ResponseEntity.status(httpStatus)
                 .body(errorMsg);
+    }
+
+    @ExceptionHandler(MessagingException.class)
+    public ResponseEntity<String> messagingExceptionHandler(MessagingException e) {
+        HttpStatus httpStatus = HttpStatus.CONFLICT;
+
+        String errorMsg = "메일 전송을 실패했습니다.";
+
+        log.error("--------------------------------");
+        log.error("StackTrace = {} ", (Object) e.getStackTrace());
+        log.error("HttpStatus = {} ", httpStatus);
+        log.error("ErrorMsg = {} ", errorMsg);
+        log.error("--------------------------------");
+
+        return ResponseEntity.status(httpStatus)
+                        .body(errorMsg);
     }
 }
