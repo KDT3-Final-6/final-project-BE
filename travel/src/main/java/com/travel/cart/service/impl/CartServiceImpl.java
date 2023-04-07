@@ -15,6 +15,7 @@ import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
+import com.travel.order.entity.Order;
 import com.travel.product.entity.PeriodOption;
 import com.travel.product.entity.Product;
 import com.travel.product.entity.Status;
@@ -28,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,6 +86,7 @@ public class CartServiceImpl implements CartService {
         List<Cart> cartList = cartRepository.findByMember(member);
 
         List<CartResponseDTO> cartResponseDTOList = cartList.stream()
+                .sorted(Comparator.comparing(Cart::getCartId).reversed())
                 .map(Cart::toCartResponseDTO)
                 .collect(Collectors.toList());
 
