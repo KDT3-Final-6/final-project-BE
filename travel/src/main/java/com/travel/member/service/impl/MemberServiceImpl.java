@@ -17,14 +17,10 @@ import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
 import com.travel.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -159,16 +155,17 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Boolean passwordCheck(String email, PasswordCheckDTO passwordCheckDTO) {
+    public boolean passwordCheck(String email, PasswordCheckDTO passwordCheckDTO) {
         Optional<Member> memberOptional = memberRepository.findByMemberEmail(email);
         if (memberOptional.isPresent()) {
             Member member = memberOptional.get();
-            if (passwordEncoder.matches(passwordCheckDTO.getMemberPassword(), member.getPassword())) {
-                return true;
-            }
+            String hashedPassword = member.getPassword();
+            String plainPassword = passwordCheckDTO.getMemberPassword();
+            return passwordEncoder.matches(plainPassword, hashedPassword);
         }
         return false;
     }
+
 
     private void passwordCheck(String checkMemberPassword, String memberPassword) {
         if (!passwordEncoder.matches(checkMemberPassword, memberPassword)) {

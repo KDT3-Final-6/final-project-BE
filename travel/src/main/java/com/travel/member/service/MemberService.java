@@ -21,6 +21,6 @@ public interface MemberService {
     void updateProfile(String memberEmail, MultipartFile profile) throws IOException;
     ResponseEntity<?> exampleOfUpdate(String email,MemberModifyRequestDTO.ModifyMemberRequestDTO dto);
     void deleteMember(DeleteMemberDTO deleteMember);
-    Boolean passwordCheck(String email, PasswordCheckDTO passwordCheckDTO);
+    boolean passwordCheck(String email, PasswordCheckDTO passwordCheckDTO);
 
 }
