@@ -17,9 +17,8 @@ public interface MemberService {
     ResponseDto<?> memberInfo(MemberRequestDto.Login login);
     Member getMemberById(Long id);
     ResponseEntity<MemberResponseDTO.MemberInfoResponseDTO> getMemberByMemberEmail(String email);
-    ResponseDto<?> modifyMember(MemberRequestDto.Login login, MemberModifyRequestDTO.ModifyMemberRequestDTO modifyMemberInfoRequestDTO);
     void updateProfile(String memberEmail, MultipartFile profile) throws IOException;
-    ResponseEntity<?> exampleOfUpdate(String email,MemberModifyRequestDTO.ModifyMemberRequestDTO dto);
+    void memberUpdate(String email,MemberModifyRequestDTO.ModifyMemberRequestDTO dto);
     void deleteMember(DeleteMemberDTO deleteMember);
     boolean passwordCheck(String email, PasswordCheckDTO passwordCheckDTO);
 
