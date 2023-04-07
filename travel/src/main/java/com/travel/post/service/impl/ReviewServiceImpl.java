@@ -55,6 +55,8 @@ public class ReviewServiceImpl implements ReviewService {
 
         if (!orderRepository.existsByPurchasedProductsContainsAndMember(purchasedProduct, member)) {
             throw new PostException(PostExceptionType.NOT_THE_PRODUCT_ORDERED);
+        } else if (reviewRepository.existsByPurchasedProduct(purchasedProduct)) {
+            throw new PostException(PostExceptionType.CAN_ONLY_WRITE_ONE_REVIEW);
         }
 
         ReviewPost reviewPost = new ReviewPost(purchasedProduct.getPurchasedProductName(), reviewCreateRequestDTO.getContent(), member, purchasedProduct, reviewCreateRequestDTO.getScope());
