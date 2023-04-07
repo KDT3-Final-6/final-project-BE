@@ -89,6 +89,7 @@ public class OrderServiceImpl implements OrderService {
 
                                 return purchasedProduct.toOrderResponseDTO(hasReview);
                             })
+                             .sorted(Comparator.comparing(OrderResponseDTO::getPurchasedProductId).reversed())
                             .collect(Collectors.toList());
 
                     return OrderListResponseDTO.builder()
