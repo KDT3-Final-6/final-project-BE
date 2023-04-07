@@ -59,6 +59,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public PageResponseDTO getReviews(Pageable pageable) {
         List<ReviewPost> reviewPostList = reviewRepository.findAll().stream()
+                .filter(reviewPost -> !reviewPost.isCanceled())
                 .sorted(Comparator.comparing(ReviewPost::getPostId).reversed())
                 .collect(Collectors.toList());
 
@@ -81,6 +82,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
         List<ReviewPost> reviewPostList = reviewRepository.findByMember(member).stream()
+                .filter(reviewPost -> !reviewPost.isCanceled())
                 .sorted(Comparator.comparing(ReviewPost::getPostId).reversed())
                 .collect(Collectors.toList());
 
@@ -103,6 +105,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
         List<ReviewPost> reviewPostList = reviewRepository.findByPurchasedProductProduct(product).stream()
+                .filter(reviewPost -> !reviewPost.isCanceled())
                 .sorted(Comparator.comparing(ReviewPost::getPostId).reversed())
                 .collect(Collectors.toList());
 
