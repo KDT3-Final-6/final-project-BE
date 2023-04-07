@@ -89,6 +89,9 @@ public class MemberService {
 
         MemberResponseDto.TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
 
+        redisTemplate.opsForValue()
+                .set("RT:" + authentication.getName(), tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
+
         return MemberResponseDto.LoginInfo.builder()
                 .memberName(member.getMemberName())
                 .roles(member.getRoles())
