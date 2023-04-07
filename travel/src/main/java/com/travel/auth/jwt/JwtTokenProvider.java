@@ -1,7 +1,10 @@
 package com.travel.auth.jwt;
 
 
+import com.travel.auth.enums.TokenType;
 import com.travel.auth.dto.response.MemberResponseDto;
+import com.travel.auth.exception.AuthException;
+import com.travel.auth.exception.AuthExceptionType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -29,12 +32,13 @@ public class JwtTokenProvider {
 
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L;              // 30분
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 24 * 60 * 60 * 1000L;            // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L;    // 7일
     private final Key key;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
-        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 
 
@@ -57,6 +61,7 @@ public class JwtTokenProvider {
 
         // Refresh Token 생성
         String refreshToken = Jwts.builder()
+                .setSubject(authentication.getName())
                 .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -102,6 +107,8 @@ public class JwtTokenProvider {
         }
         return false;
     }
+
+    // 토큰의 Claims 정보를 파싱하는 메서드
     private Claims parseClaims(String accessToken) {
         try {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
@@ -116,8 +123,53 @@ public class JwtTokenProvider {
         Long now = new Date().getTime();
         return (expiration.getTime() - now);
     }
-    public String getMemberIdFromToken(String accessToken) {
-        Claims claims = parseClaims(accessToken);
+
+    // 토큰에서 사용자 아이드를 추출하는 메서드
+    public String getEmailFromToken(String token) {
+        Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
         return claims.getSubject();
+    }
+    public Claims getClaimsFromToken(String token, TokenType tokenType) {
+        try {
+            Jws<Claims> claimsJws = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+
+            // 토큰 유형에 따라 토큰을 검증합니다.
+            if (tokenType == TokenType.ACCESS) {
+                // Access Token의 경우, 토큰이 만료되었는지 확인합니다.
+                if (claimsJws.getBody().getExpiration().before(new Date())) {
+                    throw new AuthException(AuthExceptionType.EXPIRED_TOKEN);
+                }
+            } else if (tokenType == TokenType.REFRESH) {
+                // Refresh Token의 경우, 토큰이 만료되지 않았는지 확인합니다.
+                if (!claimsJws.getBody().getExpiration().after(new Date())) {
+                    throw new AuthException(AuthExceptionType.EXPIRED_TOKEN);
+                }
+            }
+            System.out.println("claimsJws.getBody() = " + claimsJws.getBody());
+
+            return claimsJws.getBody();
+        } catch (JwtException e) {
+            throw new AuthException(AuthExceptionType.INVALID_TOKEN);
+        }
+    }
+
+    public long getRemainingExpireTime(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        Date expirationDate = claims.getExpiration();
+        Date now = new Date();
+
+        if (expirationDate.before(now)) {
+            return 0;
+        }
+
+        return expirationDate.getTime() - now.getTime();
     }
 }

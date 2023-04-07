@@ -13,8 +13,4 @@ public class PasswordCheckDTO {
     public String getMemberPassword() {
         return MemberPassword;
     }
-
-    public void setMemberPassword(String memberPassword) {
-        MemberPassword = memberPassword;
-    }
 }

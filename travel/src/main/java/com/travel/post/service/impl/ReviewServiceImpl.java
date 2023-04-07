@@ -1,10 +1,13 @@
 package com.travel.post.service.impl;
 
+import com.travel.global.exception.GlobalException;
+import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
+import com.travel.order.repository.OrderRepository;
 import com.travel.post.dto.request.ReviewCreateRequestDTO;
 import com.travel.post.dto.request.ReviewUpdateRequestDTO;
 import com.travel.post.dto.response.ReviewListDTO;
@@ -27,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +43,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final MemberRepository memberRepository;
     private final PurchasedProductRepository purchasedProductRepository;
     private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
 
     @Override
     public void createReview(ReviewCreateRequestDTO reviewCreateRequestDTO, String memberEmail) {
@@ -48,6 +53,12 @@ public class ReviewServiceImpl implements ReviewService {
         PurchasedProduct purchasedProduct = purchasedProductRepository.findById(reviewCreateRequestDTO.getPurchasedProductId())
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
+        if (!orderRepository.existsByPurchasedProductsContainsAndMember(purchasedProduct, member)) {
+            throw new PostException(PostExceptionType.NOT_THE_PRODUCT_ORDERED);
+        } else if (reviewRepository.existsByPurchasedProduct(purchasedProduct)) {
+            throw new PostException(PostExceptionType.CAN_ONLY_WRITE_ONE_REVIEW);
+        }
+
         ReviewPost reviewPost = new ReviewPost(purchasedProduct.getPurchasedProductName(), reviewCreateRequestDTO.getContent(), member, purchasedProduct, reviewCreateRequestDTO.getScope());
 
         reviewRepository.save(reviewPost);
@@ -55,13 +66,22 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public PageResponseDTO getReviews(Pageable pageable) {
-        List<ReviewPost> reviewPostList = reviewRepository.findAll();
+        List<ReviewPost> reviewPostList = reviewRepository.findAll().stream()
+                .filter(reviewPost -> !reviewPost.isCanceled())
+                .sorted(Comparator.comparing(ReviewPost::getPostId).reversed())
+                .collect(Collectors.toList());
 
         List<ReviewListDTO> reviewListMemberDTOList = reviewPostList.stream()
                 .map(ReviewPost::toReviewListDTO)
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(reviewListMemberDTOList, pageable, reviewListMemberDTOList.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), reviewListMemberDTOList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(reviewListMemberDTOList.subList(start, end), pageable, reviewListMemberDTOList.size()));
     }
 
     @Override
@@ -69,13 +89,22 @@ public class ReviewServiceImpl implements ReviewService {
         Member member = memberRepository.findByMemberEmail(memberEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        List<ReviewPost> reviewPostList = reviewRepository.findByMember(member);
+        List<ReviewPost> reviewPostList = reviewRepository.findByMember(member).stream()
+                .filter(reviewPost -> !reviewPost.isCanceled())
+                .sorted(Comparator.comparing(ReviewPost::getPostId).reversed())
+                .collect(Collectors.toList());
 
         List<ReviewListMemberDTO> reviewListMemberDTOList = reviewPostList.stream()
                 .map(ReviewPost::toReviewListMemberDTO)
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(reviewListMemberDTOList, pageable, reviewListMemberDTOList.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), reviewListMemberDTOList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(reviewListMemberDTOList.subList(start, end), pageable, reviewListMemberDTOList.size()));
     }
 
     @Override
@@ -83,13 +112,22 @@ public class ReviewServiceImpl implements ReviewService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
-        List<ReviewPost> reviewPostList = reviewRepository.findByPurchasedProductProduct(product);
+        List<ReviewPost> reviewPostList = reviewRepository.findByPurchasedProductProduct(product).stream()
+                .filter(reviewPost -> !reviewPost.isCanceled())
+                .sorted(Comparator.comparing(ReviewPost::getPostId).reversed())
+                .collect(Collectors.toList());
 
         List<ReviewListProductDTO> reviewListProductDTOList = reviewPostList.stream()
                 .map(ReviewPost::toReviewListProductDTO)
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(reviewListProductDTOList, pageable, reviewListProductDTOList.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), reviewListProductDTOList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(reviewListProductDTOList.subList(start, end), pageable, reviewListProductDTOList.size()));
     }
 
     @Override

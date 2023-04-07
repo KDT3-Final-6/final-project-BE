@@ -22,10 +22,11 @@ public class MemberResponseDTO {
         private String memberPhone;
         private String memberBirthDate;
         private List<Hobby> memberHobby;
-        private Boolean memberSmsAgree;
-        private Boolean memberEmailAgree;
+        private boolean memberSmsAgree;
+        private boolean memberEmailAgree;
         private Grade memberGrade;
         private String memberImage;
+        private List<String> roles;
 
         public MemberInfoResponseDTO(Member member) {
             this.memberEmail = member.getMemberEmail();
@@ -34,10 +35,11 @@ public class MemberResponseDTO {
             this.memberPhone = member.getMemberPhone();
             this.memberBirthDate = member.getMemberBirthDate();
             this.memberHobby = member.getMemberHobby();
-            this.memberSmsAgree = member.getMemberSmsAgree();
-            this.memberEmailAgree = member.getMemberEmailAgree();
+            this.memberSmsAgree = member.isMemberSmsAgree();
+            this.memberEmailAgree = member.isMemberEmailAgree();
             this.memberGrade = member.getMemberGrade();
             this.memberImage = member.getMemberImage().getImagePath();
+            this.roles = member.getRoles();
         }
 
 

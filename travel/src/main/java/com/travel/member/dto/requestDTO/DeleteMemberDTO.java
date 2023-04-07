@@ -8,14 +8,12 @@ import lombok.ToString;
 @Setter
 @ToString
 public class DeleteMemberDTO {
-    private String memberPassword;
-
-
-    public String getMemberPassword() {
-        return memberPassword;
+    private String accessToken;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public void setMemberPassword(String memberPassword) {
-        this.memberPassword = memberPassword;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 
 @Slf4j
@@ -61,42 +62,37 @@ public class MemberController {
                 .getBody();
         String memberEmail = (claims.getSubject());
 
-
-        // 회원 정보 수정 요청 처리
-//        MemberRequestDto.Login login = new MemberRequestDto.Login();
-//        login.setMemberEmail(memberEmail);
-//        ResponseDto<?> responseDto = memberService.modifyMember(login, modifyMemberRequestDTO);
-
-
         return memberService.exampleOfUpdate(memberEmail,modifyMemberRequestDTO);
     }
 
     @DeleteMapping("/members")
-    public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String authorizationHeader,
-                                                       @RequestBody DeleteMemberDTO deleteMemberDTO) {
-            String token = authorizationHeader.substring(7);
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(tokenProvider.getKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-            String memberEmail = claims.getSubject();
-            return memberService.deleteMember(memberEmail, deleteMemberDTO);
-        }
+    public ResponseEntity<?> deleteMember(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.substring(7);
+        DeleteMemberDTO deleteMemberDTO = new DeleteMemberDTO();
+        deleteMemberDTO.setAccessToken(token);
+
+        memberService.deleteMember(deleteMemberDTO);
+
+        return ResponseEntity.ok().build();
+    }
 
     @PostMapping("/members/password-check")
-    public Boolean passwordCheck(@RequestHeader("Authorization") String authorizationHeader,
-                                           @RequestBody PasswordCheckDTO passwordCheckDTO) {
+    public ResponseEntity<?> passwordCheck(@RequestHeader("Authorization") String authorizationHeader, @RequestBody PasswordCheckDTO passwordCheckDTO) {
         String token = authorizationHeader.substring(7);
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(tokenProvider.getKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        String memberEmail = claims.getSubject();
-        return memberService.passwordCheck(memberEmail, passwordCheckDTO);
-
+        String email = claims.getSubject(); // 토큰에서 회원 이메일 정보 추출
+        boolean isMatched = memberService.passwordCheck(email, passwordCheckDTO);
+        if (isMatched) {
+            return ResponseEntity.ok("비밀번호가 일치합니다.");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 일치하지 않습니다.");
+        }
     }
+
 
 
     @PutMapping("/members/profile")

@@ -1,5 +1,7 @@
 package com.travel.order.service.impl;
 
+import com.travel.global.exception.GlobalException;
+import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
@@ -37,6 +39,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -77,7 +80,9 @@ public class OrderServiceImpl implements OrderService {
         Member member = memberRepository.findByMemberEmail(userEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        List<Order> orderList = orderRepository.findByMember(member);
+        List<Order> orderList = orderRepository.findByMember(member).stream()
+                .sorted(Comparator.comparing(Order::getOrderId).reversed())
+                .collect(Collectors.toList());
 
         List<OrderListResponseDTO> orderListResponseDTOS = orderList.stream()
                 .map(order -> {
@@ -96,7 +101,13 @@ public class OrderServiceImpl implements OrderService {
                 })
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS, pageable, orderListResponseDTOS.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), orderListResponseDTOS.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS.subList(start, end), pageable, orderListResponseDTOS.size()));
     }
 
     @Override
@@ -121,7 +132,9 @@ public class OrderServiceImpl implements OrderService {
             throw new MemberException(MemberExceptionType.MEMBER_IS_NOT_ADMIN);
         }
 
-        List<Order> orderList = orderRepository.findAll();
+        List<Order> orderList = orderRepository.findAll().stream()
+                .sorted(Comparator.comparing(Order::getOrderId).reversed())
+                .collect(Collectors.toList());
 
         List<OrderListAdminResponseDTO> orderListResponseDTOS = orderList.stream()
                 .map(order -> {
@@ -137,7 +150,13 @@ public class OrderServiceImpl implements OrderService {
                 })
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS, pageable, orderListResponseDTOS.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), orderListResponseDTOS.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS.subList(start, end), pageable, orderListResponseDTOS.size()));
     }
 
     @Override
@@ -161,16 +180,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void createOrderNonMember(OrderNonMemberCreateDTO orderNonMemberCreateDTO) {
-        String memberEmail = null;
-        if (orderNonMemberCreateDTO.getMemberEmail() != null) {
-            memberEmail = orderNonMemberCreateDTO.getMemberEmail();
-        }
-
+    public Order createOrderNonMember(OrderNonMemberCreateDTO orderNonMemberCreateDTO) {
         Member member = Member.builder()
                 .memberName(orderNonMemberCreateDTO.getMemberName())
-                .memberPhone(orderNonMemberCreateDTO.getMemberPhone())
-                .memberEmail(memberEmail)
+                .memberEmail(orderNonMemberCreateDTO.getMemberEmail())
                 .build();
 
         member.setNonMembers(true);
@@ -188,7 +201,7 @@ public class OrderServiceImpl implements OrderService {
 
         purchasedProductList.forEach(purchasedProduct -> purchasedProduct.setOrder(order));
 
-        orderRepository.save(order);
+        return orderRepository.save(order);
     }
 
     private List<PurchasedProduct> getPurchasedProducts(List<OrderCreateDTO> orderCreateDTOList) {
@@ -196,12 +209,13 @@ public class OrderServiceImpl implements OrderService {
                 .map(createDTO -> {
                     Integer quantity = createDTO.getQuantity();
 
-                    Product product = productRepository.findById(createDTO.getProductId())
-                            .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
-                    PeriodOption periodOption = periodOptionRepository.findByProductAndPeriodOptionId(product, createDTO.getPeriodOptionId())
+                    PeriodOption periodOption = periodOptionRepository.findById(createDTO.getPeriodOptionId())
                             .orElseThrow(() -> new ProductException(ProductExceptionType.PERIOD_OPTION_NOT_FOUND));
 
-                    if (periodOption.getPeriodOptionStatus() != Status.FORSALE) {
+                    Product product = productRepository.findById(periodOption.getProduct().getProductId())
+                            .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
+
+                    if (product.getProductStatus() != Status.FORSALE || periodOption.getPeriodOptionStatus() != Status.FORSALE) {
                         throw new OrderException(OrderExceptionType.PRODUCTS_CANNOT_BE_ORDERED);
                     }
 

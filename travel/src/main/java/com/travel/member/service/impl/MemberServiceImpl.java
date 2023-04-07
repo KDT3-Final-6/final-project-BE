@@ -2,6 +2,7 @@ package com.travel.member.service.impl;
 
 import com.travel.auth.dto.ResponseDto;
 import com.travel.auth.dto.request.MemberRequestDto;
+import com.travel.auth.jwt.JwtTokenProvider;
 import com.travel.image.entity.Image;
 import com.travel.image.entity.MemberImage;
 import com.travel.image.repository.MemberImageRepository;
@@ -16,12 +17,10 @@ import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
 import com.travel.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +40,8 @@ public class MemberServiceImpl implements MemberService {
     private final MemberImageRepository memberImageRepository;
     private final PasswordEncoder passwordEncoder;
     private final FileUploadService fileUploadService;
+    private final JwtTokenProvider tokenProvider;
+    private final RedisTemplate redisTemplate;
 
     @Override
     public ResponseDto<?> memberInfo(MemberRequestDto.Login login) {
@@ -99,8 +101,8 @@ public class MemberServiceImpl implements MemberService {
             member.setMemberNickname(modifyMemberRequestDTO.getMemberNickname());
             member.setMemberHobby(modifyMemberRequestDTO.getMemberHobby());
             member.setMemberPhone(modifyMemberRequestDTO.getMemberPhone());
-            member.setMemberSmsAgree(modifyMemberRequestDTO.getMemberSmsAgree());
-            member.setMemberEmailAgree(modifyMemberRequestDTO.getMemberEmailAgree());
+            member.setMemberSmsAgree(modifyMemberRequestDTO.isMemberSmsAgree());
+            member.setMemberEmailAgree(modifyMemberRequestDTO.isMemberEmailAgree());
             member.setMemberImage(modifyMemberRequestDTO.getMemberImage());
 
             memberRepository.save(member);
@@ -139,40 +141,31 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public ResponseEntity<?> deleteMember(String email, DeleteMemberDTO deleteMemberDTO) {
-        try {
-            Member member = memberRepository.findByMemberEmail(email).orElseThrow(NoSuchElementException::new);
-            deleteMemberDTO.setMemberPassword(encodingPassword(deleteMemberDTO.getMemberPassword()));
-            member.setMemberDeleteCheck(true);
-            memberRepository.save(member);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public void deleteMember(DeleteMemberDTO deleteMemberDTO) {
+        String email = tokenProvider.getEmailFromToken(deleteMemberDTO.getAccessToken());
+        Member member = memberRepository.findByMemberEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 회원이 존재하지 않습니다."));
+
+        member.setMemberDeleteCheck(true);
+        memberRepository.save(member);
+
+        long expireTime = tokenProvider.getExpiration(deleteMemberDTO.getAccessToken());
+        redisTemplate.opsForValue().set(deleteMemberDTO.getAccessToken(), "logout", expireTime, TimeUnit.MILLISECONDS);
+        redisTemplate.delete("RT:" + email);
     }
 
-//    @Override
-//    public Boolean passwordCheck(String email, PasswordCheckDTO passwordCheckDTO) {
-//        try {
-//            memberRepository.findByMemberEmail(email).orElseThrow(NoSuchElementException::new);
-//            passwordCheckDTO.setMemberPassword(encodingPassword(passwordCheckDTO.getMemberPassword()));
-//            return true;
-//        } catch (NoSuchElementException e) {
-//            return false;
-//        }
-//    }
-
     @Override
-    public Boolean passwordCheck(String email, PasswordCheckDTO passwordCheckDTO) {
+    public boolean passwordCheck(String email, PasswordCheckDTO passwordCheckDTO) {
         Optional<Member> memberOptional = memberRepository.findByMemberEmail(email);
         if (memberOptional.isPresent()) {
             Member member = memberOptional.get();
-            if (passwordEncoder.matches(passwordCheckDTO.getMemberPassword(), member.getPassword())) {
-                return true;
-            }
+            String hashedPassword = member.getPassword();
+            String plainPassword = passwordCheckDTO.getMemberPassword();
+            return passwordEncoder.matches(plainPassword, hashedPassword);
         }
         return false;
     }
+
 
     private void passwordCheck(String checkMemberPassword, String memberPassword) {
         if (!passwordEncoder.matches(checkMemberPassword, memberPassword)) {

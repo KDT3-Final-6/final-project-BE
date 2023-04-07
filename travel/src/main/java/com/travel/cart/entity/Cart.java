@@ -42,15 +42,17 @@ public class Cart extends BaseEntity {
 
     public CartResponseDTO toCartResponseDTO() {
         return CartResponseDTO.builder()
-                .cartId(this.getCartId())
-                .productId(this.getPeriodOption().getProduct().getProductId())
-                .periodOptionId(this.getPeriodOption().getPeriodOptionId())
-                .cartPrice(this.getPeriodOption().getProduct().getProductPrice() * this.getCartQuantity())
-                .productName(this.getPeriodOption().getProduct().getProductName())
-                .periodOptionName(this.getPeriodOption().getOptionName())
-                .productThumbnail(this.getPeriodOption().getProduct().getProductImages().get(0).getImagePath())
-                .productContent(this.getPeriodOption().getProduct().getProductContent())
-                .cartQuantity(this.getCartQuantity())
+                .cartId(this.cartId)
+                .productId(this.periodOption.getProduct().getProductId())
+                .periodOptionId(this.periodOption.getPeriodOptionId())
+                .productPrice(this.periodOption.getProduct().getProductPrice())
+                .productName(this.periodOption.getProduct().getProductName())
+                .periodOptionName(this.periodOption.getOptionName())
+                .productThumbnail(this.periodOption.getProduct().getProductImages().get(0).getImagePath())
+                .productContent(this.periodOption.getProduct().getProductContent())
+                .cartQuantity(this.cartQuantity)
+                .productStatus(this.periodOption.getProduct().getProductStatus().getKorean())
+                .periodOptionStatus(this.periodOption.getPeriodOptionStatus().getKorean())
                 .build();
     }
 }

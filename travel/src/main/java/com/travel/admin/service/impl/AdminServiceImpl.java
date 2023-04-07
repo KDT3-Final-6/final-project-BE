@@ -38,7 +38,7 @@ public class AdminServiceImpl implements AdminService {
     // 관리자에서 회원 정보 조회
     @Override
     public PageResponseDTO getAllMembers(Pageable pageable) {
-        List<Member> members = memberRepository.findAllByMemberDeleteCheckFalse();
+        List<Member> members = memberRepository.findAllByMemberDeleteCheckFalseOrderByMemberIdDesc();
         List<MemberListDTO> memberListDTOs = new ArrayList<>();
 
         for (Member member : members) {

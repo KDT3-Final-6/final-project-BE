@@ -51,20 +51,32 @@ public class AdminController {
     }
 
     @GetMapping("/products")
-    public ResponseEntity<PageResponseDTO> getProducts(@RequestParam(required = false, defaultValue = "1") int page) {
+    public ResponseEntity<PageResponseDTO> getProducts(@RequestParam(required = false, defaultValue = "1") int page,
+                                                       Authentication authentication) {
 
         if (page < 1) {
             throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
 
         PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE);
+        PageResponseDTO pageResponseDTO = null;
 
-        return ResponseEntity.ok(productService.displayProductsByAdmin(pageRequest));
+        if (authentication == null) {
+            // 로그인되지 않은 사용자용 정보를 반환
+            pageResponseDTO = productService.displayProductsByAdmin(null, pageRequest);
+        } else {
+            // 로그인된 사용자용 정보를 반환
+            String memberEmail = authentication.getName();
+            pageResponseDTO = productService.displayProductsByAdmin(memberEmail, pageRequest);
+        }
+
+        return ResponseEntity.ok(pageResponseDTO);
     }
 
     @GetMapping("/products/{productId}")
-    public ResponseEntity<ProductDetailGetResponseDTO> getProductDetail(@PathVariable Long productId) {
-        return ResponseEntity.ok(productService.displayProductDetail(productId));
+    public ResponseEntity<ProductDetailGetResponseDTO> getProductDetail(@PathVariable Long productId,
+                                                                        Authentication authentication) {
+        return ResponseEntity.ok(productService.displayProductDetail(productId, authentication.getName()));
     }
 
     @PostMapping("/products/periods")
@@ -164,7 +176,7 @@ public class AdminController {
     }
 
     @GetMapping("/members")
-    public ResponseEntity<PageResponseDTO>getAllMember(@RequestParam(required = false, defaultValue = "1") int page) {
+    public ResponseEntity<PageResponseDTO> getAllMember(@RequestParam(required = false, defaultValue = "1") int page) {
         if (page < 1) {
             throw new GlobalException(GlobalExceptionType.PAGE_INDEX_NOT_POSITIVE_NUMBER);
         }
@@ -187,11 +199,13 @@ public class AdminController {
         adminService.changeAdminToMember(memberId);
         return ResponseEntity.ok().build();
     }
+
     @PostMapping("/deleteMember/{memberId}")
     public ResponseEntity<?> deleteMember(@PathVariable Long memberId) {
         adminService.deleteMember(memberId);
         return ResponseEntity.ok().build();
     }
+
     @GetMapping("/members/{memberId}")
     public ResponseEntity<MemberDetailInfoDTO> getMemberDetailInfo(@PathVariable Long memberId) {
         MemberDetailInfoDTO memberDetailInfoDTO = adminService.getMemberDetailInfo(memberId);
@@ -203,6 +217,7 @@ public class AdminController {
         long count = adminService.countActiveMembers();
         return ResponseEntity.ok(count);
     }
+
     @GetMapping("/countDeleteMember")
     public ResponseEntity<Long> countDeleteMembers() {
         long count = adminService.countDeleteMembers();

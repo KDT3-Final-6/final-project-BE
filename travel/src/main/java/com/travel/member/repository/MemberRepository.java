@@ -13,11 +13,13 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByMemberEmail(String email);
-    List<Member> findAllByMemberDeleteCheckFalse();
+    List<Member> findAllByMemberDeleteCheckFalseOrderByMemberIdDesc();
     List<Member> findAll();
     boolean existsByMemberEmail(String memberEmail);
     @Query("SELECT COUNT(m) FROM Member m WHERE m.memberDeleteCheck = false")
     long countActiveMembers();
     @Query("SELECT COUNT(m) FROM Member m WHERE m.memberDeleteCheck = true")
     long countDeleteMembers();
+
+
 }

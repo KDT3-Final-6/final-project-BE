@@ -9,7 +9,9 @@ public enum AuthExceptionType implements CustomExceptionType {
 
     INVALID_EMAIL_OR_PASSWORD(HttpStatus.UNAUTHORIZED, "가입되지 않은 이메일이거나 비밀번호가 일치하지 않습니다."),
     ACCOUNT_DISABLED(HttpStatus.UNAUTHORIZED, "삭제된 계정입니다."),
-    ACCOUNT_LOCKED(HttpStatus.UNAUTHORIZED, "계정이 잠겨있습니다.");
+    ACCOUNT_LOCKED(HttpStatus.UNAUTHORIZED, "계정이 잠겨있습니다."),
+    INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "잘못된 토큰입니다."),
+    EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.");
 
     private final HttpStatus httpStatus;
     private final String errorMsg;

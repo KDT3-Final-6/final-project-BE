@@ -1,5 +1,7 @@
 package com.travel.post.service.impl;
 
+import com.travel.global.exception.GlobalException;
+import com.travel.global.exception.GlobalExceptionType;
 import com.travel.global.response.PageResponseDTO;
 import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
@@ -27,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -73,6 +76,7 @@ public class QnAServiceImpl implements QnAService {
 
         List<QnAPost> qnAPostList = qnARepository.findByMember(member).stream()
                 .filter(qnAPost -> !qnAPost.isCanceled())
+                .sorted(Comparator.comparing(QnAPost::getPostId).reversed())
                 .collect(Collectors.toList());
 
         List<QnAResponseDTO> qnAPostDTOList = qnAPostList.stream()
@@ -91,7 +95,13 @@ public class QnAServiceImpl implements QnAService {
                 })
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(qnAPostDTOList, pageable, qnAPostDTOList.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), qnAPostDTOList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(qnAPostDTOList.subList(start, end), pageable, qnAPostDTOList.size()));
     }
 
     @Override
@@ -118,6 +128,7 @@ public class QnAServiceImpl implements QnAService {
 
         List<QnAPost> qnAPostList = qnARepository.findAll().stream()
                 .filter(qnAPost -> !qnAPost.isCanceled())
+                .sorted(Comparator.comparing(QnAPost::getPostId).reversed())
                 .collect(Collectors.toList());
 
         List<QnAAdminResponseDTO> qnAPostDTOList = qnAPostList.stream()
@@ -136,7 +147,13 @@ public class QnAServiceImpl implements QnAService {
                 })
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO(new PageImpl<>(qnAPostDTOList, pageable, qnAPostDTOList.size()));
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), qnAPostDTOList.size());
+        if (start > end) {
+            throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
+        }
+
+        return new PageResponseDTO(new PageImpl<>(qnAPostDTOList.subList(start, end), pageable, qnAPostDTOList.size()));
     }
 
     @Override

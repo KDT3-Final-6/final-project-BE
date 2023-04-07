@@ -2,23 +2,44 @@ package com.travel.auth.controller;
 
 import com.travel.auth.dto.ResponseDto;
 import com.travel.auth.dto.request.MemberRequestDto;
+import com.travel.auth.dto.request.RefreshTokenRequestDTO;
+import com.travel.auth.dto.response.LoginResponseDTO;
+import com.travel.auth.dto.response.MemberResponseDto;
+import com.travel.auth.jwt.JwtTokenProvider;
 import com.travel.auth.lib.Helper;
 import com.travel.auth.service.MemberService;
+import com.travel.member.dto.responseDTO.MemberResponseDTO;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static com.travel.auth.dto.ResponseDto.empty;
 
 
 @Slf4j
-@RequiredArgsConstructor
 @RestController
-public class AuthController {
+public class    AuthController {
     private final MemberService memberService;
+    private final JwtTokenProvider tokenProvider;
+
+    public AuthController(MemberService memberService, JwtTokenProvider tokenProvider) {
+        this.memberService = memberService;
+        this.tokenProvider = tokenProvider;
+    }
+
     @PostMapping("/members")
     public ResponseDto<?> signUp(@Validated @RequestBody MemberRequestDto.SignUp signUp, Errors errors) {
         // validation check
@@ -29,29 +50,30 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseDto<?> login(@Validated @RequestBody MemberRequestDto.Login login, Errors errors) {
-        // validation check
-        if (errors.hasErrors()) {
-            return new ResponseDto<>(Helper.refineErrors(errors));
-        }
-        return memberService.login(login);
+    public ResponseEntity<ResponseDto<MemberResponseDto.LoginInfo>> login(@Validated @RequestBody MemberRequestDto.Login login) {
+        MemberResponseDto.LoginInfo loginInfo = memberService.login(login);
+        ResponseDto<MemberResponseDto.LoginInfo> responseDto = new ResponseDto<>(loginInfo);
+        return ResponseEntity.ok(responseDto);
     }
 
     @PostMapping("/reissue")
-    public ResponseDto<?> reissue(@Validated @RequestBody MemberRequestDto.Reissue reissue, Errors errors) {
-        // validation check
-        if (errors.hasErrors()) {
-            return new ResponseDto<>(Helper.refineErrors(errors));
-        }
-        return memberService.reissue(reissue);
+    public ResponseEntity<ResponseDto<MemberResponseDto.TokenInfo>> reissue(
+            @RequestBody MemberRequestDto.TokenRequest tokenRequest) {
+        ResponseDto<MemberResponseDto.TokenInfo> responseDto = memberService.reissue(tokenRequest.getRefreshToken());
+        return ResponseEntity.ok(responseDto);
+    }
+    @PostMapping("/members/logout")
+    public ResponseEntity<ResponseDto<Boolean>> logout(@Validated @RequestHeader(name = "Authorization") String authorizationHeader) {
+        String token = authorizationHeader.substring(7);
+        MemberRequestDto.Logout logoutRequest = new MemberRequestDto.Logout();
+        logoutRequest.setAccessToken(token);
+
+        memberService.logout(logoutRequest);
+
+        return new ResponseEntity<>(new ResponseDto<>(true), HttpStatus.OK);
     }
 
-    @PostMapping("/members/logout")
-    public ResponseEntity<?> logout(@Validated @RequestHeader(name = "Authorization") String token,
-                                    @RequestHeader(name = "Refresh-Token")String refreshToken) {
-        // 토큰 폐기 등 로그아웃 처리 수행
-        return ResponseEntity.ok("로그아웃 성공");
-    }
+
     @GetMapping("/authority")
     public ResponseEntity<?> authority() {
         log.info("ADD ROLE_ADMIN");

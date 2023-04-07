@@ -2,6 +2,7 @@ package com.travel.auth.dto.request;
 
 
 import com.travel.member.entity.Hobby;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,8 +41,8 @@ public class MemberRequestDto {
         private String memberBirthDate;
         private List<Hobby> memberHobby;
         private String memberGender;
-        private Boolean memberSmsAgree;
-        private Boolean memberEmailAgree;
+        private boolean memberSmsAgree;
+        private boolean memberEmailAgree;
 
     }
 
@@ -55,19 +56,8 @@ public class MemberRequestDto {
         @NotEmpty(message = "비밀번호는 필수 입력값입니다.")
         private String memberPassword;
         public UsernamePasswordAuthenticationToken toAuthentication() {
-            System.out.println("memberPassword = " + memberPassword);
             return new UsernamePasswordAuthenticationToken(memberEmail, memberPassword);
         }
-    }
-
-    @Getter
-    @Setter
-    public static class Reissue {
-        @NotEmpty(message = "accessToken 을 입력해주세요.")
-        private String accessToken;
-
-        @NotEmpty(message = "refreshToken 을 입력해주세요.")
-        private String refreshToken;
     }
 
     @Getter
@@ -75,9 +65,16 @@ public class MemberRequestDto {
     public static class Logout {
         @NotEmpty(message = "잘못된 요청입니다.")
         private String accessToken;
+        public Logout() {
+        }
+    }
 
-        @NotEmpty(message = "잘못된 요청입니다.")
+    @Getter
+    @Setter
+    public static class TokenRequest {
+        private String accessToken;
         private String refreshToken;
+
     }
 
 }

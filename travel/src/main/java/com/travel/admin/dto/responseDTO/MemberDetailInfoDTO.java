@@ -32,8 +32,8 @@ public class MemberDetailInfoDTO {
     private Boolean memberDeleteCheck;
     private List<Hobby> memberHobby;
     private String memberGender;
-    private Boolean memberSmsAgree;
-    private Boolean memberEmailAgree;
+    private boolean memberSmsAgree;
+    private boolean memberEmailAgree;
     private MemberImage memberImage;
     private List<String> roles;
     private List<Order> orders;
@@ -53,8 +53,8 @@ public class MemberDetailInfoDTO {
         this.memberDeleteCheck = member.getMemberDeleteCheck();
         this.memberHobby = member.getMemberHobby();
         this.memberGender = member.getMemberGender();
-        this.memberSmsAgree = member.getMemberSmsAgree();
-        this.memberEmailAgree = member.getMemberEmailAgree();
+        this.memberSmsAgree = member.isMemberSmsAgree();
+        this.memberEmailAgree = member.isMemberEmailAgree();
         this.memberImage = member.getMemberImage();
         this.roles = member.getRoles();
         this.orders = member.getOrders();

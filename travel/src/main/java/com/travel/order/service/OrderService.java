@@ -4,6 +4,7 @@ import com.travel.global.response.PageResponseDTO;
 import com.travel.order.dto.request.OrderApproveDTO;
 import com.travel.order.dto.request.OrderCreateListDTO;
 import com.travel.order.dto.request.OrderNonMemberCreateDTO;
+import com.travel.order.entity.Order;
 import org.springframework.data.domain.Pageable;
 
 public interface OrderService {
@@ -18,5 +19,5 @@ public interface OrderService {
 
     void approveOrder(Long orderId, OrderApproveDTO orderApproveDTO, String userEmail);
 
-    void createOrderNonMember(OrderNonMemberCreateDTO orderNonMemberCreateDTO);
+    Order createOrderNonMember(OrderNonMemberCreateDTO orderNonMemberCreateDTO);
 }

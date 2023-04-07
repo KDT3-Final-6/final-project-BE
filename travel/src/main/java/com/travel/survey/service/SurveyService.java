@@ -32,7 +32,7 @@ public class SurveyService {
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
         if (member.getSurvey() == null)
-            throw new MemberException(MemberExceptionType.NO_SURVEY_EXISTS);
+            throw new MemberException(MemberExceptionType.SURVEY_NOT_EXISTS);
 
         return new SurveyDTO.GetSurvey(member.getSurvey());
     }
