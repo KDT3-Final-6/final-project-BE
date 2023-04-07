@@ -8,9 +8,9 @@ import lombok.ToString;
 @ToString
 @Setter
 public class PasswordCheckDTO {
-    private String MemberPassword;
+    private String memberPassword;
 
     public String getMemberPassword() {
-        return MemberPassword;
+        return memberPassword;
     }
 }

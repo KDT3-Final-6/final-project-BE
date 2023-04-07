@@ -169,13 +169,11 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
         return true;
     }
 
-
     public void delete() {
         this.memberDeleteCheck = true;
     }
 
     public void update(MemberModifyRequestDTO.ModifyMemberRequestDTO dto) {
-        this.memberPassword = dto.getMemberRenewPassword();
         this.memberNickname = dto.getMemberNickname();
         this.memberPhone = dto.getMemberPhone();
         this.memberHobby = dto.getMemberHobby();

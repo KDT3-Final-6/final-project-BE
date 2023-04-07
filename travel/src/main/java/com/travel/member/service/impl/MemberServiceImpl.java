@@ -58,14 +58,6 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
-    public Member loadMemberByEmail(String memberEmail) {
-        Optional<Member> member = memberRepository.findByMemberEmail(memberEmail);
-        if (member == null) {
-            throw new UsernameNotFoundException("No member found with email" + memberEmail);
-        }
-        return new Member(member);
-    }
-
     @Override
     public Member getMemberById(Long id) {
         return memberRepository.findById(id)
@@ -86,35 +78,6 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public ResponseDto<?> modifyMember(MemberRequestDto.Login login, MemberModifyRequestDTO.ModifyMemberRequestDTO modifyMemberRequestDTO) {
-        try {
-            // 회원 정보를 찾습니다.
-            Member member = memberRepository.findByMemberEmail(login.getMemberEmail())
-                    .orElseThrow(IllegalArgumentException::new);
-
-            // 비밀번호 검증을 수행합니다.
-            passwordCheck(modifyMemberRequestDTO.getMemberPassword(), member.getMemberPassword());
-
-            // 회원 정보를 업데이트합니다.
-            member.setMemberPassword(encodingPassword(modifyMemberRequestDTO.getMemberRenewPassword()));
-            member.setMemberPassword(modifyMemberRequestDTO.getMemberPassword());
-            member.setMemberNickname(modifyMemberRequestDTO.getMemberNickname());
-            member.setMemberHobby(modifyMemberRequestDTO.getMemberHobby());
-            member.setMemberPhone(modifyMemberRequestDTO.getMemberPhone());
-            member.setMemberSmsAgree(modifyMemberRequestDTO.isMemberSmsAgree());
-            member.setMemberEmailAgree(modifyMemberRequestDTO.isMemberEmailAgree());
-            member.setMemberImage(modifyMemberRequestDTO.getMemberImage());
-
-            memberRepository.save(member);
-
-            return new ResponseDto<>("회원정보 수정 성공하였습니다.");
-        } catch (IllegalArgumentException e) {
-            return new ResponseDto<>("로그인 정보가 없습니다.");
-        }
-    }
-
-    @Transactional
-    @Override
     public void updateProfile(String memberEmail, MultipartFile profile) throws IOException {
         Member member = memberRepository.findByMemberEmail(memberEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
@@ -129,14 +92,20 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> exampleOfUpdate(String email, MemberModifyRequestDTO.ModifyMemberRequestDTO dto) {
-        try {
+    public void memberUpdate(String email, MemberModifyRequestDTO.ModifyMemberRequestDTO dto) {
+        Optional<Member> memberOptional = memberRepository.findByMemberEmail(email);
+        if (memberOptional.isPresent()) {
             Member member = memberRepository.findByMemberEmail(email).orElseThrow(NoSuchElementException::new);
-            dto.setMemberRenewPassword(encodingPassword(dto.getMemberRenewPassword()));
-            member.update(dto);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            if (dto.getMemberPassword() != null) {
+                member.setMemberPassword(passwordEncoder.encode(dto.getMemberPassword()));
+            }
+            member.setMemberNickname(dto.getMemberNickname());
+            member.setMemberHobby(dto.getMemberHobby());
+            member.setMemberSmsAgree(dto.isMemberSmsAgree());
+            member.setMemberEmailAgree(dto.isMemberEmailAgree());
+            memberRepository.save(member);
+        } else {
+            throw new NoSuchElementException();
         }
     }
 
