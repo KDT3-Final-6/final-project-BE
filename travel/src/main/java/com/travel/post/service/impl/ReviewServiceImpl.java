@@ -7,6 +7,7 @@ import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
+import com.travel.order.repository.OrderRepository;
 import com.travel.post.dto.request.ReviewCreateRequestDTO;
 import com.travel.post.dto.request.ReviewUpdateRequestDTO;
 import com.travel.post.dto.response.ReviewListDTO;
@@ -42,6 +43,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final MemberRepository memberRepository;
     private final PurchasedProductRepository purchasedProductRepository;
     private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
 
     @Override
     public void createReview(ReviewCreateRequestDTO reviewCreateRequestDTO, String memberEmail) {
@@ -51,6 +53,12 @@ public class ReviewServiceImpl implements ReviewService {
         PurchasedProduct purchasedProduct = purchasedProductRepository.findById(reviewCreateRequestDTO.getPurchasedProductId())
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
+        if (!orderRepository.existsByPurchasedProductsContainsAndMember(purchasedProduct, member)) {
+            throw new PostException(PostExceptionType.NOT_THE_PRODUCT_ORDERED);
+        } else if (reviewRepository.existsByPurchasedProduct(purchasedProduct)) {
+            throw new PostException(PostExceptionType.CAN_ONLY_WRITE_ONE_REVIEW);
+        }
+
         ReviewPost reviewPost = new ReviewPost(purchasedProduct.getPurchasedProductName(), reviewCreateRequestDTO.getContent(), member, purchasedProduct, reviewCreateRequestDTO.getScope());
 
         reviewRepository.save(reviewPost);
@@ -59,6 +67,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public PageResponseDTO getReviews(Pageable pageable) {
         List<ReviewPost> reviewPostList = reviewRepository.findAll().stream()
+                .filter(reviewPost -> !reviewPost.isCanceled())
                 .sorted(Comparator.comparing(ReviewPost::getPostId).reversed())
                 .collect(Collectors.toList());
 
@@ -81,6 +90,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
         List<ReviewPost> reviewPostList = reviewRepository.findByMember(member).stream()
+                .filter(reviewPost -> !reviewPost.isCanceled())
                 .sorted(Comparator.comparing(ReviewPost::getPostId).reversed())
                 .collect(Collectors.toList());
 
@@ -103,6 +113,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
 
         List<ReviewPost> reviewPostList = reviewRepository.findByPurchasedProductProduct(product).stream()
+                .filter(reviewPost -> !reviewPost.isCanceled())
                 .sorted(Comparator.comparing(ReviewPost::getPostId).reversed())
                 .collect(Collectors.toList());
 
