@@ -39,9 +39,9 @@ public class WishlistController {
         return ResponseEntity.ok(wishlists);
     }
 
-    @DeleteMapping("/{wishlistId}")
-    public ResponseEntity<Void> deleteWishlist(@PathVariable Long wishlistId, Authentication authentication) {
-        wishlistService.deleteWishlist(wishlistId, authentication.getName());
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<Void> deleteWishlist(@PathVariable Long productId, Authentication authentication) {
+        wishlistService.deleteWishlist(productId, authentication.getName());
 
         return ResponseEntity.ok(null);
     }
