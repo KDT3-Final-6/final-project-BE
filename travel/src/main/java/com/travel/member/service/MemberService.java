@@ -19,7 +19,7 @@ public interface MemberService {
     Member getMemberById(Long id);
     ResponseEntity<MemberResponseDTO.MemberInfoResponseDTO> getMemberByMemberEmail(String email);
     void updateProfile(String memberEmail, MultipartFile profile) throws IOException;
-    void memberUpdate(String email,MemberModifyRequestDTO.ModifyMemberRequestDTO dto);
+    void memberUpdate(String email,MemberModifyRequestDTO dto);
     void deleteMember(DeleteMemberDTO deleteMember);
     boolean passwordCheck(String email, PasswordCheckDTO passwordCheckDTO);
     String findMemberEmail(FindMemberDTO.FindMemberEmail findMemberEmail);
