@@ -51,7 +51,7 @@ public class MemberController {
 
     // 회원정보 수정
     @PatchMapping("/members")
-    public ResponseEntity<?> memberUpdate(@RequestHeader("Authorization") String authorizationHeader, @RequestBody MemberModifyRequestDTO.ModifyMemberRequestDTO modifyMemberRequestDTO) {
+    public ResponseEntity<?> memberUpdate(@RequestHeader("Authorization") String authorizationHeader, @RequestBody MemberModifyRequestDTO memberModifyRequestDTO) {
 
         String token = authorizationHeader.substring(7);
 
@@ -63,7 +63,7 @@ public class MemberController {
                 .getBody();
         String memberEmail = (claims.getSubject());
         try {
-            memberService.memberUpdate(memberEmail, modifyMemberRequestDTO);
+            memberService.memberUpdate(memberEmail, memberModifyRequestDTO);
             return ResponseEntity.ok().build();
         } catch (NoSuchElementException e) {
             return ResponseEntity.notFound().build();

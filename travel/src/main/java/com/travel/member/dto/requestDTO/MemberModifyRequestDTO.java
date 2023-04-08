@@ -11,15 +11,14 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-public class MemberModifyRequestDTO {
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class MemberModifyRequestDTO extends BaseEntityWithModifiedDate {
 
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @ToString
     // 회원 정보 수정
-    public static class ModifyMemberRequestDTO extends BaseEntityWithModifiedDate {
         private String memberEmail;
         @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*()+|=])[A-Za-z\\d~!@#$%^&*()+|=]{8,16}$", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
         private String memberPassword;
@@ -36,4 +35,4 @@ public class MemberModifyRequestDTO {
         private MemberImage memberImage;
 
     }
-}
+
