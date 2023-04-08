@@ -27,6 +27,7 @@ public class MemberResponseDTO {
         private Grade memberGrade;
         private String memberImage;
         private List<String> roles;
+        private String memberGender;
 
         public MemberInfoResponseDTO(Member member) {
             this.memberEmail = member.getMemberEmail();
@@ -40,6 +41,7 @@ public class MemberResponseDTO {
             this.memberGrade = member.getMemberGrade();
             this.memberImage = member.getMemberImage().getImagePath();
             this.roles = member.getRoles();
+            this.memberGender = member.getMemberGender();
         }
 
 
