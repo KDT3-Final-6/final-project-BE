@@ -8,6 +8,7 @@ import com.travel.image.entity.MemberImage;
 import com.travel.image.repository.MemberImageRepository;
 import com.travel.image.service.FileUploadService;
 import com.travel.member.dto.requestDTO.DeleteMemberDTO;
+import com.travel.member.dto.requestDTO.FindMemberDTO;
 import com.travel.member.dto.requestDTO.MemberModifyRequestDTO;
 import com.travel.member.dto.requestDTO.PasswordCheckDTO;
 import com.travel.member.dto.responseDTO.MemberResponseDTO;
@@ -31,6 +32,8 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import static com.travel.member.util.PasswordUtils.generateRandomPassword;
 
 @Service
 @RequiredArgsConstructor
@@ -133,6 +136,36 @@ public class MemberServiceImpl implements MemberService {
             return passwordEncoder.matches(plainPassword, hashedPassword);
         }
         return false;
+    }
+
+    @Override
+    public String findMemberEmail(FindMemberDTO.FindMemberEmail findMemberEmail) {
+        Member member = memberRepository.findByMemberNameAndMemberPhoneAndMemberBirthDate(
+                findMemberEmail.getMemberName(),
+                findMemberEmail.getMemberPhone(),
+                findMemberEmail.getMemberBirthDate()
+        ).orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        String email = member.getMemberEmail();
+
+        return email;
+    }
+
+    @Override
+    public String findMemberPassword(FindMemberDTO.FindMemberPassword findMemberPassword) {
+
+        Member member = memberRepository.findByMemberEmailAndMemberNameAndMemberPhone(
+                findMemberPassword.getMemberEmail(),
+                findMemberPassword.getMemberName(),
+                findMemberPassword.getMemberPhone()
+        ).orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
+
+        String newPassword = generateRandomPassword();
+        String hashedPassword = passwordEncoder.encode(newPassword);
+
+        member.setMemberPassword(hashedPassword);
+        memberRepository.save(member);
+        return newPassword;
     }
 
 
