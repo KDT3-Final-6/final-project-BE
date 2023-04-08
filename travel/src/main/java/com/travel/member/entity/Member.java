@@ -8,12 +8,14 @@ import com.travel.order.entity.Order;
 import com.travel.survey.entity.Survey;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,18 +33,23 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
     private Long memberId;
 
     @Column(name = "member_email")
+    @NotNull
     private String memberEmail;
 
     @Column(name = "member_pw")
+    @NotNull
     private String memberPassword;
 
     @Column(name = "member_name")
+    @NotNull
     private String memberName;
 
     @Column(name = "member_nickname")
+    @NotNull
     private String memberNickname;
 
     @Column(name = "member_phone")
+    @NotNull
     private String memberPhone;
 
     // localdate로 해보기
@@ -173,7 +180,7 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
         this.memberDeleteCheck = true;
     }
 
-    public void update(MemberModifyRequestDTO.ModifyMemberRequestDTO dto) {
+    public void update(MemberModifyRequestDTO dto) {
         this.memberNickname = dto.getMemberNickname();
         this.memberPhone = dto.getMemberPhone();
         this.memberHobby = dto.getMemberHobby();
