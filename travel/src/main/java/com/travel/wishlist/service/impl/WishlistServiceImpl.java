@@ -80,14 +80,16 @@ public class WishlistServiceImpl implements WishlistService {
     }
 
     @Override
-    public void deleteWishlist(Long wishlistId, String userEmail) {
+    public void deleteWishlist(Long productId, String userEmail) {
         Member member = memberRepository.findByMemberEmail(userEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
 
-        Wishlist wishlist = wishlistRepository.findByWishlistIdAndMember(wishlistId, member)
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductException(ProductExceptionType.PRODUCT_NOT_FOUND));
+
+        Wishlist wishlist = wishlistRepository.findByProductAndMember(product, member)
                 .orElseThrow(() -> new WishlistException(WishlistExceptionType.WISHLIST_NOT_FOUND)); // 나중에 예외 구체적으로 바꾸가
 
-        Product product = wishlist.getProduct();
         product.setWishlistCount(product.getWishlistCount() - 1);
         productRepository.save(product);
 
