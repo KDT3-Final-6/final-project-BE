@@ -101,6 +101,7 @@ public class MemberServiceImpl implements MemberService {
             }
             member.setMemberNickname(dto.getMemberNickname());
             member.setMemberHobby(dto.getMemberHobby());
+            member.setMemberPhone(dto.getMemberPhone());
             member.setMemberSmsAgree(dto.isMemberSmsAgree());
             member.setMemberEmailAgree(dto.isMemberEmailAgree());
             memberRepository.save(member);
