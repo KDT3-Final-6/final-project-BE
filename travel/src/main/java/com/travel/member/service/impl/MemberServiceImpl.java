@@ -27,9 +27,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.utils.StringUtils;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -95,16 +97,22 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void memberUpdate(String email, MemberModifyRequestDTO.ModifyMemberRequestDTO dto) {
+    public void memberUpdate(String email, MemberModifyRequestDTO dto) {
         Optional<Member> memberOptional = memberRepository.findByMemberEmail(email);
         if (memberOptional.isPresent()) {
             Member member = memberRepository.findByMemberEmail(email).orElseThrow(NoSuchElementException::new);
-            if (dto.getMemberPassword() != null) {
+            if (!StringUtils.isBlank(dto.getMemberPassword())) {
                 member.setMemberPassword(passwordEncoder.encode(dto.getMemberPassword()));
             }
-            member.setMemberNickname(dto.getMemberNickname());
-            member.setMemberHobby(dto.getMemberHobby());
-            member.setMemberPhone(dto.getMemberPhone());
+            if (!StringUtils.isBlank(dto.getMemberNickname())) {
+                member.setMemberNickname(dto.getMemberNickname());
+            }
+            if (Objects.nonNull(dto.getMemberHobby()) && !dto.getMemberHobby().isEmpty()) {
+                member.setMemberHobby(dto.getMemberHobby());
+            }
+            if (!StringUtils.isBlank(dto.getMemberPhone())) {
+                member.setMemberPhone(dto.getMemberPhone());
+            }
             member.setMemberSmsAgree(dto.isMemberSmsAgree());
             member.setMemberEmailAgree(dto.isMemberEmailAgree());
             memberRepository.save(member);
@@ -112,7 +120,6 @@ public class MemberServiceImpl implements MemberService {
             throw new NoSuchElementException();
         }
     }
-
     @Override
     public void deleteMember(DeleteMemberDTO deleteMemberDTO) {
         String email = tokenProvider.getEmailFromToken(deleteMemberDTO.getAccessToken());
