@@ -165,6 +165,7 @@ public class OrderServiceImpl implements OrderService {
                 .map(order -> {
                     Member user = order.getMember();
                     List<OrderAdminResponseDTO> orderResponseDTOList = purchasedProductRepository.findByOrder(order).stream()
+                            .sorted(Comparator.comparing(PurchasedProduct::getPurchasedProductId).reversed())
                             .map(purchasedProduct -> purchasedProduct.toOrderAdminResponseDTO(user))
                             .collect(Collectors.toList());
 
