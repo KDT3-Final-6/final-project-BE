@@ -3,6 +3,7 @@ package com.travel.member.service;
 import com.travel.auth.dto.ResponseDto;
 import com.travel.auth.dto.request.MemberRequestDto;
 import com.travel.member.dto.requestDTO.DeleteMemberDTO;
+import com.travel.member.dto.requestDTO.FindMemberDTO;
 import com.travel.member.dto.requestDTO.MemberModifyRequestDTO;
 import com.travel.member.dto.requestDTO.PasswordCheckDTO;
 import com.travel.member.dto.responseDTO.MemberResponseDTO;
@@ -21,5 +22,6 @@ public interface MemberService {
     void memberUpdate(String email,MemberModifyRequestDTO.ModifyMemberRequestDTO dto);
     void deleteMember(DeleteMemberDTO deleteMember);
     boolean passwordCheck(String email, PasswordCheckDTO passwordCheckDTO);
-
+    String findMemberEmail(FindMemberDTO.FindMemberEmail findMemberEmail);
+    String findMemberPassword(FindMemberDTO.FindMemberPassword findMemberPassword);
 }

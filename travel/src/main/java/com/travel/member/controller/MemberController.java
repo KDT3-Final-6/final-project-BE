@@ -4,6 +4,7 @@ import com.travel.auth.dto.ResponseDto;
 import com.travel.auth.dto.request.MemberRequestDto;
 import com.travel.auth.jwt.JwtTokenProvider;
 import com.travel.member.dto.requestDTO.DeleteMemberDTO;
+import com.travel.member.dto.requestDTO.FindMemberDTO;
 import com.travel.member.dto.requestDTO.MemberModifyRequestDTO;
 import com.travel.member.dto.requestDTO.PasswordCheckDTO;
 import com.travel.member.dto.responseDTO.MemberResponseDTO;
@@ -98,7 +99,6 @@ public class MemberController {
     }
 
 
-
     @PutMapping("/members/profile")
     public ResponseEntity<String> putProfile(@RequestHeader("Authorization") String authorizationHeader,
                                              @RequestPart("profile") MultipartFile profile) throws IOException {
@@ -113,6 +113,18 @@ public class MemberController {
 
         memberService.updateProfile(memberEmail, profile);
         return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("/find-password")
+    public ResponseEntity<String> findPassword(@RequestBody FindMemberDTO.FindMemberPassword findPassword) {
+        String newPassword = memberService.findMemberPassword(findPassword);
+        return ResponseEntity.ok(newPassword);
+    }
+
+    @PostMapping("/find-email")
+    public ResponseEntity<String> findEmail(@RequestBody FindMemberDTO.FindMemberEmail findEmail) {
+        String email = memberService.findMemberEmail(findEmail);
+        return ResponseEntity.ok(email);
     }
 }
 
