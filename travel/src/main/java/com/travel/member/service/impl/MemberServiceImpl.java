@@ -18,6 +18,7 @@ import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
 import com.travel.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,11 +30,18 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.utils.StringUtils;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import static com.travel.member.util.PasswordUtils.generateRandomPassword;
 
@@ -48,6 +56,8 @@ public class MemberServiceImpl implements MemberService {
     private final JwtTokenProvider tokenProvider;
     private final RedisTemplate redisTemplate;
 
+    @Autowired
+    private Validator validator;
     @Override
     public ResponseDto<?> memberInfo(MemberRequestDto.Login login) {
         try {
@@ -98,6 +108,10 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void memberUpdate(String email, MemberModifyRequestDTO dto) {
+        Set<ConstraintViolation<MemberModifyRequestDTO>> violations = validator.validate(dto);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
         Optional<Member> memberOptional = memberRepository.findByMemberEmail(email);
         if (memberOptional.isPresent()) {
             Member member = memberRepository.findByMemberEmail(email).orElseThrow(NoSuchElementException::new);

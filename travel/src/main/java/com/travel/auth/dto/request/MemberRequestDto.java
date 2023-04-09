@@ -33,7 +33,7 @@ public class MemberRequestDto {
         private String memberNickname;
 
         @NotEmpty(message = "휴대폰 번호를 작성해주세요")
-        @Pattern(regexp = "^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$", message = "-없이 작성해주세요")
+        @Pattern(regexp = "^\\d{3}\\d{3,4}\\d{4}$", message = "-없이 작성해주세요")
         private String memberPhone;
 
         @NotEmpty(message = "생일을 적어주세요")
