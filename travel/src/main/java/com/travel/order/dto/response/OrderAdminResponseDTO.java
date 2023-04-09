@@ -16,6 +16,8 @@ public class OrderAdminResponseDTO {
 
     private Long productId;
 
+    private Long purchasedProductId;
+
     private Long memberId;
 
     private String memberName;
@@ -40,12 +42,13 @@ public class OrderAdminResponseDTO {
 
     @Builder
     public OrderAdminResponseDTO(
-            Long orderId, Long productId, Long memberId, String memberName, String memberEmail,
+            Long orderId, Long productId, Long purchasedProductId, Long memberId, String memberName, String memberEmail,
             String productName, String productThumbnail, Integer productPrice, LocalDateTime orderDate,
             String periodOptionName, Integer purchasedProductQuantity, OrderStatus orderStatus, PaymentMethod paymentMethod
     ) {
         this.orderId = orderId;
         this.productId = productId;
+        this.purchasedProductId = purchasedProductId;
         this.memberId = memberId;
         this.memberName = memberName;
         this.memberEmail = memberEmail;
