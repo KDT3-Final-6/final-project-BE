@@ -1,6 +1,7 @@
 package com.travel.order.dto.response;
 
 import com.travel.order.entity.OrderStatus;
+import com.travel.order.entity.PaymentMethod;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,8 +36,14 @@ public class OrderAdminResponseDTO {
 
     private String orderStatus;
 
+    private String paymentMethod;
+
     @Builder
-    public OrderAdminResponseDTO(Long orderId, Long productId, Long memberId, String memberName, String memberEmail, String productName, String productThumbnail, Integer productPrice, LocalDateTime orderDate, String periodOptionName, Integer purchasedProductQuantity, OrderStatus orderStatus) {
+    public OrderAdminResponseDTO(
+            Long orderId, Long productId, Long memberId, String memberName, String memberEmail,
+            String productName, String productThumbnail, Integer productPrice, LocalDateTime orderDate,
+            String periodOptionName, Integer purchasedProductQuantity, OrderStatus orderStatus, PaymentMethod paymentMethod
+    ) {
         this.orderId = orderId;
         this.productId = productId;
         this.memberId = memberId;
@@ -49,5 +56,6 @@ public class OrderAdminResponseDTO {
         this.periodOptionName = periodOptionName;
         this.purchasedProductQuantity = purchasedProductQuantity;
         this.orderStatus = orderStatus.getKorean();
+        this.paymentMethod = paymentMethod.getKorean();
     }
 }

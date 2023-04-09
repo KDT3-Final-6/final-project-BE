@@ -161,28 +161,23 @@ public class OrderServiceImpl implements OrderService {
                 .sorted(Comparator.comparing(Order::getOrderId).reversed())
                 .collect(Collectors.toList());
 
-        List<OrderListAdminResponseDTO> orderListResponseDTOS = orderList.stream()
-                .map(order -> {
+        List<OrderAdminResponseDTO> orderAdminResponseDTOList = orderList.stream()
+                .flatMap(order -> {
                     Member user = order.getMember();
-                    List<OrderAdminResponseDTO> orderResponseDTOList = purchasedProductRepository.findByOrder(order).stream()
-                            .sorted(Comparator.comparing(PurchasedProduct::getPurchasedProductId).reversed())
-                            .map(purchasedProduct -> purchasedProduct.toOrderAdminResponseDTO(user))
-                            .collect(Collectors.toList());
 
-                    return OrderListAdminResponseDTO.builder()
-                            .orderList(orderResponseDTOList)
-                            .order(order)
-                            .build();
+                    return purchasedProductRepository.findByOrder(order).stream()
+                            .sorted(Comparator.comparing(PurchasedProduct::getPurchasedProductId).reversed())
+                            .map(purchasedProduct -> purchasedProduct.toOrderAdminResponseDTO(user));
                 })
                 .collect(Collectors.toList());
 
         int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), orderListResponseDTOS.size());
+        int end = Math.min((start + pageable.getPageSize()), orderAdminResponseDTOList.size());
         if (start > end) {
             throw new GlobalException(GlobalExceptionType.PAGE_IS_EXCEEDED);
         }
 
-        return new PageResponseDTO(new PageImpl<>(orderListResponseDTOS.subList(start, end), pageable, orderListResponseDTOS.size()));
+        return new PageResponseDTO(new PageImpl<>(orderAdminResponseDTOList.subList(start, end), pageable, orderAdminResponseDTOList.size()));
     }
 
     @Override
