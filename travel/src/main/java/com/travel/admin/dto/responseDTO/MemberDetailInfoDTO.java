@@ -36,8 +36,6 @@ public class MemberDetailInfoDTO {
     private boolean memberEmailAgree;
     private MemberImage memberImage;
     private List<String> roles;
-    private List<Order> orders;
-    private Survey survey;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
 
@@ -57,8 +55,6 @@ public class MemberDetailInfoDTO {
         this.memberEmailAgree = member.isMemberEmailAgree();
         this.memberImage = member.getMemberImage();
         this.roles = member.getRoles();
-        this.orders = member.getOrders();
-        this.survey = member.getSurvey();
         this.createdDate = member.getCreatedDate();
         this.modifiedDate = member.getModifiedDate();
     }
