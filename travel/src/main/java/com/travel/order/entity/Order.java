@@ -1,5 +1,6 @@
 package com.travel.order.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.travel.global.entity.BaseEntityWithModifiedDate;
 import com.travel.member.entity.Member;
 import com.travel.product.entity.PurchasedProduct;
@@ -22,6 +23,7 @@ public class Order extends BaseEntityWithModifiedDate {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
+    @JsonIgnore
     private Member member;
 
     @Setter
