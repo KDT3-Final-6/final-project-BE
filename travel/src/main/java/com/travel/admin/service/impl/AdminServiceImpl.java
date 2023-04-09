@@ -13,7 +13,6 @@ import com.travel.member.repository.MemberRepository;
 import com.travel.post.repository.PostRepository;
 import com.travel.post.repository.qnapost.QnARepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -42,15 +41,17 @@ public class AdminServiceImpl implements AdminService {
         List<MemberListDTO> memberListDTOs = new ArrayList<>();
 
         for (Member member : members) {
-            Long totalQnAs = postRepository.countQnaPostsByMemberId(member.getMemberId());
-            Long totalReviews = postRepository.countReviewPostsByMemberId(member.getMemberId());
-            Long total = totalQnAs + totalReviews;
-            memberListDTOs.add(MemberListDTO.builder()
-                    .member(member)
-                    .total(total)
-                    .totalQnAs(totalQnAs)
-                    .totalReviews(totalReviews)
-                    .build());
+            if (!member.isNonMembers()) {
+                Long totalQnAs = postRepository.countQnaPostsByMemberId(member.getMemberId());
+                Long totalReviews = postRepository.countReviewPostsByMemberId(member.getMemberId());
+                Long total = totalQnAs + totalReviews;
+                memberListDTOs.add(MemberListDTO.builder()
+                        .member(member)
+                        .total(total)
+                        .totalQnAs(totalQnAs)
+                        .totalReviews(totalReviews)
+                        .build());
+            }
         }
 
         int start = (int) pageable.getOffset();
@@ -100,6 +101,7 @@ public class AdminServiceImpl implements AdminService {
     public long countActiveMembers() {
         return memberRepository.countActiveMembers();
     }
+
     @Override
     public long countDeleteMembers() {
         return memberRepository.countDeleteMembers();

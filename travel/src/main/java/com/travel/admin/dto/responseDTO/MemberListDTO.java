@@ -4,6 +4,7 @@ import com.travel.member.entity.Member;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,6 +19,8 @@ public class MemberListDTO {
     private Long totalReviews;
     private Long total;
 
+    private List<String> roles;
+
     @Builder
     public MemberListDTO(Member member, Long totalQnAs, Long totalReviews, Long total) {
         this.memberId = member.getMemberId();
@@ -28,5 +31,6 @@ public class MemberListDTO {
         this.totalQnAs = totalQnAs;
         this.totalReviews = totalReviews;
         this.total = total;
+        this.roles = member.getRoles();
     }
 }
