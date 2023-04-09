@@ -97,6 +97,7 @@ public class PurchasedProduct {
                 .purchasedProductQuantity(this.purchasedProductQuantity)
                 .orderDate(this.order.getCreatedDate())
                 .orderStatus(this.order.getOrderStatus())
+                .paymentMethod(this.order.getPaymentMethod())
                 .build();
     }
 }
