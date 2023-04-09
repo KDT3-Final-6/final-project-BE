@@ -11,7 +11,10 @@ import com.travel.order.dto.request.OrderApproveDTO;
 import com.travel.order.dto.request.OrderCreateDTO;
 import com.travel.order.dto.request.OrderCreateListDTO;
 import com.travel.order.dto.request.OrderNonMemberCreateDTO;
-import com.travel.order.dto.response.*;
+import com.travel.order.dto.response.OrderAdminResponseDTO;
+import com.travel.order.dto.response.OrderByQnAResponseDTO;
+import com.travel.order.dto.response.OrderListResponseDTO;
+import com.travel.order.dto.response.OrderResponseDTO;
 import com.travel.order.entity.Order;
 import com.travel.order.entity.OrderStatus;
 import com.travel.order.entity.PaymentMethod;
@@ -89,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
 
                                 return purchasedProduct.toOrderResponseDTO(hasReview);
                             })
-                             .sorted(Comparator.comparing(OrderResponseDTO::getPurchasedProductId).reversed())
+                            .sorted(Comparator.comparing(OrderResponseDTO::getPurchasedProductId).reversed())
                             .collect(Collectors.toList());
 
                     return OrderListResponseDTO.builder()
@@ -202,15 +205,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order createOrderNonMember(OrderNonMemberCreateDTO orderNonMemberCreateDTO) {
-        Member member = Member.builder()
-                .memberName(orderNonMemberCreateDTO.getMemberName())
-                .memberEmail(orderNonMemberCreateDTO.getMemberEmail())
-                .build();
+        Member member = memberRepository.findByMemberEmail(orderNonMemberCreateDTO.getMemberEmail())
+                .orElse(Member.builder()
+                        .memberName(orderNonMemberCreateDTO.getMemberName())
+                        .memberEmail(orderNonMemberCreateDTO.getMemberEmail())
+                        .build());
 
         member.setNonMembers(true);
 
         memberRepository.save(member);
-
 
         List<PurchasedProduct> purchasedProductList = getPurchasedProducts(orderNonMemberCreateDTO.getProductIds());
 
