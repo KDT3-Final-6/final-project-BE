@@ -37,7 +37,7 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
     private String memberEmail;
 
     @Column(name = "member_pw")
-    @NotNull
+//    @NotNull
     private String memberPassword;
 
     @Column(name = "member_name")
@@ -45,11 +45,11 @@ public class Member extends BaseEntityWithModifiedDate implements UserDetails {
     private String memberName;
 
     @Column(name = "member_nickname")
-    @NotNull
+//    @NotNull
     private String memberNickname;
 
     @Column(name = "member_phone")
-    @NotNull
+//    @NotNull
     private String memberPhone;
 
     // localdate로 해보기
