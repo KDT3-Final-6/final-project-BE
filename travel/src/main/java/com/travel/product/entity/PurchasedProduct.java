@@ -87,6 +87,7 @@ public class PurchasedProduct {
         return OrderAdminResponseDTO.builder()
                 .orderId(this.order.getOrderId())
                 .productId(this.product.getProductId())
+                .purchasedProductId(this.purchasedProductId)
                 .memberId(member.getMemberId())
                 .memberName(member.getMemberName())
                 .memberEmail(member.getMemberEmail())
