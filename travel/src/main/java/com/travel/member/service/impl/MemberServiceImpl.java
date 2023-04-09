@@ -56,8 +56,8 @@ public class MemberServiceImpl implements MemberService {
     private final JwtTokenProvider tokenProvider;
     private final RedisTemplate redisTemplate;
 
-    @Autowired
-    private Validator validator;
+//    @Autowired
+//    private Validator validator;
     @Override
     public ResponseDto<?> memberInfo(MemberRequestDto.Login login) {
         try {
@@ -108,10 +108,10 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public void memberUpdate(String email, MemberModifyRequestDTO dto) {
-        Set<ConstraintViolation<MemberModifyRequestDTO>> violations = validator.validate(dto);
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
+//        Set<ConstraintViolation<MemberModifyRequestDTO>> violations = validator.validate(dto);
+//        if (!violations.isEmpty()) {
+//            throw new ConstraintViolationException(violations);
+//        }
         Optional<Member> memberOptional = memberRepository.findByMemberEmail(email);
         if (memberOptional.isPresent()) {
             Member member = memberRepository.findByMemberEmail(email).orElseThrow(NoSuchElementException::new);
