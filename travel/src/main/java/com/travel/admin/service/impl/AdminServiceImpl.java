@@ -66,8 +66,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void changeMemberToAdmin(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new NotFoundException("Member not found"));
-        member.getRoles().add("ROLE_ADMIN");
-        memberRepository.save(member);
+        if (!member.getRoles().contains("ROLE_ADMIN")) { // 현재 권한 목록에 ROLE_ADMIN이 없을 경우에만 추가
+            member.getRoles().add("ROLE_ADMIN");
+            memberRepository.save(member);
+        }
     }
 
     @Override
