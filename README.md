@@ -1,8 +1,66 @@
 # final-project-BE
 
-이 프로젝트는 final-project 입니다
+##Project Name
+ 파이널 프로젝트 이며,
+ 더 샤이니기업과 하는 여행상품 사이트 프로젝트 입니다.
+ [See Demo]()
+ 
+## Purpose
 
-고투게더 서비스 플랫폼 리뉴얼
+1. 사용자가 입력한 키워드 정보를 기반으로 유사 정보를 입력한 사용자들끼리 그룹화 서비스 구축
+2. 키워드 정보 기반 여행상품 등이 추천되는 서비스 구축이 목적이며,
+3. 사용자관리, 상품관리, 예약관리 페이지 등의 제작이 목적입니다.
+ 
+
+## Prerequisite
+
+- java: ^11
+
+## How to start
+
+```shell
+$ git clone {repo addr}
+$ cd repo-setup-sample
+$ npm install
+$ npm start
+```
+
+## Feature
+
+- Blog
+- Reply
+- My Page
+
+## Contributors
+
+|username|Real name|github link|
+|:--:|:--:|:--:|
+|zoomin3022|주우민|[zoomin3022](https://github.com/zoomin3022)|
+|JeYeongR|류제영|[JeYeongR](https://github.com/JeYeongR)|
+|lala9663|김태윤|[lala9663](https://github.com/lala9663)|
+
+
+### Platforms & Languages
+
+![Java](https://img.shields.io/badge/Java-007396.svg?&style=for-the-badge&logo=Java&logoColor=white)
+![Spring](https://img.shields.io/badge/Spring-6DB33F.svg?&style=for-the-badge&logo=Spring&logoColor=white)
+![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
+
+### Tools
+![Git](https://img.shields.io/badge/Git-F05032.svg?&style=for-the-badge&logo=Git&logoColor=white)
+![IntelliJ](https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white)
+
+### Communication
+
+![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)
+![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)
+
+## References
+
+- [고투게더](https://www.gotogether-s.com/)
+
+
+## License
 
 프로젝트 상세 요구사항
 
@@ -52,90 +110,3 @@
 14. 서버 구축 및 연동
 - aws 서버 구축
 
-## Purpose
-
-1. 사용자가 입력한 키워드 정보를 기반으로 유사 정보를 입력한 사용자들끼리 그룹화 서비스 구축
-2. 키워드 정보 기반 여행상품 등이 추천되는 서비스 구축이 목적이며,
-3. 사용자관리, 상품관리, 예약관리 페이지 등의 제작이 목적입니다.
-
-
-### Platforms & Languages
-
-![Java](https://img.shields.io/badge/Java-007396.svg?&style=for-the-badge&logo=Java&logoColor=white)
-![Spring](https://img.shields.io/badge/Spring-6DB33F.svg?&style=for-the-badge&logo=Spring&logoColor=white)
-![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)
-
-### Tools
-![Git](https://img.shields.io/badge/Git-F05032.svg?&style=for-the-badge&logo=Git&logoColor=white)
-![IntelliJ](https://img.shields.io/badge/IntelliJ_IDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white)
-
-### Communication
-
-![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)
-![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)
-
-## How to Start
-
-```shell
-$ git clone {repo addr}
-$ cd repo-setup-sample
-$ npm install
-$ npm start
-```
-
-## Features
-
-- Board
-- Admin page
-
-## Contributors
-
-|username|Real name|github link|
-|:--:|:--:|:--:|
-|zoomin3022|주우민|[zoomin3022](https://github.com/zoomin3022)|
-|JeYeongR|류제영|[JeYeongR](https://github.com/JeYeongR)|
-|lala9663|김태윤|[lala9663](https://github.com/lala9663)|
-
-## References
-
-- [고투게더](https://www.gotogether-s.com/)
-
------
-##Project Name
- 파이널 프로젝트 이며,
- 더 샤이니기업과 하는 여행상품 사이트 프로젝트 입니다.
- [See Demo]()
-
-## Prerequisite
-
-- java: ^11
-
-## How to start
-
-```shell
-$ git clone {repo addr}
-$ cd repo-setup-sample
-$ npm install
-$ npm start
-```
-
-## Feature
-
-- Blog
-- Reply
-- My Page
-
-## Contributors
-
-|username|Real name|github link|
-|:--:|:--:|:--:|
-|zoomin3022|주우민|[zoomin3022](https://github.com/zoomin3022)|
-|JeYeongR|류제영|[JeYeongR](https://github.com/JeYeongR)|
-|lala9663|김태윤|[lala9663](https://github.com/lala9663)|
-
-## References
-
-- [고투게더](https://www.gotogether-s.com/)
-
-
-## License
