@@ -11,7 +11,7 @@ public interface SearchService {
 
     PageResponseDTO getRecommend(Pageable pageable, String memberEmail);
 
-    public PageResponseDTO getRelatedProducts(Pageable pageable, Long productId, String memberEmail);
+    PageResponseDTO getRelatedProducts(Pageable pageable, Long productId, String memberEmail);
 
     PageResponseDTO searchQnAs(Pageable pageable, String qnAStatus, String inquiryType, String keyword);
 }
