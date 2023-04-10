@@ -26,7 +26,6 @@ import com.travel.product.repository.CategoryRepository;
 import com.travel.product.repository.ProductCategoryRepository;
 import com.travel.product.repository.product.ProductRepository;
 import com.travel.search.dto.request.SortTarget;
-import com.travel.search.dto.response.SearchResultResponseDTO;
 import com.travel.search.service.SearchService;
 import com.travel.wishlist.repository.WishlistRepository;
 import lombok.RequiredArgsConstructor;
@@ -106,6 +105,7 @@ public class SearchServiceImpl implements SearchService {
         return new PageResponseDTO(getPageImpl(pageable, searchResult));
     }
 
+    @Override
     public PageResponseDTO getRecommend(Pageable pageable, String memberEmail) {
         Member member = memberRepository.findByMemberEmail(memberEmail)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.MEMBER_NOT_FOUND));
@@ -177,12 +177,13 @@ public class SearchServiceImpl implements SearchService {
                 .flatMap(Collection::stream)
                 .distinct()
                 .filter(qnAPost -> !qnAPost.isCanceled())
-                .collect(Collectors.toList());
+                .sorted(Comparator.comparing(QnAPost::getPostId).reversed())
+                .collect(toList());
 
         List<QnAPost> qnAPostsFiltering = qnAPostKeywordList.stream()
                 .filter(qnAPost -> (qnAStatusQnAs.isEmpty() || qnAStatusQnAs.contains(qnAPost)) &&
                         (inquiryTypeQnAs.isEmpty() || inquiryTypeQnAs.contains(qnAPost)))
-                .collect(Collectors.toList());
+                .collect(toList());
 
         List<QnAAdminResponseDTO> qnAPostDTOList = qnAPostsFiltering.stream()
                 .map(qnAPost -> {
@@ -198,7 +199,7 @@ public class SearchServiceImpl implements SearchService {
 
                     return qnAPost.toQnAAdminResponseDTO(answerPost);
                 })
-                .collect(Collectors.toList());
+                .collect(toList());
 
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), qnAPostDTOList.size());
