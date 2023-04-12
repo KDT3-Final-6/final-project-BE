@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class OrderByQnAResponseDTO {
+public class OrderInQnAResponseDTO {
 
     private Long orderId;
 
@@ -13,7 +13,7 @@ public class OrderByQnAResponseDTO {
     private String productName;
 
     @Builder
-    public OrderByQnAResponseDTO(Long orderId, Long purchasedProductId, String productName) {
+    public OrderInQnAResponseDTO(Long orderId, Long purchasedProductId, String productName) {
         this.orderId = orderId;
         this.purchasedProductId = purchasedProductId;
         this.productName = productName;

@@ -12,7 +12,7 @@ import com.travel.order.dto.request.OrderCreateDTO;
 import com.travel.order.dto.request.OrderCreateListDTO;
 import com.travel.order.dto.request.OrderNonMemberCreateDTO;
 import com.travel.order.dto.response.OrderAdminResponseDTO;
-import com.travel.order.dto.response.OrderByQnAResponseDTO;
+import com.travel.order.dto.response.OrderInQnAResponseDTO;
 import com.travel.order.dto.response.OrderListResponseDTO;
 import com.travel.order.dto.response.OrderResponseDTO;
 import com.travel.order.entity.Order;
@@ -118,15 +118,15 @@ public class OrderServiceImpl implements OrderService {
 
         List<Order> orderList = orderRepository.findByMember(member);
 
-        List<OrderByQnAResponseDTO> orderByQnAList = orderList.stream()
+        List<OrderInQnAResponseDTO> orderByQnAList = orderList.stream()
                 .flatMap(order -> purchasedProductRepository.findByOrder(order).stream()
-                        .map(purchasedProduct -> OrderByQnAResponseDTO.builder()
+                        .map(purchasedProduct -> OrderInQnAResponseDTO.builder()
                                 .orderId(order.getOrderId())
                                 .purchasedProductId(purchasedProduct.getPurchasedProductId())
                                 .productName(purchasedProduct.getPurchasedProductName())
                                 .build())
                 )
-                .sorted(Comparator.comparing(OrderByQnAResponseDTO::getPurchasedProductId).reversed())
+                .sorted(Comparator.comparing(OrderInQnAResponseDTO::getPurchasedProductId).reversed())
                 .collect(Collectors.toList());
 
         int start = (int) pageable.getOffset();
