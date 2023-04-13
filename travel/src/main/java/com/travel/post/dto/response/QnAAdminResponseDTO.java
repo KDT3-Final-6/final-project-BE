@@ -1,31 +1,11 @@
 package com.travel.post.dto.response;
 
-import lombok.Builder;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@Builder
-public class QnAAdminResponseDTO {
-
-    private Long postId;
-
-    private String postTitle;
-
-    private String postContent;
-
-    private String inquiryType;
-
-    private String qnAStatus;
-
-    private String answer;
-
-    private LocalDateTime replyDate;
-
-    private String purchasedProductName;
-
-    private LocalDateTime createdDate;
+@SuperBuilder
+public class QnAAdminResponseDTO extends QnAResponseDTO {
 
     private String memberName;
 }

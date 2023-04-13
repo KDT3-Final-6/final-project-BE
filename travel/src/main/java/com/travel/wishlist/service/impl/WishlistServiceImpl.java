@@ -7,7 +7,6 @@ import com.travel.member.entity.Member;
 import com.travel.member.exception.MemberException;
 import com.travel.member.exception.MemberExceptionType;
 import com.travel.member.repository.MemberRepository;
-import com.travel.order.dto.response.OrderByQnAResponseDTO;
 import com.travel.product.entity.Product;
 import com.travel.product.exception.ProductException;
 import com.travel.product.exception.ProductExceptionType;
