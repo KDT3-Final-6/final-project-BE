@@ -75,10 +75,10 @@ public class PurchasedProduct {
                 .productName(this.purchasedProductName)
                 .productThumbnail(this.purchasedProductThumbnail)
                 .productPrice(this.purchasedProductPrice)
-                .optionName(this.periodOptionName)
+                .periodOptionName(this.periodOptionName)
                 .purchasedProductQuantity(this.purchasedProductQuantity)
                 .orderDate(this.order.getCreatedDate())
-                .orderStatus(this.order.getOrderStatus())
+                .orderStatus(this.order.getOrderStatus().getKorean())
                 .hasReview(hasReview)
                 .build();
     }
@@ -97,8 +97,8 @@ public class PurchasedProduct {
                 .periodOptionName(this.periodOptionName)
                 .purchasedProductQuantity(this.purchasedProductQuantity)
                 .orderDate(this.order.getCreatedDate())
-                .orderStatus(this.order.getOrderStatus())
-                .paymentMethod(this.order.getPaymentMethod())
+                .orderStatus(this.order.getOrderStatus().getKorean())
+                .paymentMethod(this.order.getPaymentMethod().getKorean())
                 .build();
     }
 }
