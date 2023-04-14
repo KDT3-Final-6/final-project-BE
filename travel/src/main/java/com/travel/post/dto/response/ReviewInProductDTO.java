@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ReviewListProductDTO {
+public class ReviewInProductDTO {
 
     private String memberNickname;
 
