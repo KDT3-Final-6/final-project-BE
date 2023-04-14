@@ -1,7 +1,7 @@
 package com.travel.post.entity;
 
 import com.travel.member.entity.Member;
-import com.travel.post.dto.response.ReviewListDTO;
+import com.travel.post.dto.response.ReviewInBoardDTO;
 import com.travel.post.dto.response.ReviewInMemberDTO;
 import com.travel.post.dto.response.ReviewInProductDTO;
 import com.travel.product.entity.PurchasedProduct;
@@ -33,8 +33,8 @@ public class ReviewPost extends Post {
         this.scope = scope;
     }
 
-    public ReviewListDTO toReviewListDTO() {
-        return ReviewListDTO.builder()
+    public ReviewInBoardDTO toReviewInBoardDTO() {
+        return ReviewInBoardDTO.builder()
                 .postId(this.getPostId())
                 .productId(this.purchasedProduct.getProduct().getProductId())
                 .purchasedProductName(this.purchasedProduct.getPurchasedProductName())
@@ -46,7 +46,7 @@ public class ReviewPost extends Post {
                 .build();
     }
 
-    public ReviewInMemberDTO toReviewListMemberDTO() {
+    public ReviewInMemberDTO toReviewInMemberDTO() {
         return ReviewInMemberDTO.builder()
                 .postId(this.getPostId())
                 .productId(this.purchasedProduct.getProduct().getProductId())
@@ -58,7 +58,7 @@ public class ReviewPost extends Post {
                 .build();
     }
 
-    public ReviewInProductDTO toReviewListProductDTO() {
+    public ReviewInProductDTO toReviewInProductDTO() {
         return ReviewInProductDTO.builder()
                 .memberNickname(this.getMember().getMemberNickname())
                 .postContent(this.getPostContent())
