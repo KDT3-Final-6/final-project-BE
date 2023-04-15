@@ -1,13 +1,13 @@
 package com.travel.post.dto.response;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
 @Getter
-@Builder
-public class ReviewListMemberDTO {
+@SuperBuilder
+public class ReviewInMemberDTO {
 
     private Long postId;
 

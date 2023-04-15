@@ -1,9 +1,9 @@
 package com.travel.post.entity;
 
 import com.travel.member.entity.Member;
-import com.travel.post.dto.response.ReviewListDTO;
-import com.travel.post.dto.response.ReviewListMemberDTO;
-import com.travel.post.dto.response.ReviewListProductDTO;
+import com.travel.post.dto.response.ReviewInBoardDTO;
+import com.travel.post.dto.response.ReviewInMemberDTO;
+import com.travel.post.dto.response.ReviewInProductDTO;
 import com.travel.product.entity.PurchasedProduct;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,8 +33,8 @@ public class ReviewPost extends Post {
         this.scope = scope;
     }
 
-    public ReviewListDTO toReviewListDTO() {
-        return ReviewListDTO.builder()
+    public ReviewInBoardDTO toReviewInBoardDTO() {
+        return ReviewInBoardDTO.builder()
                 .postId(this.getPostId())
                 .productId(this.purchasedProduct.getProduct().getProductId())
                 .purchasedProductName(this.purchasedProduct.getPurchasedProductName())
@@ -46,8 +46,8 @@ public class ReviewPost extends Post {
                 .build();
     }
 
-    public ReviewListMemberDTO toReviewListMemberDTO() {
-        return ReviewListMemberDTO.builder()
+    public ReviewInMemberDTO toReviewInMemberDTO() {
+        return ReviewInMemberDTO.builder()
                 .postId(this.getPostId())
                 .productId(this.purchasedProduct.getProduct().getProductId())
                 .purchasedProductName(this.purchasedProduct.getPurchasedProductName())
@@ -58,8 +58,8 @@ public class ReviewPost extends Post {
                 .build();
     }
 
-    public ReviewListProductDTO toReviewListProductDTO() {
-        return ReviewListProductDTO.builder()
+    public ReviewInProductDTO toReviewInProductDTO() {
+        return ReviewInProductDTO.builder()
                 .memberNickname(this.getMember().getMemberNickname())
                 .postContent(this.getPostContent())
                 .scope(this.scope)

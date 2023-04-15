@@ -5,7 +5,7 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
-public class QnAAdminResponseDTO extends QnAResponseDTO {
+public class ReviewInBoardDTO extends ReviewInMemberDTO {
 
-    private String memberName;
+    private String memberNickname;
 }
