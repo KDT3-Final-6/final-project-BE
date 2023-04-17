@@ -148,6 +148,7 @@ public class MemberService {
         redisTemplate.opsForValue().set(logout.getAccessToken(),"logout",expiration,TimeUnit.MILLISECONDS);
     }
 
+    @Transactional
     public ResponseEntity<?> authority() {
         String memberEmail = SecurityUtil.getCurrentUserEmail();
 
@@ -160,5 +161,6 @@ public class MemberService {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
 }
