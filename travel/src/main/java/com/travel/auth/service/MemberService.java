@@ -162,5 +162,4 @@ public class MemberService {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
 }
