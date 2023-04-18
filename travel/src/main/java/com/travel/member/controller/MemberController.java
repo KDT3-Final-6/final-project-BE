@@ -10,6 +10,7 @@ import com.travel.member.dto.requestDTO.PasswordCheckDTO;
 import com.travel.member.dto.responseDTO.MemberResponseDTO;
 import com.travel.member.entity.Member;
 import com.travel.member.service.MemberService;
+import com.travel.nonmember.service.MailService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
@@ -30,6 +32,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final JwtTokenProvider tokenProvider;
+    private final MailService mailService;
 
     // 회원정보
     @GetMapping("/members")
@@ -125,6 +128,11 @@ public class MemberController {
     public ResponseEntity<String> findEmail(@RequestBody FindMemberDTO.FindMemberEmail findEmail) {
         String email = memberService.findMemberEmail(findEmail);
         return ResponseEntity.ok(email);
+    }
+
+    @PostMapping("/find-passwords")
+    public ResponseEntity<String> findEmails(@RequestBody FindMemberDTO.FindMemberPassword findPassword) throws MessagingException {
+        return ResponseEntity.ok(mailService.findPassword(findPassword));
     }
 }
 

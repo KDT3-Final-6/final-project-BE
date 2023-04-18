@@ -77,4 +77,10 @@ public class MemberRequestDto {
 
     }
 
+    @Getter
+    @Setter
+    public static class CheckEmail {
+        private String memberEmail;
+    }
+
 }
