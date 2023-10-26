@@ -18,6 +18,10 @@
 ## 프로젝트 소개
 6투게더는 더샤이니 기업과 연계하여 만든 여행사이트 입니다. 기존에 있는 사이트를 참고하여 조금 더 나은 방향으로 만드는 것이 프로젝트의 목적입니다. 
 
+## ERD
+![final](https://github.com/KDT3-Final-6/final-project-BE/assets/121492369/3d7de371-ffb9-4576-9d97-82d039e86291)
+https://www.erdcloud.com/d/2DaE4s4DaFn9NwaWT
+
 ## Stacks
 
 ### Development
